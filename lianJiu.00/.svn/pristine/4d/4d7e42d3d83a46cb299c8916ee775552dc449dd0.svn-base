@@ -1,0 +1,41 @@
+//
+//  BankModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/17.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BankModel.h"
+
+@implementation BankModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    BankModel *model = [[self alloc] init];
+    model.bank = dic[@"bank"];
+    model.log = dic[@"log"];
+    model.name = dic[@"name"];
+    model.no = dic[@"no"];
+    model.number = dic[@"number"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.bank forKey:@"bank"];
+    [aCoder encodeObject:self.log forKey:@"log"];
+    [aCoder encodeObject:self.name forKey:@"name"];
+    [aCoder encodeObject:self.no forKey:@"no"];
+    [aCoder encodeObject:self.number forKey:@"number"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.bank = [aDecoder decodeObjectForKey:@"bank"];
+        self.log = [aDecoder decodeObjectForKey:@"log"];
+        self.name = [aDecoder decodeObjectForKey:@"name"];
+        self.no = [aDecoder decodeObjectForKey:@"no"];
+        self.number = [aDecoder decodeObjectForKey:@"number"];
+    }
+    return self;
+}
+@end

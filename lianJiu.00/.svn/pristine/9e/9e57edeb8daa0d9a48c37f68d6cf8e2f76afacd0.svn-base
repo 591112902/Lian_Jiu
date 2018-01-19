@@ -1,0 +1,184 @@
+//
+//  SelectViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/7.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+
+#import "SelectViewController.h"
+#import "MOSTableViewCell.h"
+@interface SelectViewController ()<UITableViewDataSource,UITableViewDelegate>
+{
+ int _selectCellHeight;// cell 的高度 适配 ipone 5 和 ipone 6
+}
+@end
+
+@implementation SelectViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+       _selectCellHeight=BOUND_HIGHT-630;
+    if (_selectCellHeight<=0) {
+        _selectCellHeight=BOUND_HIGHT-520;
+    }
+    
+    
+    self.view.backgroundColor = [UIColor clearColor];
+    UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,BOUND_WIDTH, BOUND_HIGHT)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapImage:)];
+    [image addGestureRecognizer:tap];
+    image.userInteractionEnabled = YES;
+    image.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    [self.view addSubview:image];
+    
+    
+    if (self.tableViewFram.size.height==0) {
+        CGFloat tableVH;
+        CGFloat tableVY;
+        NSInteger count;
+        count = self.titleText?self.dataSource.count+1:self.dataSource.count;
+        if (BOUND_HIGHT-64-80-20>count *44) {
+            // 调整适配
+//            tableVH = count *44;
+             tableVH = BOUND_HIGHT-64-80-20;
+            tableVY = (BOUND_HIGHT-64-80-20-tableVH)/2+64+20;
+        }else{
+            tableVH = BOUND_HIGHT-64-80-20;
+            tableVY = 64+40;
+        }
+        self.tableViewFram = CGRectMake(20, tableVY, BOUND_WIDTH-40, tableVH+40);
+        
+//        self.tableViewFram = CGRectMake(20, tableVY, BOUND_WIDTH-40, tableVH+80);
+    }
+
+    UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(self.tableViewFram.origin.x+self.tableViewUIEdgeInsets.left, self.tableViewFram.origin.y+self.tableViewUIEdgeInsets.top, self.tableViewFram.size.width-self.tableViewUIEdgeInsets.left-self.tableViewUIEdgeInsets.right, self.tableViewFram.size.height-self.tableViewUIEdgeInsets.top-self.tableViewUIEdgeInsets.bottom)];
+    [table registerNib:[UINib nibWithNibName:@"MOSTableViewCell" bundle:nil] forCellReuseIdentifier:@"MOSTableViewCell"];
+    table.separatorStyle = UITableViewCellSelectionStyleNone;
+    table.delegate = self;
+    table.dataSource = self;
+    table.layer.cornerRadius = 5;
+    table.clipsToBounds = YES;
+    
+    
+    if (self.bgImage) {
+        UIImageView *ScreenView = [[UIImageView alloc] initWithFrame:self.tableViewFram];
+        ScreenView.userInteractionEnabled = YES;
+        ScreenView.image = self.bgImage;
+        [self.view addSubview:ScreenView];
+        table.backgroundColor = [UIColor clearColor];
+    }
+    
+    
+    [self.view addSubview:table];
+//    self.view.alpha = 0;
+//    [UIView animateWithDuration:0.5 animations:^{
+//        self.view.alpha = 1;
+//    } completion:^(BOOL finished) {
+//    }];
+    // Do any additional setup after loading the view.
+}
+
+- (void)tapImage:(UITapGestureRecognizer *)tap
+{
+    [UIView animateWithDuration:0.5 animations:^{
+        self.view.alpha = 0;
+    } completion:^(BOOL finished) {
+        [tap.view removeFromSuperview];
+        [self.view removeFromSuperview];
+        [self removeFromParentViewController];
+
+    }];
+   
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+
+    if (self.titleText) {
+        
+        UIView *headView=nil;
+        UILabel *headlabel=nil;
+        UIImageView *imge=nil;
+        
+        
+        headView= [[UIView alloc] initWithFrame:CGRectMake(0,0, tableView.frame.size.width,_selectCellHeight)];
+        
+        
+        headlabel= [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width,_selectCellHeight)];
+        
+        
+        imge = [[UIImageView alloc] initWithFrame:CGRectMake(0,_selectCellHeight, tableView.frame.size.width, 1)];
+        
+        
+        
+        headlabel.text = self.titleText;
+        headlabel.font = [UIFont boldSystemFontOfSize:15];
+        headlabel.textAlignment = NSTextAlignmentCenter;
+        headlabel.backgroundColor = [UIColor whiteColor];
+        
+        imge.backgroundColor = MAINColor;
+        [headView addSubview:headlabel];
+        [headView addSubview:imge];
+        
+        return headView;
+    }
+    return nil;
+    
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    return self.dataSource.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    MOSTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MOSTableViewCell"];
+   
+    cell.label.text = self.dataSource[indexPath.row];
+    return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+//    [self.delegate AddTableViewDidSelect:indexPath.row];
+    if (self.didselc) {
+      
+        self.didselc(indexPath.row,self.dataSource[indexPath.row]);
+        self.title=CustomLocalizedString(self.dataSource[indexPath.row], nil);
+    }
+    
+    [self.view removeFromSuperview];
+    [self removeFromParentViewController];
+   
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (self.titleText) {
+        return _selectCellHeight;
+    }
+    return 0;
+   
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+  return _selectCellHeight;
+    
+}
+-(void)dealloc
+{
+
+    HZLog(@"%@----dealloc",self.class);
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

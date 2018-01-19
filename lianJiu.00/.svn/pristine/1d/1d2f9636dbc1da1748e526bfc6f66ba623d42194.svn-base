@@ -1,0 +1,31 @@
+//
+//  BaseModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "TradesModel.h"
+#import "ProductsModel.h"
+#import "CurrencysModel.h"
+#import "UnitsModel.h"
+#import "AreasModel.h"
+#import "PercentModel.h"
+#import "PacksModle.h"
+#import "BankModel.h"
+
+@interface BaseModel : NSObject<NSCoding>
+@property(nonatomic,strong)NSMutableArray *Trades;
+@property(nonatomic,strong)NSMutableArray *Products;//类别里的数据
+@property(nonatomic,strong)NSMutableArray *Currencys;
+@property(nonatomic,strong)NSMutableArray *Units;
+@property(nonatomic,strong)NSMutableArray *Areas;// 地区里的数据
+@property(nonatomic,strong)NSMutableArray *Percent;
+@property(nonatomic,strong)NSMutableArray *Packs;
+@property(nonatomic,strong)NSMutableArray *Bank;
+-(NSString *)findLocationNameWithId:(NSString *)a_id;
++(instancetype)ModelWith:(NSDictionary *)dic;
+
+@end

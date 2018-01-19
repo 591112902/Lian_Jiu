@@ -1,0 +1,155 @@
+//
+//  FeedbackViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "FeedbackViewController.h"
+#import "CommitSuccseViewController.h"
+#import "validate.h"
+@interface FeedbackViewController ()
+
+@end
+
+@implementation FeedbackViewController
+{
+    UIScrollView *_scrollV;
+    CGFloat _scrollVH;
+    UITextField *titleTF;//标题
+    UITextField *contactsTF;//联系人
+    UITextField *descriptionTF;//联系方式
+    UITextView *Feedbacktv;//详细内容
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    self.view .backgroundColor = BGColor;
+    _scrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, BOUND_HIGHT)];
+    _scrollV.showsVerticalScrollIndicator = NO;
+    [self.view addSubview:_scrollV];
+    
+    CGFloat leftgap = 20;
+    _scrollVH +=25;
+    
+    titleTF = [[UITextField alloc] initWithFrame:CGRectMake(leftgap, _scrollVH, BOUND_WIDTH-leftgap*2, 40)];
+    titleTF.delegate = self;
+    titleTF.borderStyle = UITextBorderStyleBezel;
+    titleTF.font = [UIFont systemFontOfSize:14];
+    titleTF.placeholder = [@" " stringByAppendingString:CustomLocalizedString(@"标题", nil)];
+    [_scrollV addSubview:titleTF];
+    _scrollVH+=40+15;
+    
+    contactsTF = [[UITextField alloc] initWithFrame:CGRectMake(leftgap, _scrollVH, BOUND_WIDTH-leftgap*2, 40)];
+    contactsTF.delegate = self;
+    contactsTF.borderStyle = UITextBorderStyleBezel;
+    contactsTF.font = [UIFont systemFontOfSize:14];
+    contactsTF.placeholder = [@" " stringByAppendingString:CustomLocalizedString(@"联系人", nil)];
+    [_scrollV addSubview:contactsTF];
+    _scrollVH+=40+15;
+
+    descriptionTF = [[UITextField alloc] initWithFrame:CGRectMake(leftgap, _scrollVH, BOUND_WIDTH-leftgap*2, 40)];
+    descriptionTF.delegate = self;
+    descriptionTF.borderStyle = UITextBorderStyleBezel;
+    descriptionTF.font = [UIFont systemFontOfSize:14];
+    descriptionTF.placeholder = [@" " stringByAppendingString:CustomLocalizedString(@"请留下您的联系方式，手机或者邮箱", nil)];
+    [_scrollV addSubview:descriptionTF];
+    _scrollVH+=40+15;
+
+    
+    Feedbacktv = [[UITextView alloc] initWithFrame:CGRectMake(leftgap, _scrollVH, BOUND_WIDTH-leftgap*2, 150)];
+    Feedbacktv.delegate = self;
+    Feedbacktv.layer.borderWidth = 0.5;
+    UILabel *Feedbacktvplacelabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 8, BOUND_WIDTH-leftgap*2-16, 15)];
+    Feedbacktvplacelabel.text = CustomLocalizedString(@"请留下您的宝贵意见和建议", nil);
+    Feedbacktvplacelabel.font = UIFont13;
+    Feedbacktvplacelabel.numberOfLines = 0;
+    Feedbacktvplacelabel.textColor = [UIColor lightGrayColor];
+    Feedbacktv.backgroundColor = BGColor;
+    [Feedbacktv addSubview:Feedbacktvplacelabel];
+    
+    [_scrollV addSubview:Feedbacktv];
+    _scrollVH+=150+25;
+    
+    
+    
+    UIButton *conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, _scrollVH, BOUND_WIDTH-20, 44)];
+    [conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [self.conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn setTitle:CustomLocalizedString(@"提交", nil) forState:UIControlStateNormal];
+    [_scrollV addSubview:conmitBtn];
+    _scrollVH+=44+20;
+    _scrollV.contentSize = CGSizeMake(BOUND_WIDTH, _scrollVH);
+  
+}
+//-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+//    [self.view endEditing:YES];
+//}
+
+-(void)textViewDidChange:(UITextView *)textView
+{
+    UIView *view;
+    for (UIView *child in textView.subviews) {
+        if ([child isKindOfClass:[UILabel class]]) {
+            view = child;
+        }
+    }
+    if (textView.text.length == 0) {
+        view.hidden = NO;
+    }else view.hidden = YES;
+    
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    UIView *tf ;
+    BOOL isstar = NO;
+    for (UIView *view in _scrollV.subviews) {
+        if (textField==view) {
+            isstar =YES;
+            continue;
+        }
+        if (isstar) {
+            if ([view isKindOfClass:[UITextField class]]||[view isKindOfClass:[UITextView class]]) {
+                tf = view;
+                break;
+            }
+        }
+    }
+    if (tf) {
+        [tf becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
+//提交
+-(void)ToCommit
+{
+    if ([validate CheckInputAccount:CustomLocalizedString(@"标题", nil) withText:titleTF.text withminNum:1 withMaxNum:50]&&
+        [validate CheckInputAccount:CustomLocalizedString(@"联系人", nil) withText:contactsTF.text withminNum:1 withMaxNum:20]&&
+        [validate CheckInputALLPhoneAndEmail:CustomLocalizedString(@"联系方式", nil) withText:descriptionTF.text]&&
+        [validate CheckInputAccount:CustomLocalizedString(@"建议", nil) withText:Feedbacktv.text withminNum:1 withMaxNum:2000]) {
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *vip = [def objectForKey:@"vip"];
+        NSDictionary *parameters = @{@"vip":vip,@"title":titleTF.text,@"contacts":contactsTF.text,@"lxfs":descriptionTF.text,@"content":Feedbacktv.text};
+        [networking AFNPOST:SUBMITCOMPLAINT withparameters:parameters success:^(NSMutableDictionary *dic) {
+            CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+            CMVC.title = self.title;
+            CMVC.contenValue = CustomLocalizedString(@"反馈成功", nil);
+            CMVC.subValue = CustomLocalizedString(@"感谢您的反馈，您的支持是我们最大的动力！", nil);
+            CMVC.image = [UIImage imageNamed:@"sucsses"];
+            [self.navigationController pushViewController:CMVC animated:YES];
+        } error:nil HUDAddView:self.view];
+    }
+    
+    
+    
+}
+@end

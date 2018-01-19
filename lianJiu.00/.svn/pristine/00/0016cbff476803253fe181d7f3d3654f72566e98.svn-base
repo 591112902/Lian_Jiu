@@ -1,0 +1,33 @@
+//
+//  UnitsModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "UnitsModel.h"
+
+@implementation UnitsModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    UnitsModel *model = [[self alloc] init];
+    model.u_id = dic[@"u_id"];
+    model.u_name = dic[@"u_name"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.u_id forKey:@"u_id"];
+    [aCoder encodeObject:self.u_name forKey:@"u_name"];
+    
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.u_id = [aDecoder decodeObjectForKey:@"u_id"];
+        self.u_name = [aDecoder decodeObjectForKey:@"u_name"];
+    }
+    return self;
+}
+@end

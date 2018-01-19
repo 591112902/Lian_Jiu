@@ -1,0 +1,258 @@
+//
+//  UploadOrderTBViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+
+#import "UploadOrderTBViewController.h"
+#import "TextFileTableViewCell.h"
+#import "CommitSuccseViewController.h"
+#import "DictionnaryModel.h"
+#import "validate.h"
+#import "BankModel.h"
+@interface UploadOrderTBViewController ()<UITextViewDelegate,UITextFieldDelegate>
+
+@end
+
+@implementation UploadOrderTBViewController
+
+{
+    NSString *identifier;
+    UIButton *btn1;
+    UIButton *btn2;
+    UIButton *btn3;
+    
+}
+- (void)adjustmentTableView
+{
+    identifier = @"TextFileTableViewCell";
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.showsVerticalScrollIndicator = NO;
+//    self.tableView.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:identifier bundle:nil] forCellReuseIdentifier:identifier];
+}
+-(AccountModel *)userModel
+{
+    if (!_userModel) {
+        _userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+    }
+    return _userModel;
+}
+-(void)addDataScour
+{
+    self.dataScour = [[NSMutableArray alloc] init];
+    NSArray *arr1 = @[CustomLocalizedString(@"如已汇款请填写汇款信息", nil)];
+//    NSArray *list = @[@"姓名:",@"充值金额:",@"汇款银行:",@"银行账户:",@"流水单号:",@"联系电话:"];
+    NSArray *list = @[CustomLocalizedString(@"姓名:", nil),CustomLocalizedString(@"充值金额:", nil),CustomLocalizedString(@"汇款银行:", nil),CustomLocalizedString(@"银行账户:", nil),CustomLocalizedString(@"流水单号:", nil),CustomLocalizedString(@"联系电话:", nil)];
+    NSMutableArray *arr2 = [[NSMutableArray alloc] init];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *name = [defaults objectForKey:@"name"];
+    NSString *phone = [defaults objectForKey:@"phone"];
+    for (int i=0; i<list.count; i++) {
+        NSString *str = list[i];
+        DictionnaryModel *model = [DictionnaryModel ModelWithDictionnary:@{str:@""}];
+        if (i==0) {
+            model.value = name;
+        }else if(i==list.count-1){
+            model.value = phone;
+        }
+        [arr2 addObject:model];
+    }
+    [self.dataScour addObject:arr1];
+    [self.dataScour addObject:arr2];
+}
+
+
+- (void)ToCommit
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    
+    NSArray *arr = self.dataScour[1];
+    DictionnaryModel *model1 = arr[0];
+    DictionnaryModel *model2 = arr[1];
+    DictionnaryModel *model3 = arr[2];
+    DictionnaryModel *model4 = arr[3];
+    DictionnaryModel *model5 = arr[4];
+    DictionnaryModel *model6 = arr[5];
+    
+    if (
+//        [self strIsNilName:model1.title WithText:model1.value]&&
+//        [validate CheckInputMoney:model2.value]&&
+//        [self strIsNilName:model3.title WithText:model3.value]&&
+//        [validate CheckInputOnlyNum:[model4.title substringToIndex:model4.title.length-1] withText:model4.value withminNum:16 withMaxNum:19]&&
+//        [self strIsNilName:model5.title WithText:model5.value]&&
+//        [validate CheckInputPhone:model6.title withText:model6.value]&&
+//        [self isDidAddPhoto]
+        
+        [self strIsNilName:model1.title WithText:model1.value]&&
+        [validate CheckInputMoney:model2.value]&&
+        [self strIsNilName:model3.title WithText:model3.value]&&[self strIsNilName:model4.title WithText:model4.value]&&
+        [self strIsNilName:model5.title WithText:model5.value]&&[self strIsNilName:model6.title WithText:model6.value]&&
+        [self isDidAddPhoto]
+        ) {
+        NSArray *dataArr= [self photoDataSoucToData];
+        [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr success:^(NSMutableDictionary *dic) {
+            
+            NSString *vip = [def objectForKey:@"vip"];
+         //获取 充值里的账户
+           
+            NSDictionary *parameters = @{@"vip":vip,@"p_name":model1.value,@"p_money":model2.value,@"b_name":model3.value,@"b_no":model4.value,@"serial":model5.value,@"phone":model6.value,@"photo":dic[@"response"]?dic[@"response"]:@"",@"otherNo":self.commitAcCount};
+            HZLog(@"%@",parameters);
+            [networking AFNPOST:GNRECHARGE withparameters:parameters success:^(NSMutableDictionary *dic) {
+                HZLog(@"%@---%@",dic[@"message"],dic);
+                
+                self.conmitBtn.userInteractionEnabled = NO;
+                self.conmitBtn.alpha = 0.4;
+
+//                if (self.userModel) {
+//                    double account_balance = [self.userModel.account_balance doubleValue];
+//                     account_balance+= [parameters[@"p_money"] doubleValue];
+//                    account_balance  = [parameters[@"p_money"] doubleValue];
+//                    self.userModel.account_balance = [NSNumber numberWithDouble:account_balance];
+                
+                
+                CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+                CMVC.title = self.title;
+                CMVC.contenValue = CustomLocalizedString(@"提交成功", nil);
+                NSMutableString *curStr = [NSMutableString stringWithString:CustomLocalizedString(@"你的充值编号是100，提交成功，提交审核后3个工作日内到账（节假日延顺）", nil)];
+                NSRange range = [curStr rangeOfString:@"100"];
+                [curStr replaceCharactersInRange:range withString:dic[@"response"]];
+                CMVC.subValue = curStr;
+
+//                CMVC.subValue = [NSString stringWithFormat:@"你的充值编号是%@，提交成功，提交审核后3个工作日内到账（节假日延顺）",dic[@"response"]];
+                CMVC.image = [UIImage imageNamed:@"sucsses"];
+                [self.navigationController pushViewController:CMVC animated:YES];
+                
+            } error:nil HUDAddView:self.view];
+            
+        } error:nil HUDAddView:self.view];
+    }
+  
+}
+//判断字符串是否为空
+- (BOOL)strIsNilName:(NSString*)name WithText:(NSString *)text
+{
+    name = [name substringToIndex:name.length-1];
+    if (text.length==0) {
+        [MBProgressHUD showNotPhotoError:[NSString stringWithFormat:@"%@:%@",CustomLocalizedString(@"请填写", nil),name] toView:self.view];
+        return NO;
+    }
+    return YES;
+}
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    return CGSizeMake((BOUND_WIDTH-40)/3, (BOUND_WIDTH-40)/3*125/170);
+}
+#pragma mark - Table view data source
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 0;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSArray *arr = self.dataScour[indexPath.section];
+    if (indexPath.section==0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textLabel.text = arr[indexPath.row];
+      
+        }
+        return cell;
+    }else{
+        TextFileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        DictionnaryModel *model = arr[indexPath.row];
+        cell.title.text = model.title;
+        cell.valueTF.text = model.value;
+        
+      
+
+        cell.valueTF.delegate =self;
+        cell.valueTF.tag =470+indexPath.row;
+        cell.title.textAlignment = NSTextAlignmentRight;
+ 
+        if (indexPath.row==1) {
+            cell.valueTF.keyboardType = UIKeyboardTypeDecimalPad;
+            cell.valueTF.placeholder = @"1.00";
+            cell.YuanLabel.hidden=NO;
+        }else{
+            if (indexPath.row==3) {
+                cell.valueTF.keyboardType = UIKeyboardTypeDecimalPad;
+                cell.valueTF.placeholder = nil;
+                
+            }else{
+                
+                cell.valueTF.keyboardType = UIKeyboardTypeDefault;
+                cell.valueTF.placeholder = nil;
+                cell.valueTF.text=nil;
+                
+            }
+            
+        }
+        
+    return cell;
+    }
+}
+#pragma mark - uitextFileDelegate
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    NSInteger index = textField.tag-470;
+    NSArray *arr = self.dataScour[1];
+    DictionnaryModel *modle = arr[index];
+    modle.value = textField.text;
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@" "]&&textField.text.length<1) {
+        return NO;
+    }
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }
+    NSInteger index = textField.tag-470;
+    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (index==0||index==1)
+    {
+        if ([aString length] > 15) {
+            textField.text = [aString substringToIndex:15];
+            return NO;
+        }
+    }else if(index==2){
+        if ([aString length] > 50) {
+            textField.text = [aString substringToIndex:50];
+            return NO;
+        }
+    }else if(index==3){
+        if ([aString length] > 30) {
+            textField.text = [aString substringToIndex:30];
+            return NO;
+        }
+    }else if(index==4){
+        if ([aString length] > 30) {
+            textField.text = [aString substringToIndex:30];
+            return NO;
+        }
+    }else if(index==5)
+    {
+        if ([aString length] > 11) {
+            textField.text = [aString substringToIndex:11];
+            return NO;
+        }
+    }
+    self.conmitBtn.userInteractionEnabled = YES;
+    self.conmitBtn.alpha = 1;
+    return YES;
+}
+@end

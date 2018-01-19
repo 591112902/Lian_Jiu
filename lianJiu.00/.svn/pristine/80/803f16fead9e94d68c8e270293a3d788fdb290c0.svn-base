@@ -1,0 +1,20 @@
+//
+//  BidManageContenTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/30.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "ModifyTableViewController.h"
+
+@interface BidManageContenTableViewController : UITableViewController
+@property (nonatomic)BOOL isToubiao;
+@property (nonatomic)NSInteger type;
+@property (nonatomic,strong)NSString *url;
+@property (nonatomic,strong)NSString *state;
+@property (nonatomic,strong)NSString *vip;
+@property (nonatomic)BOOL isRequestData;//重新申请数据
+@property(nonatomic,strong)ModifyTableViewController *VC;
+@end

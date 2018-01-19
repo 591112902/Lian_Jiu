@@ -1,0 +1,24 @@
+//
+//  MyOrderTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/25.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SupplyModel.h"
+#import "PurchaseModel.h"
+#import "MyOrederTableViewCell.h"
+#import "MJRefresh.h"
+#import "B_C_GViewController.h"
+#import "PRJTabBarViewController.h"
+
+@interface MyOrderSupplyTableViewController : UITableViewController
+@property (nonatomic,strong)NSMutableArray *superDataSource;//父页面的数据源
+@property (nonatomic,strong)NSMutableDictionary *parameters;//申请数据参数
+@property (nonatomic,strong)NSMutableArray *dataSource;//本页面数据源
+@property (nonatomic,strong)NSString *vip;
+
+//@property (nonatomic,strong)ModifyTableViewController *VC;
+@end

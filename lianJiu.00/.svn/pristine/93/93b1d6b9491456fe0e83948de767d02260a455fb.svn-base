@@ -1,0 +1,28 @@
+//
+//  AuthenticateFootView.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "AuthenticateFootView.h"
+
+@implementation AuthenticateFootView
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
+
+-(void)awakeFromNib
+{
+    _leftLabel.text = CustomLocalizedString(@"上传证件正面照片", nil);
+    _rihtLabel.text = CustomLocalizedString(@"上传手持身份证正面头部照片", nil);
+    _beCarefulLabel.text = CustomLocalizedString(@"注意:", nil);
+    _beCarefulValueLabel.text = CustomLocalizedString(@"请按照样图上传图片，证件需要清晰有效且为原件数码照，虚假者将封号并信用减半！仅支持.jpg.jpeg.png.gif的图片格式，图片大小不超过10M", nil);
+}
+@end

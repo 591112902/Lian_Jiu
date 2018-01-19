@@ -1,0 +1,226 @@
+//
+//  networking.h
+//  PRJ_ZaiShang
+//
+//  Created by cnmobi on 15/9/8.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+#define API_DOMAIN  @"zs21.cn"
+#define HTTP  @"http://www."
+//#define API_DOMAIN  @""
+//#define HTTP  @"http://112.74.129.207"//@"http://192.168.1.151"
+
+//图片路径
+//#define PHOTOLOADPATH HTTP API_DOMAIN@"/upload/"
+#define PHOTOLOADPATH @""
+
+//2.1获取验证码
+#define GETCODE HTTP API_DOMAIN@"/zswjk/getcode"
+// 2.2 注册
+#define API_REGISTRR HTTP API_DOMAIN@"/zswjk/register"
+//2.3登录
+#define LOGIN HTTP API_DOMAIN@"/zswjk/login"
+//	文件缩略图
+#define LOADIMG HTTP API_DOMAIN@"/zswjk/loadimg"
+//2.4文件上传
+#define LOADFILE HTTP API_DOMAIN@"/zswjk/loadfile"// 上传汇款凭证
+//2.5找回密码
+#define FINDPWD HTTP API_DOMAIN@"/zswjk/finadpwd"
+//2.6修改密码
+#define UPDATEPWD HTTP API_DOMAIN@"/zswjk/updatepwd"
+//2.7修改支付密码
+#define UPDATEPAYMENT HTTP API_DOMAIN@"/zswjk/updatepayment"
+//2.8	签到
+#define SIGN HTTP API_DOMAIN@"/zswjk/sign"
+//2.9	查看服务范围
+#define ALLDETAILS HTTP API_DOMAIN@"/zswjk/alldetails"
+//2.10	上门回收
+#define ADDWASTE HTTP API_DOMAIN@"/zswjk/addWaste"
+//2.11	申请加入回收商
+#define APPLYRECYCLE HTTP API_DOMAIN@"/zswjk/applyrecycle"
+//2.12	手机回收
+#define ADDPHONERECYCL HTTP API_DOMAIN@"/zswjk/addPhonerecycl"
+//2.13	轮播图
+#define CAROUSEL HTTP API_DOMAIN@"/zswjk/carousel"
+
+
+//2.14	 查询所有计量单位
+#define QUERRYUNIT HTTP API_DOMAIN@"/zswjk/queryUnit"
+//2.15	 查询所有货币类型
+#define QUERYCURRENCY HTTP API_DOMAIN@"/zswjk/queryCurrency"
+//2.16	 查询所有交易方式
+#define QUERYTRADE HTTP API_DOMAIN@"/zswjk/queryTrade"
+//2.17   查询所有包装方式
+#define QUERYPACK HTTP API_DOMAIN@"/zswjk/queryPack"
+//2.18	 查询行业类别
+#define PRODUCTBYID HTTP API_DOMAIN@"/zswjk/productbyid"
+//2.19	 所有辅助类别接口
+#define BASES HTTP API_DOMAIN@"/zswjk/Bases"
+
+//2.20	 按类别地区查询供应信息
+#define QUERYSUPPLY HTTP API_DOMAIN@"/zswjk/querySupply"
+//2.21	 按类别地区查询采购信息
+#define QUERYPURCHASE HTTP API_DOMAIN@"/zswjk/queryPurchase"
+
+//查找供应信息
+//#define QuerySupplyId HTTP API_DOMAIN@"/zswjk/querySupplyId"
+#define QuerySupplyId HTTP API_DOMAIN@"/zswjk/querySupplyByid"
+
+//推送注册
+#define SETTOKEN HTTP API_DOMAIN@"/zswjk/setToKen"
+//退出登录退出
+#define ELIMINATETOKEN HTTP API_DOMAIN@"/zswjk/exit"
+//查询消息列表
+#define QUERYPUSH HTTP API_DOMAIN@"/zswjk/queryPush"
+//阅读消息
+#define READPUSH HTTP API_DOMAIN@"/zswjk/ReadPush"
+//删除消息
+#define DELETEPUSH HTTP API_DOMAIN@"/zswjk/DeletePush"
+//首页标的列表
+#define QUERYTENDER HTTP API_DOMAIN@"/zswjk/queryTender"
+//投标查询
+#define QUERYTENDERBYTITLE HTTP API_DOMAIN@"/zswjk/queryTenderByTitle"
+//投标查询
+#define QUERYGOODSBYTITLE HTTP API_DOMAIN@"/zswjk/queryGoodsByTitle"
+//竞标出价查询
+#define QUERYJINGBIAO HTTP API_DOMAIN@"/zswjk/queryJingBiao"
+//竞标出价
+#define JINGBIAO HTTP API_DOMAIN@"/zswjk/JingBiao"
+//提交保证金
+#define SUBMITBZJ HTTP API_DOMAIN@"/zswjk/submitBzj"
+//2.22	 提交供应信息
+#define ADDSUPPLY HTTP API_DOMAIN@"/zswjk/addSupply"
+//2.23	 提交采购信息
+#define ADDPURCHASE HTTP API_DOMAIN@"/zswjk/addPurchase"
+//2.24	 提交招投标信息
+#define ADDTENDER HTTP API_DOMAIN@"/zswjk/addTender"
+//2.24	 修改招投标信息
+#define MODIFYTENDER HTTP API_DOMAIN@"/zswjk/ModifyTender"
+
+//我的订单 修改供应信息
+#define MODIFYSUPPLY HTTP API_DOMAIN@"/zswjk/ModifySupply"
+
+//我的订单 修改采购信息
+/*
+ * @param purId			采购id
+ * @param purTitle		标题
+ * @param purType		货物类型
+ * @param purQuality	数量
+ * @param purPrice		价格
+ * @param purPhone		联系电话
+ * @param purAddress	地址
+ * @param purDate		时间
+ * @param purDetail		详情
+ * @param areaId		地区id
+ * @param pId			类别id
+ * @param usrId			用户id
+ * @param unitId		计量单位id
+ * @param tradeId		交易方式
+ * @param packId		包装方式
+ * @param currencyId	交易币种
+ * @param pFile			图片地址
+ * @param pDetail		货物详情图
+ * @param pCargolist	货物清单
+ * @param pRar			图片包名
+ * @param listRar		清单包名
+ */
+#define MODIFYPURCHASE HTTP API_DOMAIN@"/zswjk/ModifyPurchase"
+
+//	 查询是否提交保证金
+#define QUERYTENDERMIDDLE HTTP API_DOMAIN@"/zswjk/queryTenderMiddle"
+//	 足迹
+#define RECORDTRACK HTTP API_DOMAIN@"/zswjk/RecordTrack"
+//	 查询足迹
+#define QUERYFOOTPRINT HTTP API_DOMAIN@"/zswjk/queryFootprint"
+//	 删除足迹
+#define DELETEFOOTPRINT HTTP API_DOMAIN@"/zswjk/DeleteFootprint"
+//	 查询收藏信息
+#define QUERYSHOUCANG HTTP API_DOMAIN@"/zswjk/queryShoucang"
+//	 收藏
+#define ADDSHOUCANG HTTP API_DOMAIN@"/zswjk/addShoucang"
+//	 取消收藏
+#define DELETESHOUCANG HTTP API_DOMAIN@"/zswjk/DeleteShoucang"
+//账号信息
+#define USER HTTP API_DOMAIN@"/zswjk/GetInfoByvip"
+
+//	 查询个人认证详细信息
+#define QUERYGRSMRZ HTTP API_DOMAIN@"/zswjk/querygrsmrz"
+//	 查询企业认证详细信息
+#define QUERYQYSMRZ HTTP API_DOMAIN@"/zswjk/queryqysmrz"
+//更改个人认证详细信息
+#define GRSMRZ HTTP API_DOMAIN@"/zswjk/grsmrz"
+//更改企业认证详细信息
+#define SMRZQY HTTP API_DOMAIN@"/zswjk/smrzqy"
+
+//	 查询个人详细信息
+#define QUERYUINFO HTTP API_DOMAIN@"/zswjk/queryUinfo"
+//	 查询企业详细信息
+#define QUERYUENTERPRISE HTTP API_DOMAIN@"/zswjk/queryUenterprise"
+//更改个人详细信息
+#define ADDUINFO HTTP API_DOMAIN@"/zswjk/addUinfo"
+//更改企业详细信息
+#define ADDUENTERPRISE HTTP API_DOMAIN@"/zswjk/addUenterprise"
+
+//信用明细查询
+#define JFDETAILED HTTP API_DOMAIN@"/zswjk/JfDetailed"
+//查询账户明细
+#define QUERYMONEY HTTP API_DOMAIN@"/zswjk/querymoney"
+//查询保证金明细
+#define QUERYBzj HTTP API_DOMAIN@"/zswjk/queryBzj"
+#define QUERYBZJ HTTP API_DOMAIN@"/zswjk/queryBZJ"
+//上传汇款凭证
+#define GNRECHARGE HTTP API_DOMAIN@"/zswjk/GnRecharge"
+//国内提现
+#define GNWITHDRAWALS HTTP API_DOMAIN@"/zswjk/GnWithdrawals"
+//国际提现
+#define GWWITHDRAWALS HTTP API_DOMAIN@"/zswjk/GwWithdrawals"
+//提交意见建议
+#define SUBMITCOMPLAINT HTTP API_DOMAIN@"/zswjk/SubmitComplaint"
+//提交意见建议
+#define QUERYHELPCENTER HTTP API_DOMAIN@"/zswjk/queryHelPcenter"
+//订单管理---查询回收
+#define QUERYRECOVERY HTTP API_DOMAIN@"/zswjk/queryrecovery"
+//订单管理---查询供应、采购
+#define ORDERBYVIP HTTP API_DOMAIN@"/zswjk/OrderByVip"
+//订单管理---回收--确定回收
+#define CONFIRMTAKE HTTP API_DOMAIN@"/zswjk/ConfirmTake"
+//投标管理--投标ƒ
+#define TBGL HTTP API_DOMAIN@"/zswjk/TBGL"
+//投标管理--招标
+#define ZBGL HTTP API_DOMAIN@"/zswjk/ZBGL"
+//投标管理--招标--中标管理
+#define BIDMANAGEMENT HTTP API_DOMAIN@"/zswjk/bidmanagement"
+//投标管理--招标--中标管理---成交
+#define DEAL HTTP API_DOMAIN@"/zswjk/Deal"
+//投标管理--招标----成交
+#define DETERMINETHEDEAL HTTP API_DOMAIN@"/zswjk/DetermineThedeal"
+//投标管理--投标---成交
+#define CONFIRMRECEIVING HTTP API_DOMAIN@"/zswjk/ConfirmReceiving"
+
+typedef void (^callBack)(NSMutableDictionary *dic);
+typedef void (^errorBack)(NSError *error);
+#import <Foundation/Foundation.h>
+#import "AFNetworking.h"
+@interface networking : NSObject
+//GET
++ (void)AFNRequest:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//GET 里面没有判断成功返回值
++ (void)AFNRequestNotCode:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//POST
++ (void)AFNPOST:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//POST 里面没有判断成功返回值
++ (void)AFNPOSTNotCode:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//上传1图片
++ (void)AFNPOSTfile:(NSString *)url withparameters:(NSDictionary *)parameters data:(NSData *)data dataName:(NSString *)dataName success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+// 上传多张图片 不同参数名
++ (void)AFNPOSTMutableDicfile:(NSString *)url withparameters:(NSDictionary *)parameters dataSource:(NSDictionary *)datadic success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//上传多张图片 同一个参数名
++ (void)AFNPOSTMutableArrfile:(NSString *)url withparameters:(NSDictionary *)parameters dataName:(NSString *)dataName dataSource:(NSArray *)datadic success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+
+//上传多个本地文件 同一个参数名 pahts:urls
++ (void)AFNPOSTMutableArrUrlFile:(NSString *)url withparameters:(NSDictionary *)parameters dataName:(NSString *)dataName pahts:(NSArray *)paths success:(callBack )callBack error:(errorBack)errorBack HUDAddView:(UIView*)view;
+//GET 没有HUDView
++ (void)AFNRequestNotHUD:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack;
+//POST 没有HUDView
++ (void)AFNPOSTNotHUD:(NSString *)url withparameters:(NSDictionary *)parameters success:(callBack )callBack error:(errorBack)errorBack;
+@end

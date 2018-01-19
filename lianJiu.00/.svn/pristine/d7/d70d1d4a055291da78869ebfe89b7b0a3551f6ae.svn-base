@@ -1,0 +1,242 @@
+//
+//  SetUpViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SetUpViewController.h"
+#import "SetUpTableViewCell.h"
+#import "S_AbaotViewController.h"
+#import "S_ContactTableViewController.h"
+#import "FeedbackViewController.h"
+#import "ReplacePassWordViewController.h"
+#import "HelpCenterTableViewController.h"
+#import "PRJTabBarViewController.h"
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKUI/ShareSDK+SSUI.h>
+@interface SetUpViewController ()<UITableViewDataSource,UITableViewDelegate>
+
+@end
+
+@implementation SetUpViewController
+{
+    UIScrollView *scrollView;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:scrollView];
+    _dataSoc = [[NSMutableArray alloc] init];
+    [self addDataSource];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(10, 94, BOUND_WIDTH-20, 55*_dataSoc.count)];
+    self.tableView.layer.cornerRadius = 5;
+    self.tableView.clipsToBounds = YES;
+    self.tableView.layer.borderWidth = 0.5;
+    self.tableView.layer.borderColor = [UIColor grayColor].CGColor;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.scrollEnabled = NO;
+    
+
+    self.view.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:@"SetUpTableViewCell" bundle:nil] forCellReuseIdentifier:@"SetUpTableViewCell"];
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [scrollView addSubview:self.tableView];
+    
+    [self addcommitBtn];
+    
+    
+    
+}
+-(void)addDataSource
+{
+    [_dataSoc addObject:CustomLocalizedString(@"关于我们", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"修改密码", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"联系我们", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"投诉建议", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"软件分享", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"帮助中心", nil)];
+}
+-(void)addcommitBtn
+{
+    UIButton *outBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 55*_dataSoc.count+36+94, BOUND_WIDTH-20, 58)];
+    [outBtn setTitle:CustomLocalizedString(@"退出登录", nil) forState:UIControlStateNormal];
+    [outBtn setBackgroundColor:[UIColor colorWithRed:1 green:85/255.0 blue:40/255.0 alpha:1]];
+    outBtn.layer.cornerRadius = 5;
+    outBtn.clipsToBounds = YES;
+    [outBtn addTarget:self action:@selector(signOut) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:outBtn];
+    scrollView.contentSize = CGSizeMake(BOUND_WIDTH, outBtn.frame.origin.y+outBtn.frame.size.height+20);
+}
+- (void)signOut{
+//    删除userdefaults
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [defaults stringForKey:@"vip"];
+    NSDictionary *parameters = @{@"vip":vip};
+    [networking AFNPOSTNotHUD:ELIMINATETOKEN withparameters:parameters success:^(NSMutableDictionary *dic) {
+    } error:nil];
+    [defaults removeObjectForKey:@"vip"];
+
+    [defaults setBool:NO forKey:@"islogin"];
+  
+    [defaults setBool:NO forKey:@"isRealName"];
+    [defaults synchronize];
+//    删除归档模型
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    if ([defaultManager isDeletableFileAtPath:ACCOUNTPATH]) {
+        [defaultManager removeItemAtPath:ACCOUNTPATH error:nil];
+    }
+    [self.navigationController popToRootViewControllerAnimated:NO];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view data source
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    // Return the number of rows in the section.
+    return _dataSoc.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    SetUpTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SetUpTableViewCell"];
+    switch (indexPath.row) {
+        case 0:
+            cell.rightImge.image = [UIImage imageNamed:@"guanyuwomen"];
+            break;
+        case 1:
+            cell.rightImge.image = [UIImage imageNamed:@"repassword"];
+            break;
+        case 2:
+            cell.rightImge.image = [UIImage imageNamed:@"lianxiwomen"];
+            break;
+        case 3:
+            cell.rightImge.image = [UIImage imageNamed:@"yijian"];
+            break;
+        case 4:
+            cell.rightImge.image = [UIImage imageNamed:@"fenxiang"];
+            break;
+        default:
+            cell.rightImge.image = [UIImage imageNamed:@"helpcenter"];
+            break;
+    }
+    cell.label.text = _dataSoc[indexPath.row];
+    
+    // Configure the cell...
+    
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 55;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    S_AbaotViewController *VC;
+    S_ContactTableViewController *SCVC;
+    FeedbackViewController *FeedbackVC;
+    ReplacePassWordViewController *RPVC;
+    HelpCenterTableViewController *helpVC;
+    switch (indexPath.row) {
+        case 0:
+            VC = [[S_AbaotViewController alloc] init];
+            VC.title = _dataSoc[indexPath.row];
+            [self.navigationController pushViewController:VC animated:YES];
+            break;
+        case 1:
+            RPVC = [[ReplacePassWordViewController alloc] init];
+            RPVC.title = _dataSoc[indexPath.row];
+            [self.navigationController pushViewController:RPVC animated:YES];
+            break;
+        case 2:
+            SCVC = [[S_ContactTableViewController alloc] init];
+            SCVC.title = _dataSoc[indexPath.row];
+            [self.navigationController pushViewController:SCVC animated:YES];
+            break;
+        case 3:
+            FeedbackVC = [[FeedbackViewController alloc] init];
+            FeedbackVC.title = _dataSoc[indexPath.row];
+            [self.navigationController pushViewController:FeedbackVC animated:YES];
+            break;
+        case 4:
+            [self share];
+            break;
+        default:
+            helpVC = [[HelpCenterTableViewController alloc] init];
+            helpVC.title = _dataSoc[indexPath.row];
+            [self.navigationController pushViewController:helpVC animated:YES];
+            break;
+    }
+}
+- (void)share
+{
+
+    //1、创建分享参数
+    NSArray* imageArray = @[[UIImage imageNamed:@"180x180"]];
+//    （注意：图片必须要在Xcode左边目录里面，名称必须要传正确，如果要分享网络图片，可以这样传iamge参数 images:@[@"http://mob.com/Assets/images/logo.png?v=20150320"]）
+    if (imageArray) {
+        
+        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+        [shareParams SSDKSetupShareParamsByText:CustomLocalizedString(@"再商网-全球首家24H*365全产业链实时服务的再生资源信息交易平台", nil)
+                                         images:imageArray
+                                            url:[NSURL URLWithString:@"http://www.zs21.cn"]
+                                          title:CustomLocalizedString(@"再商网", nil)
+                                           type:SSDKContentTypeAuto];
+        //2、分享（可以弹出我们的分享菜单和编辑界面）
+        [ShareSDK showShareActionSheet:nil //要显示菜单的视图, iPad版中此参数作为弹出菜单的参照视图，只有传这个才可以弹出我们的分享菜单，可以传分享的按钮对象或者自己创建小的view 对象，iPhone可以传nil不会影响
+                                 items:nil
+                           shareParams:shareParams
+                   onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end) {
+                       
+                       switch (state) {
+                           case SSDKResponseStateSuccess:
+                           {
+                               UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"分享成功", nil)
+                                                                                   message:nil
+                                                                                  delegate:nil
+                                                                         cancelButtonTitle:CustomLocalizedString(@"确定", nil)
+                                                                         otherButtonTitles:nil];
+                               [alertView show];
+                               break;
+                           }
+                           case SSDKResponseStateFail:
+                           {
+                               UIAlertView *alert = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"分享失败", nil)
+                                                                               message:[NSString stringWithFormat:@"%@",error]
+                                                                              delegate:nil
+                                                                     cancelButtonTitle:@"OK"
+                                                                     otherButtonTitles:nil, nil];
+                               [alert show];
+                               break;
+                           }
+                           default:
+                               break;
+                       }
+                   }
+         ];}
+    
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

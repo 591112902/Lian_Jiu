@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="119" id="KGk-i7-Jjw" customClass="WeiXiuFourCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="119"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="119"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bJE-tO-300">
+                        <rect key="frame" x="10" y="0.0" width="300" height="119"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="电池待机电池待机电池待机电池待机" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="YMs-gz-AJw">
+                                <rect key="frame" x="8" y="8" width="284" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Upj-c4-nE5"/>
+                                    <constraint firstAttribute="width" constant="284" id="ZYV-pA-7FD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="换电池🔋" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="57B-z8-Hx5">
+                                <rect key="frame" x="8" y="50" width="284" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="7L7-oL-d8O"/>
+                                    <constraint firstAttribute="width" constant="284" id="Y0Y-dg-62E"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="¥129.00" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="hHf-fW-zBg">
+                                <rect key="frame" x="8" y="92" width="284" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="284" id="bQJ-AV-mVs"/>
+                                    <constraint firstAttribute="height" constant="27" id="ePF-iS-iGS"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.01475328041" green="0.8191631171" blue="0.0080837673609999994" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="YMs-gz-AJw" firstAttribute="top" secondItem="bJE-tO-300" secondAttribute="top" constant="8" id="5a8-Ci-TDO"/>
+                            <constraint firstAttribute="height" constant="119" id="6B3-0t-jG9"/>
+                            <constraint firstAttribute="trailing" secondItem="YMs-gz-AJw" secondAttribute="trailing" constant="8" id="6u5-qK-HcY"/>
+                            <constraint firstItem="YMs-gz-AJw" firstAttribute="leading" secondItem="bJE-tO-300" secondAttribute="leading" constant="8" id="Mdt-r6-Rbn"/>
+                            <constraint firstAttribute="width" constant="300" id="QVc-dc-EIe"/>
+                            <constraint firstAttribute="trailing" secondItem="57B-z8-Hx5" secondAttribute="trailing" constant="8" id="Rji-21-wI3"/>
+                            <constraint firstItem="hHf-fW-zBg" firstAttribute="top" secondItem="57B-z8-Hx5" secondAttribute="bottom" constant="2" id="Z4P-DT-ZCM"/>
+                            <constraint firstItem="hHf-fW-zBg" firstAttribute="leading" secondItem="bJE-tO-300" secondAttribute="leading" constant="8" id="aCI-4q-oMZ"/>
+                            <constraint firstAttribute="trailing" secondItem="hHf-fW-zBg" secondAttribute="trailing" constant="8" id="p8d-18-t2g"/>
+                            <constraint firstItem="57B-z8-Hx5" firstAttribute="top" secondItem="YMs-gz-AJw" secondAttribute="bottom" constant="2" id="rXS-Fb-eWX"/>
+                            <constraint firstItem="57B-z8-Hx5" firstAttribute="leading" secondItem="bJE-tO-300" secondAttribute="leading" constant="8" id="wKx-1G-EiZ"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="bJE-tO-300" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="4qF-Ol-M12"/>
+                    <constraint firstItem="bJE-tO-300" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="9pi-qk-nIm"/>
+                    <constraint firstAttribute="trailing" secondItem="bJE-tO-300" secondAttribute="trailing" constant="10" id="LYw-aV-kas"/>
+                    <constraint firstAttribute="bottom" secondItem="bJE-tO-300" secondAttribute="bottom" id="XoB-56-MGf"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="backView" destination="bJE-tO-300" id="GkC-I0-6et"/>
+                <outlet property="detailTitleL" destination="57B-z8-Hx5" id="OHI-X8-D4U"/>
+                <outlet property="priceL" destination="hHf-fW-zBg" id="vTS-y6-QL0"/>
+                <outlet property="titleL" destination="YMs-gz-AJw" id="Nfm-YT-Y8m"/>
+            </connections>
+            <point key="canvasLocation" x="25" y="89.5"/>
+        </tableViewCell>
+    </objects>
+</document>

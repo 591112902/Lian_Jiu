@@ -1,0 +1,31 @@
+//
+//  B_RechargeTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_RechargeTableViewCell.h"
+#import "UIImageView+WebCache.h"
+@implementation B_RechargeTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+-(void)fillCellWithModel:(BankModel*)model
+{
+
+    NSString *urlStr = [PHOTOLOADPATH stringByAppendingString:model.log?model.log:@""];
+    [self.imgeV sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    self.nameLabel.text = model.name;
+    self.bankLabel.text = model.bank;
+    self.bankIdLable.text = model.number;
+    
+    self.nameTitleLabel.text = CustomLocalizedString(@"开户名:", nil);
+    self.bankTitleLabel.text = CustomLocalizedString(@"开户银行:", nil);
+    self.btnkIdTitleLabel.text = CustomLocalizedString(@"账  户:", nil);
+}
+
+@end

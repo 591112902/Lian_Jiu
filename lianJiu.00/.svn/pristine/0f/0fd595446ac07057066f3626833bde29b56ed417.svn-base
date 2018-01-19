@@ -1,0 +1,26 @@
+//
+//  BalanceViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "AccountModel.h"
+@interface BalanceViewController : UIViewController
+@property (nonatomic,strong)AccountModel *userModel;
+
+@property (strong, nonatomic) IBOutlet UILabel *banceLabel;//账户
+@property (strong, nonatomic) IBOutlet UILabel *ensureLabel;//保证金
+@property (strong, nonatomic) IBOutlet UIButton *banceDetailBtn;
+@property (strong, nonatomic) IBOutlet UIButton *ensureDetailBtn;
+
+@property (strong, nonatomic) IBOutlet UIButton *RechargeBtn;//充值
+@property (strong, nonatomic) IBOutlet UIButton *WithdrawalsBtn;//取现
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *banceLayoutC;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *ensureLayoutC;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *banceDetailBtnLayoutW;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *ersurDetailBtnLaoutW;
+
+@end

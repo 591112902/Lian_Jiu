@@ -1,0 +1,17 @@
+//
+//  MyOrderRecoverTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "MyOrderRecoverModel.h"
+@interface MyOrderRecoverTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titelL;
+@property (strong, nonatomic) IBOutlet UILabel *stateLabel;
+@property (strong, nonatomic) IBOutlet UILabel *w_stateLabel;
+@property (strong, nonatomic) IBOutlet UIButton *determineBtn;
+-(void)fillCellWithModel:(MyOrderRecoverModel *)model;
+@end

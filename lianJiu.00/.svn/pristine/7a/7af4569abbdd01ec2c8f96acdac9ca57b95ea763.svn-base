@@ -1,0 +1,33 @@
+//
+//  CurrencysModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "CurrencysModel.h"
+
+@implementation CurrencysModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    CurrencysModel *model = [[self alloc] init];
+    model.c_id = dic[@"c_id"];
+    model.c_name = dic[@"c_name"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.c_id forKey:@"c_id"];
+    [aCoder encodeObject:self.c_name forKey:@"c_name"];
+    
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.c_id = [aDecoder decodeObjectForKey:@"c_id"];
+        self.c_name = [aDecoder decodeObjectForKey:@"c_name"];
+    }
+    return self;
+}
+@end

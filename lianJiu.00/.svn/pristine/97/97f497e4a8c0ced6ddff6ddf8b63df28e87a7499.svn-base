@@ -1,0 +1,112 @@
+//
+//  B_R_BaoZJTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_R_BaoZJTableViewCell.h"
+
+@implementation B_R_BaoZJTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+-(void)fillCellWithModel:(BanceDetailModel*)model
+{
+
+    self.titleL.text = model.d_id;
+    self.dateL.text = model.date;
+    if ([model.state isEqualToString:@"4"]) {
+        self.moneyL.text = [NSString stringWithFormat:@"+%@",model.money];
+        self.moneyL.textColor = [UIColor greenColor];
+    }else if([model.state isEqualToString:@"1"]){
+        self.moneyL.text = [model.money stringValue];
+        self.moneyL.textColor = [UIColor blackColor];
+    }else{
+        self.moneyL.text = [NSString stringWithFormat:@"-%@",model.money];
+        self.moneyL.textColor = [UIColor redColor];
+    }
+    
+    if ([model.state isEqualToString:@"1"]) {
+        self.stateL.text = CustomLocalizedString(@"待处理", nil);
+    }else if ([model.state isEqualToString:@"2"]) {
+        self.stateL.text = CustomLocalizedString(@"交易成功", nil);
+    }else if ([model.state isEqualToString:@"3"]) {
+        self.stateL.text = CustomLocalizedString(@"保证金冻结", nil);
+    }else if ([model.state isEqualToString:@"4"]) {
+        self.stateL.text = CustomLocalizedString(@"保证金解冻", nil);
+    }else if ([model.state isEqualToString:@"5"]) {
+        self.stateL.text = CustomLocalizedString(@"永久冻结", nil);
+    }else if ([model.state isEqualToString:@"6"]) {
+        self.stateL.text = CustomLocalizedString(@"删除", nil);
+    }else if ([model.state isEqualToString:@"7"]) {
+        self.stateL.text = CustomLocalizedString(@"驳回", nil);
+    }
+}
+-(void)fillCellWithModel2:(BanceDetailModel *)model{
+    self.titleL.font = [UIFont systemFontOfSize:17];
+    self.dateL.text = model.date;
+    
+    if ([model.state isEqualToString:@"1"]) {
+        self.stateL.text = CustomLocalizedString(@"待处理", nil);
+    }else if ([model.state isEqualToString:@"2"]) {
+        self.stateL.text = CustomLocalizedString(@"交易成功", nil);
+    }else if ([model.state isEqualToString:@"3"]) {
+        self.stateL.text = CustomLocalizedString(@"保证金冻结", nil);
+    }else if ([model.state isEqualToString:@"4"]) {
+        self.stateL.text = CustomLocalizedString(@"保证金解冻", nil);
+    }else if ([model.state isEqualToString:@"5"]) {
+        self.stateL.text = CustomLocalizedString(@"永久冻结", nil);
+    }else if ([model.state isEqualToString:@"6"]) {
+        self.stateL.text = CustomLocalizedString(@"删除", nil);
+    }else if ([model.state isEqualToString:@"7"]) {
+        self.stateL.text = CustomLocalizedString(@"驳回", nil);
+    }
+    
+    if ([model.type isEqualToString:@"1"]) {
+        if ([model.state isEqualToString:@"2"]) {
+            self.moneyL.text = [NSString stringWithFormat:@"+%@",model.money];
+        }else{
+            self.moneyL.text = [model.money stringValue];
+        }
+        self.titleL.text = CustomLocalizedString(@"充值", nil);
+        self.moneyL.textColor = [UIColor greenColor];
+    }else if ([model.type isEqualToString:@"2"]||[model.type isEqualToString:@"3"]) {
+        if ([model.state isEqualToString:@"2"]) {
+            self.moneyL.text = [NSString stringWithFormat:@"-%@",model.money];
+        }else{
+            self.moneyL.text = [model.money stringValue];
+        }
+        if ([model.type isEqualToString:@"2"]) {
+            self.titleL.text = CustomLocalizedString(@"国内提现", nil);
+        }else{
+            self.titleL.text = CustomLocalizedString(@"国外提现", nil);
+        }
+        self.moneyL.textColor = [UIColor redColor];
+    }else if ([model.type isEqualToString:@"4"]) {
+        if ([model.state isEqualToString:@"4"]) {
+            self.moneyL.text = [NSString stringWithFormat:@"+%@",model.money];
+            self.moneyL.textColor = [UIColor greenColor];
+        }else if([model.state isEqualToString:@"1"]){
+            self.moneyL.text = [model.money stringValue];
+            self.moneyL.textColor = [UIColor blackColor];
+        }else{
+            self.moneyL.text = [NSString stringWithFormat:@"-%@",model.money];
+            self.moneyL.textColor = [UIColor redColor];
+        }
+        self.titleL.text = CustomLocalizedString(@"保证金", nil);
+    }else if ([model.type isEqualToString:@"5"]) {
+        if ([model.state isEqualToString:@"2"]) {
+            self.moneyL.text = [NSString stringWithFormat:@"-%@",model.money];
+        }else{
+            self.moneyL.text = [model.money stringValue];
+        }
+        self.moneyL.textColor = [UIColor redColor];
+        self.titleL.text = CustomLocalizedString(@"服务费金额", nil);
+    }
+}
+
+@end

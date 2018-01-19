@@ -1,0 +1,16 @@
+//
+//  SupplyTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/12.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SATableViewCell.h"
+@interface SupplyTableViewController : UITableViewController
+@property(nonatomic,strong)NSMutableDictionary *parameters;
+@property(nonatomic,assign)int pageNo;
+@property(nonatomic,strong)NSMutableArray *dataSource;
+- (void)addDatasourceIsDown:(BOOL)isDown;
+@end

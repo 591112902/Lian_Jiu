@@ -1,0 +1,434 @@
+//
+//  ComeRecyclingVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ComeRecyclingVC.h"
+#import "PhotoCollectionViewCell.h"
+#import <CoreLocation/CoreLocation.h>
+#import "DateSelectViewController.h"
+#import "GWLPhotoLibrayController.h"
+#import "CommitSuccseViewController.h"
+#import "validate.h"
+
+@interface ComeRecyclingVC ()<UICollectionViewDataSource,UICollectionViewDelegate,UIActionSheetDelegate,UIAlertViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITextFieldDelegate,UITextViewDelegate,CLLocationManagerDelegate>
+
+@property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *collectionviewH;
+
+@property (strong, nonatomic) IBOutlet UITextField *nameTextfile;
+@property (strong, nonatomic) IBOutlet UITextField *phoneTextfile;
+@property (strong, nonatomic) IBOutlet UITextView *locationTextfile;
+@property (strong, nonatomic) IBOutlet UITextField *weightTextfile;
+@property (strong, nonatomic) IBOutlet UITextView *detailedTextView;
+
+@property (strong, nonatomic) IBOutlet UILabel *nameTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *phoneTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *weightTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *detaileTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *tishiLabel;
+@property (strong, nonatomic) IBOutlet UILabel *tishiValueLabel;
+@property (strong, nonatomic) IBOutlet UIButton *commitBtn;
+@property (strong, nonatomic) IBOutlet UILabel *titleTextLabel;
+
+
+@end
+
+@implementation ComeRecyclingVC
+{
+    BOOL isonceloview;
+    NSMutableArray *_photoDataSouc;
+    UIButton *conmitBtn;
+    BOOL isaddPhoto;
+    CGSize oldScContenSize;
+    CLLocationManager *_locationManager;//定位属性必须是全局的
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"上门回收", nil);
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    isaddPhoto = YES;
+
+    [self addFootView];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    //将触摸事件添加到当前view
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    _nameTitleLabel.text=CustomLocalizedString(@"姓名:", nil);
+    _phoneTitleLabel.text=CustomLocalizedString(@"电话:", nil);
+    _locationTitleLabel.text=CustomLocalizedString(@"地址:", nil);
+    _weightTitleLabel.text=CustomLocalizedString(@"货物重量:", nil);
+    _detaileTitleLabel.text=CustomLocalizedString(@"货物详细:", nil);
+    _tishiLabel.text = CustomLocalizedString(@"提示:", nil);
+    _tishiValueLabel.text = CustomLocalizedString(@"最多只能上传30张图片", nil);
+    _titleTextLabel.text = CustomLocalizedString(@"回收单", nil);
+    [_commitBtn setTitle:CustomLocalizedString(@"提交", nil) forState:UIControlStateNormal];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (!isonceloview) {
+        self.collectionviewH.constant = (self.view.frame.size.width-40)/3.0+20;
+        
+        isonceloview = YES;
+    }
+}
+#pragma mark - 键盘遮挡
+//--------------------------键盘遮挡----------------------------------
+-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+    [self.view endEditing:YES];
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    //键盘遮挡
+    CGPoint pt = [textField convertPoint:CGPointMake(0, textField.frame.size.height) toView:self.view];//把当前的textField的坐标映射到scrollview上
+    CGFloat contenOffsetY = self.scrollView.contentOffset.y;
+    if(BOUND_HIGHT-pt.y-64<252)//判断最上面不要去滚动
+        dispatch_async(dispatch_get_main_queue(), ^{[self.scrollView setContentOffset:CGPointMake(0, contenOffsetY+(235-(BOUND_HIGHT-pt.y-64))) animated:YES];});
+    
+}
+//当用户按下return键或者按回车键，keyboard消失
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField==self.nameTextfile) {
+        [self.phoneTextfile becomeFirstResponder];
+    }else if(textField==self.phoneTextfile){
+        [self.locationTextfile becomeFirstResponder];
+    }else if(textField==self.weightTextfile){
+        [self.detailedTextView becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    
+    return YES;
+}
+-(void)textViewDidBeginEditing:(UITextView *)textView
+{
+    //键盘遮挡
+    CGPoint pt = [textView convertPoint:CGPointMake(0, textView.frame.size.height) toView:self.view];//把当前的textField的坐标映射到scrollview上
+    //    if(self.scrollView.contentOffset.y-pt.y+64+10<=0)//判断最上面不要去滚动
+    //        [self.scrollView setContentOffset:CGPointMake(0, pt.y-64-10) animated:YES];
+    CGFloat contenOffsetY = self.scrollView.contentOffset.y;
+    HZLog(@"%f-----%f-----%f",BOUND_HIGHT,pt.y,contenOffsetY);
+    if(BOUND_HIGHT-pt.y-64<252)//判断最上面不要去滚动
+        dispatch_async(dispatch_get_main_queue(), ^{[self.scrollView setContentOffset:CGPointMake(0, contenOffsetY+(235-(BOUND_HIGHT-pt.y-64))) animated:YES];});
+}
+//--------------------------键盘遮挡----------------------------------
+
+-(void)addFootView
+{
+    _photoDataSouc = [[NSMutableArray alloc] initWithObjects:[UIImage imageNamed:@"phone_default"], nil];
+    [self.collectionView registerNib:[UINib nibWithNibName:@"PhotoCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"PhotoCollectionViewCell"];
+}
+#pragma mark - 添加照片
+- (void)addPhoto
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                  initWithTitle:CustomLocalizedString(@"添加照片", nil)
+                                  delegate:self
+                                  cancelButtonTitle:CustomLocalizedString(@"取消", nil)
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles:CustomLocalizedString(@"从相册获取", nil), CustomLocalizedString(@"拍照", nil),nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleDefault;
+    [actionSheet showInView:self.view];
+    
+}
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [self addPhotoWithPhotoLibrary];
+    }else if (buttonIndex == 1) {
+        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+        imagePicker.delegate = self;
+        imagePicker.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        imagePicker.allowsEditing = YES;
+        imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        [self presentViewController:imagePicker animated:YES completion:nil];
+        imagePicker = nil;
+    }
+}
+- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    UIImage *image= [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+    image = [image fixOrientation];
+    [self displayImages:@[image]];
+    image = nil;
+}
+- (void)addPhotoWithPhotoLibrary {
+    __weak typeof (self)weakSelf = self;
+    GWLPhotoLibrayController *photoSelector = [GWLPhotoLibrayController photoLibrayControllerWithBlock:^(NSArray *images) {
+        [weakSelf displayImages:images];
+    }];
+    photoSelector.maxCount = 30;
+    photoSelector.multiAlbumSelect = YES;
+    [self presentViewController:photoSelector animated:YES completion:nil];
+}
+
+- (void)displayImages:(NSArray *)images {
+    
+    UIImage *imge = _photoDataSouc.lastObject;
+    [_photoDataSouc removeLastObject];
+    [_photoDataSouc addObjectsFromArray:images];
+    [_photoDataSouc addObject:imge];
+    
+    if (_photoDataSouc.count>30) {
+        isaddPhoto = NO;
+        NSRange range = NSMakeRange(0, 30);
+        NSArray *temp = [_photoDataSouc subarrayWithRange:range];
+        _photoDataSouc = [NSMutableArray arrayWithArray:temp];
+    }
+    
+    
+    CGRect rect = _collectionView.frame;
+    rect.size.height = ceil (_photoDataSouc.count/3.0) *(BOUND_WIDTH-40)/3+(ceil (_photoDataSouc.count/3.0)+1)*10;
+    dispatch_async(dispatch_get_main_queue(), ^{ self.collectionviewH.constant = rect.size.height; });
+    [_collectionView reloadData];
+}
+
+#pragma mark - collectionViewDelegate
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return _photoDataSouc.count;
+}
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCollectionViewCell" forIndexPath:indexPath];
+    cell.photoImage.image = _photoDataSouc[indexPath.row];
+
+    return cell;
+}
+//定义每个UICollectionView 的大小
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    return CGSizeMake((BOUND_WIDTH-40)/3, (BOUND_WIDTH-40)/3);
+}
+//定义每个UICollectionView 的 margin
+-(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    return UIEdgeInsetsMake(10, 10, 10, 10);
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (isaddPhoto&&indexPath.row==_photoDataSouc.count-1) {
+        [self addPhoto];
+    }else{
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"删除图片", nil) message:CustomLocalizedString(@"是否删除该图片", nil) delegate:self cancelButtonTitle:CustomLocalizedString(@"是", nil) otherButtonTitles:CustomLocalizedString(@"否", nil), nil];
+        alertView.tag= indexPath.row;
+        [alertView show];
+    }
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==0) {
+        [_photoDataSouc removeObjectAtIndex:alertView.tag];
+        if (!isaddPhoto) {
+            isaddPhoto = YES;
+            [_photoDataSouc addObject:[UIImage imageNamed:@"phone_default"]];
+        }else{
+            CGRect rect = _collectionView.frame;
+            rect.size.height = ceil (_photoDataSouc.count/3.0) *(BOUND_WIDTH-40)/3+(ceil (_photoDataSouc.count/3.0)+1)*10;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.collectionviewH.constant = rect.size.height;
+            });
+        }
+        [self.collectionView reloadData];
+    }
+}
+#pragma mark - 提交
+
+- (IBAction)ToCommit:(id)sender {
+    NSMutableArray *commitPhotos = [_photoDataSouc mutableCopy];
+    if (isaddPhoto) {
+        [commitPhotos removeLastObject];
+    }
+    if ([validate CheckInputAccount:CustomLocalizedString(@"姓名", nil) withText:self.nameTextfile.text withminNum:1 withMaxNum:20]&&
+        
+         [validate CheckInputAccount:CustomLocalizedString(@"电话", nil) withText:self.phoneTextfile.text withminNum:1 withMaxNum:30]
+//        [validate CheckInputPhone:CustomLocalizedString(@"电话", nil) withText:self.phoneTextfile.text]
+//        [validate CheckInputALLPhone:CustomLocalizedString(@"电话", nil) withText:self.phoneTextfile.text]
+    
+        &&
+        [validate CheckInputAccount:CustomLocalizedString(@"地址", nil) withText:self.locationTextfile.text withminNum:1 withMaxNum:100]&&
+//        [validate CheckInputAccount:CustomLocalizedString(@"货物重量", nil) withText:self.weightTextfile.text withminNum:1 withMaxNum:20]&&
+        [self isDidAddPhoto:commitPhotos]
+        ) {
+        NSMutableArray *dataArr= [[NSMutableArray alloc] init];
+        
+        for (int i = 0; i<commitPhotos.count;i++) {
+            UIImage *image =commitPhotos[i];
+            NSData *data= UIImageJPEGRepresentation(image, 1);
+            if (data.length>5*1024*1024) {
+                data = UIImageJPEGRepresentation(image, 0.05);
+            }else if(data.length>1024*1024){
+                data = UIImageJPEGRepresentation(image, 0.1);
+            }
+            [dataArr addObject:data];
+        }
+        [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr success:^(NSMutableDictionary *dic) {
+      
+
+            NSDictionary *parameters = @{@"name":self.nameTextfile.text,@"phone":self.phoneTextfile.text,@"address":self.locationTextfile.text,@"weight":self.weightTextfile.text,@"detail":self.detailedTextView.text,@"photo":dic[@"response"]?dic[@"response"]:@""};
+            [networking AFNPOST:ADDWASTE withparameters:parameters success:^(NSMutableDictionary *dic) {
+                HZLog(@"%@",dic[@"message"]);
+                
+                CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+                CMVC.title = self.title;
+                CMVC.contenValue = CustomLocalizedString(@"提交成功", nil);
+                CMVC.subValue = CustomLocalizedString(@"回收单已提交到再商网回收部门，将尽快安排上门回收，请耐心等待！", nil);
+                CMVC.image = [UIImage imageNamed:@"sucsses"];
+                [self.navigationController pushViewController:CMVC animated:YES];
+            } error:nil HUDAddView:self.view];
+            
+        } error:nil HUDAddView:self.view];
+    }
+}
+- (BOOL)strIsNilName:(NSString*)name WithText:(NSString *)text
+{
+    if (text.length==0) {
+        [MBProgressHUD showNotPhotoError:[NSString stringWithFormat:@"%@%@",CustomLocalizedString(@"请填写:", nil),name] toView:self.view];
+        return NO;
+    }
+    return YES;
+}
+-(BOOL)isDidAddPhoto:(NSArray*)arr
+{
+    if (!(arr.count>0)) {
+        [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请添加照片", nil) toView:self.view];
+        return NO;
+    }
+    return YES;
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@" "]&&textField.text.length<1) {
+        return NO;
+    }
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }
+
+    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (textField ==self.nameTextfile)
+    {
+        if ([aString length] > 20) {
+            textField.text = [aString substringToIndex:20];
+            return NO;
+        }
+    }else if(textField ==self.phoneTextfile){
+        if ([aString length] >20) {
+            textField.text = [aString substringToIndex:20];
+            return NO;
+        }
+    }else if(textField ==self.weightTextfile){
+        if ([aString length] > 20) {
+            textField.text = [aString substringToIndex:20];
+            return NO;
+        }
+    }
+    return YES;
+}
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if ([text isEqualToString:@" "]&&textView.text.length<1) {
+        return NO;
+    }
+    if ([text isEqualToString:@"\n"]){
+        return YES;
+    }
+    
+    NSString * aString = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    if (textView ==self.locationTextfile)
+    {
+        if ([aString length] > 60) {
+            textView.text = [aString substringToIndex:60];
+            return NO;
+        }
+    }else if(textView ==self.detailedTextView){
+        if ([aString length] >500) {
+            textView.text = [aString substringToIndex:500];
+            return NO;
+        }
+    }
+    return YES;
+
+}
+- (void)textViewDidChange:(UITextView *)textView
+{
+    [textView setText:[textView.text filterEmoji]];
+}
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [textField setText:[textField.text filterEmoji]];
+}
+- (IBAction)location:(id)sender {
+    _locationManager=[[CLLocationManager alloc]init];
+    
+    if (![CLLocationManager locationServicesEnabled]) {
+        HZLog(@"定位服务当前可能尚未打开，请设置打开！");
+        return;
+    }
+    
+    //如果没有授权则请求用户授权
+    if ([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined){
+        [_locationManager requestWhenInUseAuthorization];
+    }else if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusAuthorizedWhenInUse){
+        //设置代理
+        _locationManager.delegate=self;
+        //设置定位精度
+        _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
+      
+        //定位频率,每隔多少米定位一次
+        CLLocationDistance distance=10.0;//米定位一次
+        _locationManager.distanceFilter=distance;
+        //启动跟踪定位
+        [_locationManager startUpdatingLocation];
+    }
+}
+#pragma mark - CoreLocation 代理
+#pragma mark 跟踪定位代理方法，每次位置发生变化即会执行（只要定位到相应位置）
+//可以通过模拟器设置一个虚拟位置，否则在模拟器中无法调用此方法
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    CLLocation *location=[locations firstObject];//取出第一个位置
+    CLLocationCoordinate2D coordinate=location.coordinate;//位置坐标
+       HZLog(@"经度：%f,纬度：%f,海拔：%f,航向：%f,行走速度：%f",coordinate.longitude,coordinate.latitude,location.altitude,location.course,location.speed);
+    //使用反地理编码
+    [self getAddressByLatitude:coordinate.latitude longitude:coordinate.longitude];
+    //如果不需要实时定位，使用完即使关闭定位服务
+    [_locationManager stopUpdatingLocation];
+    _locationManager = nil;
+}
+
+#pragma mark 根据坐标取得地名
+
+-(void)getAddressByLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude{
+    //反地理编码
+    CLLocation *location=[[CLLocation alloc]initWithLatitude:latitude longitude:longitude];
+    CLGeocoder *geocoder=[[CLGeocoder alloc]init];
+    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+        CLPlacemark *placemark=[placemarks firstObject];
+        self.locationTextfile.text = placemark.name;
+
+        
+    }];
+}
+-(void)dealloc{
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+@end

@@ -1,0 +1,16 @@
+//
+//  UnitsModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//单位
+#import <Foundation/Foundation.h>
+
+@interface UnitsModel : NSObject<NSCoding>
+@property(nonatomic,copy)NSString *u_id;
+@property(nonatomic,copy)NSString *u_name;
++(instancetype)ModelWith:(NSDictionary *)dic;
+
+@end

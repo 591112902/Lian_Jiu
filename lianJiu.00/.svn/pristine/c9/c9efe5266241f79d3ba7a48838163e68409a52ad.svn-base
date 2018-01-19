@@ -1,0 +1,13 @@
+//
+//  MyOrderRecoverContenViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//个人中心-订单中心-回收-cell内容
+#import <UIKit/UIKit.h>
+#import "MyOrderRecoverModel.h"
+@interface MyOrderRecoverContenViewController : UIViewController
+@property (nonatomic,strong)MyOrderRecoverModel *model;
+@end

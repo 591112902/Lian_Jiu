@@ -1,0 +1,130 @@
+//
+//  B_WithdrawNViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_WithdrawNViewController.h"
+#import "B_W_DTableViewController.h"
+@interface B_WithdrawNViewController ()
+
+@end
+
+@implementation B_WithdrawNViewController
+{
+    UILabel *alabelL;//现金账户余额
+    UILabel *clabelL;//可提现余额
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor =BGColor;
+    CGFloat h = 64+5;
+    CGFloat boundW = BOUND_WIDTH;
+    CGFloat headviewW = BOUND_WIDTH-30*2;
+    UIView *headview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, boundW, 140)];
+    [self.view addSubview:headview];
+    UILabel *dlabel = [[UILabel alloc] initWithFrame:CGRectMake(30, h, headviewW, 40)];
+    dlabel.font = UIFont13;
+    dlabel.numberOfLines = 0;
+    dlabel.text = CustomLocalizedString(@"用户可以随时申请提现，申请提交成功后，3个工作日内到账（节假日顺延）。", nil);
+    [headview addSubview:dlabel];
+    h+=40+10;
+    
+    UILabel *alabelR = [[UILabel alloc] initWithFrame:CGRectMake(0, h, boundW/2,20)];
+    alabelR.font = UIFont13;
+    alabelR.textAlignment = NSTextAlignmentRight;
+    alabelR.text = CustomLocalizedString(@"现金账户余额：", nil);
+    [headview addSubview:alabelR];
+    alabelL = [[UILabel alloc] initWithFrame:CGRectMake(boundW/2, h, boundW/2,20)];
+    alabelL.font = UIFont13;
+    alabelL.textColor = [UIColor orangeColor];
+    [headview addSubview:alabelL];
+    h+=20;
+    
+    UILabel *clabelR = [[UILabel alloc] initWithFrame:CGRectMake(0, h, boundW/2,20)];
+    clabelR.font = UIFont13;
+    clabelR.textAlignment = NSTextAlignmentRight;
+    clabelR.text = CustomLocalizedString(@"可提现余额：", nil);
+    [headview addSubview:clabelR];
+    clabelL = [[UILabel alloc] initWithFrame:CGRectMake(boundW/2, h, boundW/2,20)];
+    clabelL.font = UIFont13;
+    clabelL.textColor = [UIColor orangeColor];
+    [headview addSubview:clabelL];
+    h+=20+15;
+    
+    CGFloat btnW = 90;
+    CGFloat btngap = (BOUND_WIDTH-90*2)/3;
+    UIButton *DomesticBtn = [[UIButton alloc] initWithFrame:CGRectMake(btngap, h, 90, 30)];
+    [DomesticBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+//    DomesticBtn.backgroundColor = [UIColor orangeColor];
+    [DomesticBtn addTarget:self action:@selector(DomesticAccounts) forControlEvents:UIControlEventTouchUpInside];
+    [DomesticBtn setTitle:CustomLocalizedString(@"国内账户", nil) forState:UIControlStateNormal];
+    DomesticBtn.layer.cornerRadius = 3;
+    DomesticBtn.clipsToBounds = YES;
+    [self.view addSubview:DomesticBtn];
+    
+    UIButton *ForeignBtn = [[UIButton alloc] initWithFrame:CGRectMake(btngap*2+btnW, h, 90, 30)];
+    [ForeignBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    //    ForeignBtn = [UIColor orangeColor];
+    ForeignBtn.layer.cornerRadius = 3;
+    ForeignBtn.clipsToBounds = YES;
+    [ForeignBtn addTarget:self action:@selector(ForeignAccounts) forControlEvents:UIControlEventTouchUpInside];
+    [ForeignBtn setTitle:CustomLocalizedString(@"国际账户", nil) forState:UIControlStateNormal];
+    [self.view addSubview:ForeignBtn];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    clabelL.text = [self.userModel.account_balance stringValue];
+    //    double account_balance = [self.userModel.account_balance doubleValue];
+    //    double ensure_money = [self.userModel.ensure_money doubleValue];
+    //    double money =account_balance+ensure_money;
+    //    alabelL.text = [NSString stringWithFormat:@"%.2f",money];
+    alabelL.text = [self.userModel.account_balance stringValue];
+
+}
+-(AccountModel *)userModel
+{
+    if (!_userModel) {
+        _userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+    }
+    return _userModel;
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)DomesticAccounts{
+    B_W_DTableViewController *BWDVC = [[B_W_DTableViewController alloc] init];
+    BWDVC.title = CustomLocalizedString(@"国内提现", nil);
+//    BWDVC.tableList =  @[@"提现金额",@"收款币种",@"提现收款人姓名",@"收款人银行",@"收款人银行账号",@"收款人银行地址",@"提现申请人电话",@"请输入支付密码"];
+    BWDVC.tableList =  @[CustomLocalizedString(@"提现金额", nil),CustomLocalizedString(@"收款币种", nil),CustomLocalizedString(@"提现收款人姓名", nil),CustomLocalizedString(@"收款人银行", nil),CustomLocalizedString(@"收款人银行账号", nil),CustomLocalizedString(@"收款人银行地址", nil),CustomLocalizedString(@"提现申请人电话", nil),CustomLocalizedString(@"请输入支付密码", nil)];
+    BWDVC.isGuoNei = YES;
+    BWDVC.userModel =self.userModel;
+    [self.navigationController pushViewController:BWDVC animated:YES];
+}
+- (void)ForeignAccounts{
+    B_W_DTableViewController *BWDVC = [[B_W_DTableViewController alloc] init];
+    BWDVC.title = CustomLocalizedString(@"国际提现", nil);
+//    BWDVC.tableList =  @[@"提现金额",@"收款币种",@"提现收款人姓名",@"收款人银行",@"收款人银行账号",@"收款人银行国际代码",@"收款人银行地址",@"提现申请人电话",@"请输入支付密码"];
+    BWDVC.tableList =  @[CustomLocalizedString(@"提现金额", nil),CustomLocalizedString(@"收款币种", nil),CustomLocalizedString(@"提现收款人姓名", nil),CustomLocalizedString(@"收款人银行", nil),CustomLocalizedString(@"收款人银行账号", nil),CustomLocalizedString(@"收款人银行国际代码", nil),CustomLocalizedString(@"收款人银行地址", nil),CustomLocalizedString(@"提现申请人电话", nil),CustomLocalizedString(@"请输入支付密码", nil)];
+    BWDVC.userModel =self.userModel;
+    [self.navigationController pushViewController:BWDVC animated:YES];
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

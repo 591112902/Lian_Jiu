@@ -1,0 +1,27 @@
+//
+//  Au_companyFootView.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface Au_companyFootView : UIView
+@property (strong, nonatomic) IBOutlet UIButton *topPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *leftPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *midPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *rightPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *commitBTn;
+
+@property (strong, nonatomic) IBOutlet UILabel *top1Label;
+@property (strong, nonatomic) IBOutlet UILabel *top2Label;
+@property (strong, nonatomic) IBOutlet UILabel *beCarefulLabel;
+@property (strong, nonatomic) IBOutlet UILabel *beCarefulValueLabel;
+@property (strong, nonatomic) IBOutlet UILabel *topPhotosLabel;
+
+@property (strong, nonatomic) IBOutlet UILabel *leftLabel;
+@property (strong, nonatomic) IBOutlet UILabel *midLabel;
+@property (strong, nonatomic) IBOutlet UILabel *rightLabel;
+@end

@@ -1,0 +1,424 @@
+//
+//  meVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MeVC.h"
+#import "MeTableViewCell.h"
+#import "Me3TableViewCell.h"
+#import "Me2TableViewCell.h"
+#import "MyOrderViewController.h"
+#import "MyNewsTableViewController.h"
+#import "CreditViewController.h"
+#import "BalanceViewController.h"
+#import "SetUpViewController.h"
+#import "M_FootprinViewController.h"
+#import "M_CollectionViewController.h"
+#import "M_CollectionViewController.h"
+#import "BidmanageViewController.h"
+#import "AuthenticateViewController.h"
+#import "AccountInformationViewController.h"
+#import "LoginViewController.h"
+#import "AccountModel.h"
+
+#import "ReleaseTableViewController.h"
+@interface MeVC ()<UITableViewDataSource,UITableViewDelegate>
+
+@property (nonatomic,strong)AccountModel *userModel;
+
+@end
+
+@implementation MeVC
+{
+    UITableView *_tableView;
+    
+    NSMutableArray *_dataSouc;
+    UILabel *balbel;//消息个数
+    AccountModel *model;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    self.isRequestData = YES;
+    
+    UIImage* img=[UIImage imageNamed:@"fr_four_xiaoxi"];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    btn.frame =CGRectMake(0, 0, 25, 25);
+    
+    [btn setBackgroundImage:img forState:UIControlStateNormal];
+    balbel = [[UILabel alloc] initWithFrame:CGRectMake(15, -5, 20, 20)];
+    balbel.backgroundColor = [UIColor redColor];
+    balbel.font= UIFont13;
+    balbel.textColor = [UIColor whiteColor];
+    balbel.textAlignment = NSTextAlignmentCenter;
+    balbel.layer.cornerRadius = balbel.frame.size.height/2.0;
+    balbel.clipsToBounds = YES;
+    balbel.hidden = YES;
+    [btn addSubview:balbel];
+    [btn addTarget: self action: @selector(mynews) forControlEvents: UIControlEventTouchUpInside];
+    
+    UIBarButtonItem* item=[[UIBarButtonItem alloc]initWithCustomView:btn];
+    
+    self.navigationItem.rightBarButtonItem=item;
+    
+    _dataSouc = [[NSMutableArray alloc] init];
+    [self addTabeleViewDataSource];
+ 
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    if (!islogin) {
+        self.isRequestData = YES;
+        LoginViewController *loginVc = [[LoginViewController alloc] init];
+        loginVc.isBackMain = YES;
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:loginVc];
+        [self.tabBarController presentViewController:nav animated:YES completion:^{
+            
+        }];
+    }else{
+        
+        if (self.isRequestData) {
+            [self addUserDetail];
+  
+        }
+    }
+}
+
+#pragma mark -data
+-(AccountModel *)userModel{
+    if (_userModel==nil) {
+        _userModel=[[AccountModel alloc]init];
+    }
+    return _userModel;
+}
+
+- (void)addTabeleViewDataSource
+{
+    [_dataSouc removeAllObjects];
+    [_dataSouc addObject:@[@1]];
+    [_dataSouc addObject:@[@2]];
+    [_dataSouc addObject:@[@{CustomLocalizedString(@"实名认证", nil):@"me_shiMingRenZheng"},@{CustomLocalizedString(@"账户信息", nil):@"me_zhangHu"}]];
+    
+    [_dataSouc addObject:@[@{CustomLocalizedString(@"信息发布", nil):@"me_releaseMassage"},@{CustomLocalizedString(@"我的订单", nil):@"fr_four_dingdan"},@{CustomLocalizedString(@"投标管理", nil):@"toubiaoguanli"}]];
+    
+    [_dataSouc addObject:@[@{CustomLocalizedString(@"信用查询", nil):@"fr_four_xinyong"},@{CustomLocalizedString(@"余额查询",nil):@"fr_four_yue"},@{CustomLocalizedString(@"设置",nil):@"fr_four_shezhi"}]];
+    [self addTableView];
+}
+-(void)addUserDetail
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOSTNotCode:USER withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+
+        NSNumber *code=dic[@"code"];
+        if ([code isEqualToNumber:@0]) {
+            NSDictionary *response = dic[@"response"];
+            self.zuJi = response[@"zjtj"];
+            _souCang = response[@"sctj"];
+            self.xiaoXi = response[@"MessAge"];;
+            self.isHuiShouShang = response[@"HS"];
+#pragma 帐号信息 余额查询网络请求
+            self.userModel = [AccountModel ModelWith:response[@"user"]];
+
+            [_tableView reloadData];
+            self.isRequestData = NO;
+            [NSKeyedArchiver archiveRootObject:self.userModel toFile:ACCOUNTPATH];
+            
+        }else{
+            if ([code isEqualToNumber:@-2]) {
+                [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请重新登录", nil) toView:self.view];
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                //                    [defaults removeObjectForKey:@"vip"];
+                //                    [defaults removeObjectForKey:@"sessionid"];
+                [defaults setObject:@"" forKey:@"vip"];
+                [defaults setBool:NO forKey:@"islogin"];
+                [defaults setBool:NO forKey:@"isRealName"];
+                [defaults synchronize];
+                //    删除归档模型
+                NSFileManager *defaultManager = [NSFileManager defaultManager];
+                if ([defaultManager isDeletableFileAtPath:ACCOUNTPATH]) {
+                    [defaultManager removeItemAtPath:ACCOUNTPATH error:nil];
+                }
+            }
+     
+            self.userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+            [_tableView reloadData];
+            
+        }
+    } error:^(NSError *error) {
+        self.userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+        [_tableView reloadData];
+        
+    } HUDAddView:self.view];
+}
+-(void)setXiaoXi:(NSNumber *)xiaoXi
+{
+    balbel.text = [xiaoXi stringValue];
+    _xiaoXi = xiaoXi;
+    NSInteger nub = [xiaoXi integerValue];
+    if (nub==0) {
+        balbel.hidden = YES;
+    }else{
+        balbel.hidden = NO;
+    }
+    if (nub<10) {
+        balbel.frame =CGRectMake(15, -5, 20, 20);
+        balbel.layer.cornerRadius = balbel.frame.size.height/2.0;
+    }else if(nub<100)
+    {
+        balbel.frame =CGRectMake(13, -5, 24, 16);
+        balbel.layer.cornerRadius = 3;
+    }else{
+        balbel.text = @"99";
+        balbel.frame =CGRectMake(13, -5, 24, 16);
+        balbel.layer.cornerRadius = 3;
+    }
+}
+-(void)setSouCang:(NSNumber *)souCang
+{
+    _souCang = souCang;
+    [_tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+}
+-(void)setZuJi:(NSNumber *)zuJi
+{
+    _zuJi = zuJi;
+    [_tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+}
+-(void)setIsHuiShouShang:(NSNumber *)isHuiShouShang
+{
+    _isHuiShouShang = isHuiShouShang;
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    [def setObject:isHuiShouShang forKey:@"huishoushang"];
+    [def synchronize];
+}
+#pragma mark - ui
+- (void)reloadSubViews
+{
+    [self addTabeleViewDataSource];
+    self.title = CustomLocalizedString(@"个人中心", nil);
+    self.navigationItem.backBarButtonItem.title = CustomLocalizedString(@"返回", nil);
+}
+
+-(void)addTableView
+{
+    
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, BOUND_WIDTH, BOUND_HIGHT-TARBARHEIGHT-64) style:UITableViewStyleGrouped];
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.automaticallyAdjustsScrollViewInsets=NO;
+    [_tableView registerNib:[UINib nibWithNibName:@"MeTableViewCell" bundle:nil] forCellReuseIdentifier:@"MeTableViewCell"];
+    [_tableView registerNib:[UINib nibWithNibName:@"Me2TableViewCell" bundle:nil] forCellReuseIdentifier:@"Me2TableViewCell"];
+    [_tableView registerNib:[UINib nibWithNibName:@"Me3TableViewCell" bundle:nil] forCellReuseIdentifier:@"Me3TableViewCell"];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    _tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [self.view addSubview:_tableView];
+    _tableView.backgroundColor = BGColor;
+    _tableView.showsVerticalScrollIndicator = NO;
+    
+}
+#pragma mark - tabelViewDegate
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return _dataSouc.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSArray *arr = _dataSouc[section];
+    return arr.count;
+}
+
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    if (indexPath.section==0) {
+        Me2TableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Me2TableViewCell"];
+        [cell.rightBtn addTarget:self action:@selector(sign:) forControlEvents:UIControlEventTouchUpInside];
+        [cell fillCellWithModel:self.userModel];
+        
+        cell.rightLabel.tag =4999;
+        
+        return cell;
+    }else if (indexPath.section==1){
+        Me3TableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Me3TableViewCell"];
+        cell.leftValueLabel.text = [self.souCang stringValue];
+        cell.rightValueLabel.text = [self.zuJi stringValue];
+        [cell.leftBtn addTarget:self action:@selector(ToMyCollection) forControlEvents:UIControlEventTouchUpInside];
+        [cell.rightBtn addTarget:self action:@selector(ToMyFootprint) forControlEvents:UIControlEventTouchUpInside];
+        return cell;
+        
+    }else{
+        MeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MeTableViewCell"];
+        NSArray *arr = _dataSouc[indexPath.section];
+        NSDictionary *dic = arr[indexPath.row];
+        cell.label.text = [dic allKeys].lastObject;
+        cell.image.contentMode = UIViewContentModeScaleAspectFit;
+        cell.image.image = [UIImage imageNamed:dic[[dic allKeys].lastObject]];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
+        return cell;
+        
+    }
+    
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 10.0;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    if (section==_dataSouc.count-1) {
+        return 20.0;
+    }
+    return 1.0;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==0) {
+        return 80;
+    }else if (indexPath.section==1){
+        return 50;
+    }else{
+        
+        return 44;
+    }
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    if (indexPath.section>1) {
+        NSArray *arr = _dataSouc[indexPath.section];
+        NSDictionary *dic = arr[indexPath.row];
+        model= self.userModel?self.userModel:[[AccountModel alloc] init];
+        UIViewController *view;
+        if (indexPath.section==2) {
+            
+            if (indexPath.row==0) {
+                AuthenticateViewController *VC = [[AuthenticateViewController alloc] init];
+                VC.userModel = model;
+                [tableView deselectRowAtIndexPath:indexPath animated:NO];
+                view = VC;
+                
+            }else{
+                AccountInformationViewController *VC = [[AccountInformationViewController alloc] init];
+                VC.userModel = model;
+                [tableView deselectRowAtIndexPath:indexPath animated:NO];
+                view =VC;
+            }
+            
+        }else if(indexPath.section==3){
+            self.isRequestData = YES;
+            
+            if (indexPath.row==0) {
+                
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                BOOL islogin = [defaults boolForKey:@"islogin"];
+                if (islogin) {
+                    ReleaseTableViewController *releaseVC = [[ReleaseTableViewController alloc] init];
+                    releaseVC.userModel=model;
+                    view=releaseVC;
+                    releaseVC.hidesBottomBarWhenPushed = YES;
+                    
+                }else{
+                    [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请先登录", nil) toView:self.view];
+                }}
+            else if  (indexPath.row==1) {
+                MyOrderViewController *VC = [[MyOrderViewController alloc] init];
+                view =VC;
+            }
+            else{
+                view = [[BidmanageViewController alloc] init];
+            }
+        }else{
+            
+            if (indexPath.row==0) {
+                CreditViewController *VC = [[CreditViewController alloc] init];
+                [tableView deselectRowAtIndexPath:indexPath animated:NO];
+                VC.userModel = model;
+                view = VC;
+            }
+            else if(indexPath.row==1){
+                BalanceViewController *VC = [[BalanceViewController alloc] init];
+                [tableView deselectRowAtIndexPath:indexPath animated:NO];
+                VC.userModel = model;
+                view = VC;
+            }
+            else{
+                view = [[SetUpViewController alloc] init];
+                [tableView deselectRowAtIndexPath:indexPath animated:NO];
+            }
+            
+        }
+        view.hidesBottomBarWhenPushed = YES;
+        view.title = [dic allKeys].lastObject;
+        [self.navigationController pushViewController:view animated:YES];
+    }
+    
+    
+}
+#pragma mark -action
+-(void)sign:(UIView *)sender
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [def boolForKey:@"islogin"];
+    if (islogin) {
+        NSString *vip = [def objectForKey:@"vip"];
+        [networking AFNPOSTNotHUD:SIGN withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+//            HZLog(@"%@",dic);
+            UILabel *rightLabel = [sender.superview viewWithTag:4999];
+            rightLabel.alpha = 0;
+            rightLabel.hidden = NO;
+            [UIView animateWithDuration:1 animations:^{
+                rightLabel.alpha = 1;
+            } completion:^(BOOL finished) {
+                rightLabel.hidden = YES;
+            }];
+        } error:nil];
+    }else{
+        [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请先登录", nil) toView:self.view];
+    }
+    
+    
+}
+- (void)mynews
+{
+    MyNewsTableViewController *MYNVC = [[MyNewsTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    MYNVC.hidesBottomBarWhenPushed = YES;
+    MYNVC.preVc = self;
+    MYNVC.title = CustomLocalizedString(@"消息", nil);
+    [self.navigationController pushViewController:MYNVC animated:YES];
+}
+-(void)ToMyFootprint
+{
+    M_FootprinViewController *MFVC = [[M_FootprinViewController alloc] init];
+    MFVC.hidesBottomBarWhenPushed = YES;
+    MFVC.title = CustomLocalizedString(@"我的足迹", nil);
+    MFVC.userModel = self.userModel;
+    MFVC.preVC = self;
+    [self.navigationController pushViewController:MFVC animated:YES];
+}
+-(void)ToMyCollection
+{
+    M_CollectionViewController *MCVC = [[M_CollectionViewController alloc] init];
+    MCVC.title = CustomLocalizedString(@"我的收藏", nil);
+    MCVC.userModel = self.userModel;
+    MCVC.preVC = self;
+    MCVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:MCVC animated:YES];
+}
+
+
+
+@end

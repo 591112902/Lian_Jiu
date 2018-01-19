@@ -1,0 +1,51 @@
+//
+//  MainTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/19.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MainTableViewCell.h"
+
+@implementation MainTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+-(void)fillCellWithModel:(bidModel*)model
+{
+
+    
+    NSString *urlStr = [model.p_file componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@";,"]].firstObject;
+
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+////    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+
+
+    [self.leftImageView sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+
+    self.title.text = model.t_title;
+    STRINGNONIL(model.t_quality);
+    self.num.text = [model.t_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+
+    if ([model.a_level isEqualToString:@"3"]) {
+        self.location.text =[NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.location.text = model.dz_name;
+    }
+    if ([model.t_bidstate_id isEqualToString:@"4"]) {
+        self.rigthImage.image = [UIImage imageNamed:@"mainCell_nor"];
+        self.rigthLabe.text = CustomLocalizedString(@"投标结束", nil);
+    }else{
+        self.rigthImage.image = [UIImage imageNamed:@"mainCell_sel"];
+        self.rigthLabe.text = CustomLocalizedString(@"我要投标", nil);
+    }
+    self.numLStringLabel.text = CustomLocalizedString(@"数量:", nil);
+    self.locationLstringLabel.text = CustomLocalizedString(@"所在地:", nil);
+}
+
+@end

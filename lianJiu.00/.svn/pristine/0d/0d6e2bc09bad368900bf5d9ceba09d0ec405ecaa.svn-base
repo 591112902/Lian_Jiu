@@ -1,0 +1,37 @@
+//
+//  PercentModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PercentModel.h"
+
+@implementation PercentModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    PercentModel *model = [[self alloc] init];
+    model.p_id = dic[@"p_id"];
+    model.percentno = dic[@"percentno"];
+    model.type = dic[@"type"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.p_id forKey:@"p_id"];
+    [aCoder encodeObject:self.percentno forKey:@"percentno"];
+    [aCoder encodeObject:self.type forKey:@"type"];
+    
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.p_id = [aDecoder decodeObjectForKey:@"p_id"];
+        self.percentno = [aDecoder decodeObjectForKey:@"percentno"];
+        self.type = [aDecoder decodeObjectForKey:@"type"];
+    }
+    return self;
+}
+
+@end

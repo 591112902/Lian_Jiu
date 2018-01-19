@@ -1,0 +1,22 @@
+//
+//  HelpCenterModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/28.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "HelpCenterModel.h"
+
+@implementation HelpCenterModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    HelpCenterModel *model = [[self alloc] init];
+    model.content = dic[@"content"];
+     model.hid = dic[@"hid"];
+     model.no = dic[@"no"];
+     model.title = dic[@"title"];
+     model.type = dic[@"type"];
+    return model;
+}
+@end

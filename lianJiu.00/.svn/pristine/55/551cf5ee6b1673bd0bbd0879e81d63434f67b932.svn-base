@@ -1,0 +1,68 @@
+//
+//  ReplacePassWordViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ReplacePassWordViewController.h"
+#import "SetUpTableViewCell.h"
+#import "R_P_CViewController.h"
+#import "ForgotViewController.h"
+@interface ReplacePassWordViewController ()
+@end
+
+@implementation ReplacePassWordViewController
+-(void)addDataSource
+{
+    [self.dataSoc addObject:CustomLocalizedString(@"修改登陆密码", nil)];
+    [self.dataSoc addObject:CustomLocalizedString(@"修改支付密码", nil)];
+
+}
+-(void)addcommitBtn
+{
+
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    SetUpTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SetUpTableViewCell"];
+    switch (indexPath.row) {
+        case 0:
+            cell.rightImge.image = [UIImage imageNamed:@"zhifumima"];
+            break;
+        default:
+            cell.rightImge.image = [UIImage imageNamed:@"denglumima"];
+            break;
+    }
+    cell.label.text = self.dataSoc[indexPath.row];
+    
+    // Configure the cell...
+    
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==0) {
+        R_P_CViewController *RPCVC =[[R_P_CViewController alloc] init];
+        RPCVC.title = self.dataSoc[indexPath.row];
+        RPCVC.number = indexPath.row;
+  
+        [self.navigationController pushViewController:RPCVC animated:YES];
+    }else{
+        ForgotViewController *payForgotVC=[[ForgotViewController alloc]init];
+        payForgotVC.number=@1;
+        [self.navigationController pushViewController:payForgotVC animated:YES];
+    
+    }
+ 
+
+    
+    
+}
+
+
+@end

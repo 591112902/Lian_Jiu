@@ -1,0 +1,27 @@
+//
+//  SelectViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/7.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+
+@protocol SelectViewControllerDelegate <NSObject>
+
+- (void)AddTableViewDidSelect:(NSInteger)row;
+@end
+
+
+@interface SelectViewController : UIViewController
+@property (nonatomic,strong)NSArray *dataSource;
+@property (nonatomic,strong)NSArray *dataSourceList;
+@property (nonatomic,assign)CGRect tableViewFram;
+@property (nonatomic,assign)UIEdgeInsets tableViewUIEdgeInsets;
+@property (nonatomic,strong)UIImage *bgImage;
+@property (nonatomic,copy)NSString *titleText;
+@property (nonatomic,copy)void (^didselc)(NSInteger,NSString*);
+@property (nonatomic,assign)id<SelectViewControllerDelegate> delegate;
+@end

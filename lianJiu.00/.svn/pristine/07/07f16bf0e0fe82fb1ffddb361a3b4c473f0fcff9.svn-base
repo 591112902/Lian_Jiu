@@ -1,0 +1,127 @@
+//
+//  MyNewsTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyNewsTableViewController.h"
+#import "MyNewsModel.h"
+#import "MyNewsTableViewCell.h"
+#import "MyNewsContenViewController.h"
+@interface MyNewsTableViewController ()
+
+@end
+
+@implementation MyNewsTableViewController
+{
+    NSMutableArray *_dataSour;
+    NSString *reuseIdentifier;
+    NSString *vip;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"消息", nil);
+    reuseIdentifier = @"MyNewsTableViewCell";
+    [self.tableView registerNib:[UINib nibWithNibName:reuseIdentifier bundle:nil] forCellReuseIdentifier:reuseIdentifier];
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    
+    _dataSour = [[NSMutableArray alloc] init];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    vip = [def objectForKey:@"vip"];
+    [networking AFNPOSTNotHUD:QUERYPUSH withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+        NSArray *response = dic[@"response"];
+        for (NSDictionary *temp in response) {
+            MyNewsModel *model = [MyNewsModel ModleWith:temp andScreeW:self.view.window.bounds.size.width];
+            [_dataSour addObject:model];
+        }
+        [self.tableView reloadData];
+    } error:nil];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+
+}
+
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return _dataSour.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    MyNewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:indexPath];
+    MyNewsModel *moel = _dataSour[indexPath.section];
+    [cell fillCellWithModel:moel];
+    // Configure the cell...
+    
+    return cell;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 60;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 8;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 1;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MyNewsModel *model = _dataSour[indexPath.section];
+    MyNewsContenViewController *newContenVc = [[MyNewsContenViewController alloc] init];
+    newContenVc.newsModel = model;
+    [self.navigationController pushViewController:newContenVc animated:YES];
+    model.state = @"0";
+    self.preVc.isRequestData = YES;
+    [self.tableView reloadData];
+    [networking AFNPOST:READPUSH withparameters:@{@"vip":vip,@"puid":model.pu_id} success:^(NSMutableDictionary *dic) {
+    } error:nil HUDAddView:self.view];
+}
+//是否可以出现删除
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    return UITableViewCellEditingStyleDelete;
+
+}
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CustomLocalizedString(@"删除", nil);
+}
+
+- (void)tableView:(UITableView *)tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (editingStyle) {
+        case UITableViewCellEditingStyleDelete:
+            [self deleteNews:indexPath];
+            break;
+            
+        default:
+            break;
+    }
+}
+//删除
+-(void)deleteNews:(NSIndexPath *)indexPath
+{
+    MyNewsModel *model = _dataSour[indexPath.section];
+    NSSet *set = [NSSet setWithArray:@[model.pu_id]];
+    [networking AFNPOST:DELETEPUSH withparameters:@{@"vip":vip,@"puid":set} success:^(NSMutableDictionary *dic) {
+        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
+        self.preVc.isRequestData = YES;
+    } error:nil HUDAddView:self.view];
+    [_dataSour removeObjectAtIndex:indexPath.section];
+}
+@end

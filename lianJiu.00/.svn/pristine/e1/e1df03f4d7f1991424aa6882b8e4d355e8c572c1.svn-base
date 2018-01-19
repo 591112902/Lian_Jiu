@@ -1,0 +1,40 @@
+//
+//  C_ContenTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "C_ContenTableViewCell.h"
+
+@implementation C_ContenTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+-(void)fillCellWithModel:(CreditContenModel*)model{
+
+    
+    self.timeL.text = model.i_date;
+    int state = [model.i_source intValue];
+    if (state<10) {
+        self.ValueL.textColor = [UIColor orangeColor];
+        self.ValueL.text = [NSString stringWithFormat:@"+%@",model.i_integrals];
+    }else{
+        self.ValueL.textColor = [UIColor redColor];
+        self.ValueL.text = [NSString stringWithFormat:@"-%@",model.i_integrals];
+    }
+    NSArray *arr = @[@"注册",@"登录",@"签到",@"完善账号信息",@"发布招标",@"发布采购",@"发布供应",@"交易成功",@"推荐",@"发布虚假供应信息",@"发布虚假采购信息",@"发布虚假投标信息"];
+    if (state<arr.count&&state>0) {
+        if (state==9) {
+            self.titleL.text = [NSString stringWithFormat:@"%@%@",CustomLocalizedString(arr[state-1],nil),model.i_recommend];
+        }else{
+            self.titleL.text = CustomLocalizedString(arr[state-1], nil);
+        }
+        
+    }
+}
+
+@end

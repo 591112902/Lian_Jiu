@@ -1,0 +1,13 @@
+//
+//  MyNewsTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "MeVC.h"
+@interface MyNewsTableViewController : UITableViewController
+@property (nonatomic,strong)MeVC *preVc;
+@end

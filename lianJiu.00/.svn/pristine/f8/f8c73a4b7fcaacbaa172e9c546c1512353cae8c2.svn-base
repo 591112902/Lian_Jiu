@@ -1,0 +1,13 @@
+//
+//  SelectSubLocationViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/15.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SelectSubViewController.h"
+
+@interface SelectSubLocationViewController : SelectSubViewController
+
+@end

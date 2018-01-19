@@ -1,0 +1,18 @@
+//
+//  Re_2TableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "ReleaseCellModel.h"
+@interface Re_2TableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UITextField *valueTF;
+@property (strong, nonatomic) IBOutlet UIButton *rigthBtn;
+@property (strong, nonatomic) IBOutlet UILabel *rightLable;
+@property (strong, nonatomic) IBOutlet UIButton *rightclikBtn;
+-(void)fillCellWithModel:(ReleaseCellModel *)model;
+@end

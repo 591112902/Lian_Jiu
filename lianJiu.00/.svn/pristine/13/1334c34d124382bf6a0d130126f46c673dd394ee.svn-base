@@ -1,0 +1,15 @@
+//
+//  C_ContenTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "B_R_BaoZJTableViewCell.h"
+@interface C_ContenTableViewController : UITableViewController
+@property(nonatomic,strong)NSMutableArray *dataSouc;
+@property(nonatomic)NSInteger pageNo;
+
+@end

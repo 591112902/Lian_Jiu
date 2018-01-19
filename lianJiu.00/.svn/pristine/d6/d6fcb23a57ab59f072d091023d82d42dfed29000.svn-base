@@ -1,0 +1,13 @@
+//
+//  bidManageModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/31.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "bidManageModel.h"
+
+@implementation bidManageModel
+
+@end

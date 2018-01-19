@@ -1,0 +1,318 @@
+//
+//  ModifyTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/4.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+typedef enum {
+    HUOWULEIMU=0,//货物类目
+    
+    SHULIANG=4,//数量
+    
+    SUOZAIDIQU =5,//所在地
+    
+    HUOWUBAOZHUANG = 6,//货物包装
+    
+    CHUJIAJIJIADANWEI = 7,//出价交易单位
+    
+    JIAOYIBIZHONG =8,//交易币种
+    
+    JIAOYIFANGSHI = 9,//交易方式
+    
+    GONGYINGQIXIAN = 10,//供应期限
+    
+    TIHUOSHIJIAN = 11//提货时间
+
+}SELECTTABLEVIEW;
+
+
+#import "ModifyTableViewController.h"
+
+
+@interface ModifyTableViewController ()
+
+@end
+
+@implementation ModifyTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+}
+
+- (void)addfootView
+{
+
+    CGFloat H =5;
+    self.footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, ((self.view.frame.size.width-40)/3+50)*3+44+20+10+60)];
+    
+    UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc ]init];
+    flowLayout.headerReferenceSize =  CGSizeMake(BOUND_WIDTH, 30);
+    self.photoVC = [[MulPhotoCollectionViewController alloc] initWithCollectionViewLayout:flowLayout];
+    self.photoVC.view.frame = CGRectMake(0, H, BOUND_WIDTH, ((self.view.frame.size.width-40)/3+50)*3);
+    self.photoVC.dataSource = [[NSMutableArray alloc] init];
+    PhotoMultModel *model = [[PhotoMultModel alloc] init];
+    model.headTitle = CustomLocalizedString(@"货物主图:", nil);
+    model.photoDataSouc = self.mainPhotos;
+    [self.photoVC.dataSource addObject:model];
+    
+    PhotoMultModel *model2 = [[PhotoMultModel alloc] init];
+    model2.headTitle = CustomLocalizedString(@"货物详情图:", nil);
+    model2.photoDataSouc = self.detailPhotos;
+    [self.photoVC.dataSource addObject:model2];
+    PhotoMultModel *model3 = [[PhotoMultModel alloc] init];
+    model3.headTitle = CustomLocalizedString(@"货物清单:", nil);
+    model3.photoDataSouc = self.files;
+    [self.photoVC.dataSource addObject:model3];
+    self.photoVC.delegate =self;
+    [self addChildViewController:self.photoVC];
+    [self.footView addSubview:self.photoVC.view];
+    [self.photoVC didMoveToParentViewController:self];
+    H+=((self.view.frame.size.width-40)/3+50)*3+10;
+    
+    
+    conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, H, BOUND_WIDTH-20, 44)];
+    [conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn setTitle:@"修 改" forState:UIControlStateNormal];
+    H += 44+20;
+    [self.footView addSubview:conmitBtn];
+    
+    NSString *Btntitle = CustomLocalizedString(@"《招标交易规则》", nil);
+    CGSize labSize = [Btntitle boundingRectWithSize:CGSizeMake(10000, 15) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:13.0f]} context:nil].size;
+    CGFloat readBtnW = 40;
+    
+    readBtn = [[UIButton alloc] init];
+    readBtn.frame = CGRectMake((BOUND_WIDTH-labSize.width-readBtnW)/2, H, readBtnW, readBtnW);
+    readBtn.imageEdgeInsets = UIEdgeInsetsMake(10,10,10,10);
+    [readBtn setImage:[UIImage imageNamed:@"cb_glossy_off"] forState:UIControlStateNormal];
+    [readBtn setImage:[UIImage imageNamed:@"cb_green_on"] forState:UIControlStateSelected];
+    [readBtn addTarget:self action:@selector(readBtnOnclik:) forControlEvents:UIControlEventTouchUpInside];
+    [self.footView addSubview:readBtn];
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom] ;
+    [rightBtn addTarget:self action:@selector(jiaoshiGuize) forControlEvents:UIControlEventTouchUpInside];
+    [rightBtn setTitle:Btntitle forState:UIControlStateNormal];
+    [rightBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    rightBtn.titleLabel.font = UIFont13;
+    rightBtn.frame  = CGRectMake(readBtn.frame.origin.x+readBtnW,H, labSize.width+5,readBtnW);
+    [self.footView addSubview:rightBtn];
+    
+    self.tableView.tableFooterView =self.footView;
+//    H+=readBtnW+20;
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if (buttonIndex==0) {
+        PhotoMultModel *model = self.photoVC.dataSource.firstObject;
+        NSString *url1 = @"";
+        NSMutableArray *imageArr1 = [[NSMutableArray alloc] init];
+        for (id temp in model.photoDataSouc) {
+            if ([temp isKindOfClass:[NSString class]]) {
+               url1 = [url1 stringByAppendingString:[NSString stringWithFormat:@"%@,",temp]];
+            }else if([temp isKindOfClass:[UIImage class]]){
+                [imageArr1 addObject:temp];
+            }
+        }
+        NSArray *dataArr= [self photoDataSoucToData:imageArr1];
+        
+        [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr success:^(NSMutableDictionary *dic) {
+         
+//             NSString *photostr1= dic[@"response"];
+            NSString *photostr1=nil;
+            
+            photostr1 = [url1 stringByAppendingString:dic[@"response"]];
+            
+            PhotoMultModel *model2 = self.photoVC.dataSource[1];
+            NSString *url2 = @"";
+            NSMutableArray *imageArr2 = [[NSMutableArray alloc] init];
+            for (id temp in model2.photoDataSouc) {
+                if ([temp isKindOfClass:[NSString class]]) {
+                    url2 = [url2 stringByAppendingString:[NSString stringWithFormat:@"%@,",temp]];
+                }else if([temp isKindOfClass:[UIImage class]]){
+                    [imageArr2 addObject:temp];
+                }
+            }
+            NSArray *dataArr2= [self photoDataSoucToData:imageArr2];
+            [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr2 success:^(NSMutableDictionary *dic) {
+                
+//                NSString *photostr2 = dic[@"response"];
+               //赋值前需要初始化
+                NSString *photostr2 =nil;
+//                 photostr2 = dic[@"response"];
+                photostr2 = [url2 stringByAppendingString:dic[@"response"]];
+//                PhotoMultModel *model3 = self.photoVC.dataSource[2];
+                
+                PhotoMultModel *model3=nil;
+                model3=self.photoVC.dataSource[2];
+                if (model3.photoDataSouc.count>0) {
+                    NSMutableArray *urls = [[NSMutableArray alloc] init];
+                    for (NSString *str in model3.photoDataSouc) {
+                    
+//                        NSString *fullPath = [LIBRARRY stringByAppendingPathComponent:@"Pfile"];
+                            NSString *fullPath=nil;
+//                        fullPath=[LIBRARRY stringByAppendingPathComponent:@"Pfile"];
+                        fullPath = [LIBRARRY stringByAppendingPathComponent:str];
+                        [urls addObject:fullPath];
+                    }
+                    [networking AFNPOSTMutableArrUrlFile:LOADFILE withparameters:nil dataName:@"file" pahts:urls success:^(NSMutableDictionary *dic) {
+                        NSString *photostr3 = dic[@"response"];
+                        [self postDataPFile:photostr1 pDetail:photostr2 pCargolist:photostr3 pRar:nil listRar:nil];
+                    } error:nil HUDAddView:self.view];
+                }else{
+                    [self postDataPFile:photostr1 pDetail:photostr2 pCargolist:nil pRar:nil listRar:nil];
+                }
+            } error:nil HUDAddView:self.view];
+            
+            
+        } error:nil HUDAddView:self.view];
+    }
+}
+//上传
+-(void)postDataPFile:(NSString *)pFile pDetail:(NSString *)pDetail pCargolist:(NSString *)pCargolist pRar:(NSString *)pRar listRar:(NSString *)listRar
+{
+
+     STRINGNONIL(self.bidModel.t_id);
+
+        NSMutableDictionary *parameters = [[NSMutableDictionary alloc] initWithDictionary:@{ @"pFile":pFile, @"pDetail":pDetail,@"pRar":pRar?pRar:@"", @"pCargolist":pCargolist?pCargolist:@"", @"listRar":listRar?listRar:@""}];
+
+       NSArray *p=@[@"bid",@"tTitle",@"tType",@"tTendertype",@"size",@"tQuality",@"tDate",@"tPicktime",@"tDetail",@"areaId",@"pId",@"usrId",@"dw_id",@"unitId",@"tradeId",@"packId",@"currencyId",];
+    
+    for (int i=0; i<p.count; i++) {
+        ReleaseCellModel *MOdel0=self.dataScour[0];
+        ReleaseCellModel *model2=self.dataScour[2];
+        ReleaseCellModel *model3=self.dataScour[3];
+      
+        if (MOdel0.text) {
+            if (i==0) {
+                  [parameters setObject:self.bidModel.t_id forKey:@"bid"];
+            }else if (i==1){
+            
+                [parameters setObject:MOdel0.text forKey:p[i]];
+            }
+            
+            
+            else
+           if (i==2) {
+                if ([model2.text isEqualToString:@"0"]) {
+                    [parameters setObject:@"供应招标" forKey:p[i]];
+                }else{
+                    [parameters setObject:@"采购招标" forKey:p[i]];
+                }
+            }else if(i==3)
+            {
+                if ([model3.text isEqualToString:@"0"]) {
+                    [parameters setObject:@"全新" forKey:p[i]];
+                }else{
+                    [parameters setObject:@"旧" forKey:p[i]];
+                }
+            }
+                else if(i==4){
+                [parameters setObject:@"" forKey:@"size"];
+                    
+                }else if (i==10) {
+                    ReleaseCellModel *model6=self.dataScour[0];
+                    [parameters setObject:model6.textId forKey:p[i]];
+//
+                }else if (i==11){
+                        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+                        NSString *usrId = [def objectForKey:@"vip"];
+
+                    [parameters setObject:usrId forKey:@"usrId"];
+                }else if (i==12||i==13){
+                    ReleaseCellModel *model5 = self.dataScour[SHULIANG];
+                    [parameters setObject:model5.rightText forKey:@"dw_id"];
+                     [parameters setObject:model5.textId forKey:@"unitId"];
+                }
+
+                else if (i==5||i==14||i==9||i==15||i==16){
+                    ReleaseCellModel *tQualityModel=self.dataScour[4];
+                    [parameters setObject:tQualityModel.text forKey:p[5]];
+             
+                    ReleaseCellModel *areaIdMedel=self.dataScour[5];
+                    [parameters setObject:areaIdMedel.textId forKey:p[9]];
+                    
+                    ReleaseCellModel *tradeIdModel =self.dataScour[9];
+                    [parameters setObject:tradeIdModel.textId forKey:p[14]];
+                    
+                    ReleaseCellModel *packIdModel=self.dataScour[6];
+                    [parameters setObject:packIdModel.textId forKey:p[15]];
+                    
+                    ReleaseCellModel *currencyIdModel=self.dataScour[8];
+                    [parameters setObject:currencyIdModel.textId forKey:p[16]];
+                    
+                }else if(i==6||i==7||i==8){
+
+                    ReleaseCellModel *tDateModel=self.dataScour[10];
+            [parameters setObject:tDateModel.text forKey:p[6]];
+                    ReleaseCellModel *tPicktimeModel=self.dataScour[11];
+                    [parameters setObject:tPicktimeModel.text forKey:p[7]];
+                    ReleaseCellModel *tDetailModel=self.dataScour[12];
+                    [parameters setObject:tDetailModel.text forKey:p[8]];
+            
+                }
+//                else if (i==9){
+//                    [parameters setObject: forKey:<#(nonnull id<NSCopying>)#>];
+//                }
+//                (i==HUOWULEIMU|| i==SUOZAIDIQU||i==HUOWUBAOZHUANG||i==CHUJIAJIJIADANWEI||i==JIAOYIBIZHONG||i==JIAOYIFANGSHI)
+//                     (i==SHULIANG ||i==SUOZAIDIQU||i==HUOWUBAOZHUANG||i==CHUJIAJIJIADANWEI||i==JIAOYIBIZHONG||i==JIAOYIFANGSHI)
+//            {
+//                [parameters setObject:modle.textId forKey:p[i]];
+//            }
+//            else{
+//                [parameters setObject:modle.text forKey:p[i]];
+//            }
+            
+                
+        }
+        
+    }
+
+    
+    //提交成功界面  MODIFYTENDER  ADDTENDER
+    [networking AFNPOST:MODIFYTENDER withparameters:parameters success:^(NSMutableDictionary *dic) {
+     
+        CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+        CMVC.title = self.title;
+        CMVC.contenValue = CustomLocalizedString(@"修改成功", nil);
+        CMVC.subValue = CustomLocalizedString(@"您的招标信息已经提交成功", nil);
+        CMVC.image = [UIImage imageNamed:@"sucsses"];
+        [self.navigationController pushViewController:CMVC animated:YES];
+        //返回上级页面
+        [self.view layoutSubviews];//重新加载数据
+        self.isBackPreView = YES;
+//                for (PhotoMultModel *model in _photoVC.dataSource) {
+//                    [model.photoDataSouc removeAllObjects];
+//                }
+//                [_photoVC.collectionView reloadData];
+//        
+//                for (int i = 0;i<self.dataScour.count;i++) {
+//                   ReleaseCellModel *model  = self.dataScour[i];
+//                    if (i==2||i==3) {
+//                        model.text = @"0";
+//                    }else
+//                    {
+//                        model.rightText = nil;
+//                        model.textId = nil;
+//                        model.text = nil;
+//                    }
+//                }
+//                [self.tableView reloadData];
+        
+    } error:^(NSError *error) {
+
+    } HUDAddView:self.view];
+
+ 
+}
+
+
+
+
+
+@end

@@ -1,0 +1,146 @@
+//
+//  R_P_CViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "R_P_CViewController.h"
+#import "validate.h"
+#import "SuccessToNViewController.h"
+@interface R_P_CViewController ()<UITextFieldDelegate>
+{
+    NSString *email;
+}
+@property (strong, nonatomic) IBOutlet UITextField *oldPasswordTF;
+@property (strong, nonatomic) IBOutlet UITextField *NPasswordTF;
+@property (strong, nonatomic) IBOutlet UITextField *NPasswordTF2;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
+
+@end
+
+@implementation R_P_CViewController
+{
+    NSUserDefaults *defaults;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    defaults = [NSUserDefaults standardUserDefaults];
+    
+    [self addRightView:self.oldPasswordTF];
+    [self addRightView:self.NPasswordTF];
+    [self addRightView:self.NPasswordTF2];
+    _oldPasswordTF.placeholder = CustomLocalizedString(@"请输入原密码", nil);
+    _NPasswordTF.placeholder = CustomLocalizedString(@"请输入新密码", nil);
+    _NPasswordTF.placeholder = CustomLocalizedString(@"请再次输入密码", nil);
+}
+//textfield添加右边的按钮
+- (void)addRightView:(UITextField *)textField
+{
+    CGFloat btnH = self.oldPasswordTF.frame.size.height;
+    
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 10, btnH, btnH)];
+    [btn setImage:[UIImage imageNamed:@"隐藏密码"] forState:UIControlStateNormal];
+    [btn setImage:[UIImage imageNamed:@"显示密码"] forState:UIControlStateSelected];
+    btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    btn.imageEdgeInsets = UIEdgeInsetsMake(40, 20, 0, 10);
+    [btn addTarget:self action:@selector(PasswordMingWen:) forControlEvents:UIControlEventTouchUpInside];
+    btn.highlighted = NO;
+    textField.rightView = btn;
+    textField.rightViewMode = UITextFieldViewModeAlways;
+}
+//textfield右边btn点击事件
+-(void)PasswordMingWen:(UIButton *)btn
+{
+    btn.selected = !btn.selected;
+    UITextField *textf = (UITextField *)btn.superview;
+    textf.secureTextEntry  = !textf.secureTextEntry;
+}
+- (IBAction)Tonext:(id)sender {
+
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    if (islogin) {
+         email= [defaults objectForKey:@"email"];
+        if ([validate CheckInputAccount:CustomLocalizedString(@"旧密码", nil) withText:self.oldPasswordTF.text withminNum:6 withMaxNum:20]&&
+            [validate CheckInputAccount:CustomLocalizedString(@"新密码", nil) withText:self.NPasswordTF.text withminNum:6 withMaxNum:20]&&
+            [validate CheckInput:CustomLocalizedString(@"新密码", nil) withString:self.NPasswordTF.text wihtString2:self.NPasswordTF2.text]
+            ) {
+            if (![self.NPasswordTF.text correspondToPasswordRequirements]) {
+                [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"密码长度不能少于6位,密码需包含字母或数字", nil) toView:self.view];
+                return;
+            }
+         
+            if (self.number==0) {// 登陆密码
+                NSDictionary *parameters = @{@"email":email,@"pwd":self.oldPasswordTF.text,@"newpwd":self.NPasswordTF.text};
+                [networking AFNPOST:UPDATEPWD withparameters:parameters success:^(NSMutableDictionary *dic) {
+                    [self updataSuccess];
+                    
+                    [self modifyPayPwdSeccess];
+                    
+                } error:nil HUDAddView:self.view];
+            }else{
+            
+                [self modifyPayPwdSeccess];
+                
+            }
+            
+        }
+    }
+    
+
+}
+
+
+-(void)modifyPayPwdSeccess{
+
+    NSDictionary *parameters = @{@"email":email,@"payment":self.oldPasswordTF.text,@"newpayment":self.NPasswordTF.text};
+    [networking AFNPOST:UPDATEPAYMENT withparameters:parameters success:^(NSMutableDictionary *dic) {
+        [self updataSuccess];
+    } error:nil HUDAddView:self.view];
+}
+
+- (void)updataSuccess
+{
+    SuccessToNViewController *SNVC = [[SuccessToNViewController alloc] init];
+    SNVC.title = self.title;
+    
+    
+    NSString *vip = [defaults objectForKey:@"vip"];
+    
+    NSMutableString *promtlText = [NSMutableString stringWithString:CustomLocalizedString(@"恭喜，再商网账号100密码修改成功", nil)];
+    NSRange range =[promtlText rangeOfString:@"100"];
+    if (range.length>0) {
+        [promtlText replaceCharactersInRange:range withString:[NSString stringWithFormat:@"%@",vip]];
+    }
+    SNVC.contenValue =promtlText;
+    SNVC.nextValue = CustomLocalizedString( @"确定", nil);
+    [self.navigationController pushViewController:SNVC animated:YES];
+
+}
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    
+    if ([string isEqualToString:@" "]) {
+        return NO;
+    }
+    
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+
+    if (textField==_NPasswordTF||textField==_NPasswordTF2||textField==_oldPasswordTF)
+    {
+        if ([aString length] > 16) {
+            textField.text = [aString substringToIndex:16];
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+@end

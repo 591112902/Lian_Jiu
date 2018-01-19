@@ -1,0 +1,14 @@
+//
+//  ServicesModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/7.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "DictionnaryModel.h"
+
+@interface ServicesModel : DictionnaryModel
+@property(nonatomic,assign)CGFloat cellH;
++(instancetype)ModelWithDictionnary:(NSDictionary *)dic andScreeW:(CGFloat)widht;
+@end

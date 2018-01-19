@@ -1,0 +1,632 @@
+//
+//  bidVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+/** 文件作用  竞价投标  */
+
+#import "BidVC.h"
+
+@interface BidVC () <SDCycleScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
+#warning 文件获取word
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *leftNavItem;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *rightNavItem;
+@property (strong, nonatomic) IBOutlet UIButton *classify;
+@property (strong, nonatomic) IBOutlet UIButton *location;
+@property (strong, nonatomic) IBOutlet UIButton *list;
+@property (strong, nonatomic) SDCycleScrollView *cycleScrollView2;
+@property (strong, nonatomic) NSMutableDictionary *parameters;
+@property (strong, nonatomic) NSMutableArray *dataSource;
+@end
+
+@implementation BidVC
+{
+    UITableView *_tableView;
+    UICollectionView *_collectionView;
+    BOOL _iscollecList;//当前view是否collectionView
+    CGFloat scrollViewH;
+    SDCycleScrollView *cycleScrollView;//滚动视图
+    NSMutableArray *scrollPhotoList;
+    UILabel *searchLabel;//搜索框label
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    scrollViewH = BOUND_WIDTH*170/640;
+    [self addNavigationItem];
+    [self addBtnList];
+    [self reloadViewText];
+//    [self addscorlView];
+    [self addListView];
+    [self ADDCarousel];
+    [self addBaseDatasoure];
+    
+}
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    static dispatch_once_t onceToken;
+   
+    //  初次进入时 language
+    dispatch_once(&onceToken, ^{
+        self.leftNavItem.title = CustomLocalizedString(@"Language", nil);
+    });
+    
+    
+}
+//重新刷新页面
+- (void)reloadSubViews
+{
+   
+    self.leftNavItem.title = CustomLocalizedString(@"Language", nil);
+    
+    [self reloadViewText];
+    [_tableView reloadData];
+    [_collectionView reloadData];
+  
+    
+}
+
+- (void)reloadViewText
+{
+    
+    self.rightNavItem.title = CustomLocalizedString(@"发布", nil);
+    [self.classify setTitle:CustomLocalizedString(@"类别", nil) forState:UIControlStateNormal];
+    [self.location setTitle:CustomLocalizedString(@"地区", nil) forState:UIControlStateNormal];
+    [self.list setTitle:CustomLocalizedString(@"大图", nil) forState:UIControlStateNormal];
+    searchLabel.text = CustomLocalizedString(@"搜一搜试试", nil);
+    self.navigationItem.backBarButtonItem.title = CustomLocalizedString(@"返回", nil);
+    
+    MJRefreshHeaderIdleText = CustomLocalizedString(@"下拉可以刷新", nil);
+    MJRefreshHeaderPullingText = CustomLocalizedString(@"松开立即刷新", nil);
+    MJRefreshHeaderRefreshingText = CustomLocalizedString(@"正在刷新数据中...", nil);
+    
+    MJRefreshAutoFooterIdleText = CustomLocalizedString(@"点击或上拉加载更多", nil);
+    MJRefreshAutoFooterRefreshingText = CustomLocalizedString(@"正在加载更多的数据...", nil);
+    MJRefreshAutoFooterNoMoreDataText = CustomLocalizedString(@"已经全部加载完毕", nil);
+    
+    MJRefreshBackFooterIdleText = CustomLocalizedString(@"上拉可以加载更多", nil);
+    MJRefreshBackFooterPullingText = CustomLocalizedString(@"松开立即加载更多", nil);
+    MJRefreshBackFooterRefreshingText = CustomLocalizedString(@"正在加载更多的数据...", nil);
+    MJRefreshBackFooterNoMoreDataText = CustomLocalizedString(@"已经全部加载完毕", nil);
+}
+#pragma mark * 添加导航条item
+-(void)addNavigationItem
+{
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    CGFloat sLeftImageLeftGap = 10 ;
+
+    UIButton *searchBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 0, 30)];
+    UIImage *image = [UIImage imageNamed:@"select_kuang"];
+    [searchBtn setImage:image forState:UIControlStateNormal];
+
+    UIImageView *sLeftImage = [[UIImageView alloc] initWithFrame:CGRectMake(sLeftImageLeftGap, 6, 18, 18)];
+    sLeftImage.contentMode = UIViewContentModeScaleAspectFit;
+    sLeftImage.image = [UIImage imageNamed:@"frone_fangdajing"];
+    [searchBtn addSubview:sLeftImage];
+    
+    searchLabel = [[UILabel alloc] initWithFrame:CGRectMake(sLeftImageLeftGap+25, 6, 130, 18)];
+    searchLabel.font = [UIFont systemFontOfSize:15];
+    searchLabel.textColor = [UIColor grayColor];
+    searchLabel.text = CustomLocalizedString(@"搜一搜试试", nil);
+    [searchBtn addSubview:searchLabel];
+    self.navigationItem.titleView =searchBtn;
+    [searchBtn addTarget:self action:@selector(goSearchView) forControlEvents:UIControlEventTouchUpInside];
+}
+
+
+
+#pragma mark * 添加按钮
+-(void)addBtnList
+{
+    self.classify.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.location.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.list.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    UIImageView *gapView1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 8, 0.5, self.location.frame.size.height-16)];
+    gapView1.backgroundColor = [UIColor grayColor];
+    [self.location addSubview:gapView1];
+    UIImageView *gapView2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 8, 0.5, self.location.frame.size.height-16)];
+    gapView2.backgroundColor = [UIColor grayColor];
+    [self.location addSubview:gapView1];
+    [self.list addSubview:gapView2];
+}
+
+#pragma mark * 申请数据
+-(NSMutableDictionary *)parameters
+{
+    if (!_parameters) {
+        _parameters = [[NSMutableDictionary alloc] initWithDictionary:@{@"pageNo":@1}];
+    }
+    return _parameters;
+}
+-(NSMutableArray *)dataSource
+{
+    if (!_dataSource) {
+        _dataSource = [[NSMutableArray alloc] init];
+    }
+    return _dataSource;
+}
+//辅助接口数据（地区）
+- (void)addBaseDatasoure
+{
+    [networking AFNRequest:BASES withparameters:nil success:^(NSMutableDictionary *dic) {
+        if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = dic[@"response"];
+            NSLog(@"%@",BASEPATH);
+            ///删除之前数据，因为修改过basemodel，以后可以去掉
+            [[NSFileManager defaultManager] removeItemAtPath:BASEPATH error:nil];
+            BaseModel *baseModel = [BaseModel ModelWith:response];
+            [NSKeyedArchiver archiveRootObject:baseModel toFile:BASEPATH];
+        }
+    } error:nil HUDAddView:self.view];
+}
+//广告接口
+- (void)ADDCarousel
+{
+    [networking AFNRequestNotHUD:CAROUSEL withparameters:@{@"type":@"1"} success:^(NSMutableDictionary *dic) {
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            
+            NSMutableArray *arr = [[NSMutableArray alloc] init];
+            scrollPhotoList = [[NSMutableArray alloc] init];
+            for (NSDictionary *temp in response) {
+                NSString *str = temp[@"c_img"]?temp[@"c_img"]:@"";
+                NSString *urlStr = [str excisionForFistString];
+                urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+                
+                [arr addObject:[PHOTOLOADPATH stringByAppendingString:urlStr]];
+
+                [scrollPhotoList addObject:temp[@"c_url"]?temp[@"c_url"]:@""];
+            }
+            
+            cycleScrollView.imageURLStringsGroup =arr;
+        }
+    } error:nil];
+}
+//内容接口
+- (void)addDatasourceIsDown:(BOOL)isDown
+{
+    NSMutableDictionary *parameters = [self.parameters mutableCopy];
+    if (isDown) {
+        [parameters setObject:@1 forKey:@"pageNo"];
+    }
+    HZLog(@"%@",parameters);
+    [networking AFNRequest:QUERYTENDER withparameters:parameters success:^(NSMutableDictionary *dic) {
+        if (isDown) {
+            [self.dataSource removeAllObjects];
+        }
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+               self.bid = [bidModel ModelWith:temp];
+                [self.dataSource addObject:self.bid];
+            }
+            if (isDown) {
+                [self.parameters setObject:@2 forKey:@"pageNo"];
+            }else{
+                NSInteger pageNo = [self.parameters[@"pageNo"] integerValue];
+                pageNo ++;
+                [self.parameters setObject:[NSNumber numberWithInteger:pageNo] forKey:@"pageNo"];
+                
+            }
+        }
+        if (_iscollecList) {
+            [_collectionView reloadData];
+        }else{
+            [_tableView reloadData];
+        }
+        
+    } error:nil HUDAddView:self.view];
+}
+#pragma mark * 滚动广告
+-(SDCycleScrollView *)addscorlView
+{
+
+    CGFloat w = self.view.bounds.size.width;
+    
+    // 本地加载 --- 创建不带标题的图片轮播器
+    cycleScrollView = [[SDCycleScrollView alloc ] initWithFrame:CGRectMake(0, 0, w, scrollViewH)];
+    cycleScrollView.backgroundColor = BGColor;
+    cycleScrollView.infiniteLoop = YES;
+    cycleScrollView.delegate = self;
+    cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
+    cycleScrollView.dotColor = MAINColor; // 自定义分页控件小圆标颜色
+    cycleScrollView.placeholderImage = [UIImage imageNamed:@"180x180"];
+    return cycleScrollView;
+
+}
+#pragma mark - SDCycleScrollViewDelegate
+
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
+{
+    if (scrollPhotoList.count>0) {
+        ZSWViewController *ZSWWebView = [[ZSWViewController alloc] init];
+        ZSWWebView.title = CustomLocalizedString(@"再商网", nil);
+        ZSWWebView.url= scrollPhotoList[index];
+        ZSWWebView.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:ZSWWebView animated:YES];
+    }
+}
+
+-(void)addListView
+{
+    
+    if (_iscollecList) {
+        [_tableView removeFromSuperview];
+        [self addCollectionView];
+        
+    }else
+    {
+        [_collectionView removeFromSuperview];
+        [self addTableView];
+        
+    }
+}
+
+
+#pragma mark - addtableview
+-(void)addTableView
+{
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64+50, BOUND_WIDTH, BOUND_HIGHT-64-50-TARBARHEIGHT)];
+        _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        [_tableView registerNib:[UINib nibWithNibName:@"MainTableViewCell" bundle:nil] forCellReuseIdentifier:@"MainTableViewCell"];
+        _tableView.backgroundColor = BGColor;
+        _tableView.tableHeaderView = [self addscorlView];
+        [self.view addSubview:_tableView];
+  
+        __weak UITableView *tableView = _tableView;
+        WS(weakSelf);
+        // 下拉刷新
+        tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            
+            
+            [weakSelf ADDCarousel];
+            [weakSelf addDatasourceIsDown:YES];
+            // 结束刷新
+            [tableView.header endRefreshing];
+        }];
+        [tableView.header beginRefreshing];
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.header.automaticallyChangeAlpha = YES;
+        // 上拉刷新
+        tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [weakSelf addDatasourceIsDown:NO];
+            // 结束刷新
+            [tableView.footer endRefreshing];
+        }];
+
+    }else{
+        [self.view addSubview:_tableView];
+        [_tableView reloadData];
+    }
+
+}
+
+
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _dataSource.count*2;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row%2==0) {
+
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+            cell.backgroundColor = BGColor;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+   
+        }
+        return cell;
+    }else{
+        MainTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MainTableViewCell"];
+        [cell fillCellWithModel:_dataSource[indexPath.row/2]];
+   
+        return cell;
+    }
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==0) {
+        return 0;
+    }
+    if (indexPath.row%2==0) {
+        return 8;
+    }
+    return 100.0;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    bidModel *model = _dataSource[indexPath.row/2];
+
+        B_C_TViewController *bidContenVC = [[B_C_TViewController alloc] init];
+        bidContenVC.model = model;
+        bidContenVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+
+    
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers.lastObject;
+    MeVC *meVc = nav.viewControllers.firstObject;
+    meVc.isRequestData = YES;
+    
+}
+
+#pragma mark - addCollectionView
+-(void)addCollectionView
+{
+  
+    if (!_collectionView) {
+        UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc ]init];
+        if (BOUND_WIDTH<=540) {
+            flowLayout.itemSize = CGSizeMake((BOUND_WIDTH-30)/2-0.001, 180);
+            flowLayout.sectionInset =UIEdgeInsetsMake(10, (BOUND_WIDTH-flowLayout.itemSize.width*2)/3, 10, (BOUND_WIDTH-flowLayout.itemSize.width*2)/3);
+        }else{
+            flowLayout.itemSize = CGSizeMake(200, 200);
+            NSInteger nub =floor(BOUND_WIDTH/200);
+            flowLayout.sectionInset =UIEdgeInsetsMake(10, (BOUND_WIDTH-200*nub)/(nub+1), 10, (BOUND_WIDTH-200*nub)/(nub+1));
+        }
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 64+50, BOUND_WIDTH, BOUND_HIGHT-64-50-TARBARHEIGHT) collectionViewLayout:flowLayout];
+        _collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        _collectionView.delegate = self;
+        _collectionView.dataSource = self;
+        [_collectionView registerNib:[UINib nibWithNibName:@"MainCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"MainCollectionViewCell"];
+        _collectionView.backgroundColor = BGColor;
+        
+//#warning  却少调用方法 cell
+//        -(void)fillCellWithModel:(bidModel*)model
+        [self.view addSubview:_collectionView];
+        
+        
+            __weak UICollectionView *collectionView = _collectionView;
+        WS(weakSelf);
+            // 下拉刷新
+            collectionView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+                [weakSelf addDatasourceIsDown:YES];
+                // 结束刷新
+                [collectionView.header endRefreshing];
+            }];
+//            [collectionView.header beginRefreshing];
+        
+            // 上拉刷新
+            collectionView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                [weakSelf addDatasourceIsDown:NO];
+                    // 结束刷新
+                [collectionView.footer endRefreshing];
+            }];
+            // 默认先隐藏footer
+//            collectionView.footer.hidden = YES;
+    }else{
+        [self.view addSubview:_collectionView];
+        [_collectionView reloadData];
+    }
+    
+}
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return _dataSource.count;
+}
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+ MainCollectionViewCell*  cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"MainCollectionViewCell" forIndexPath:indexPath];
+
+
+    [cell fillCellWithModel:_dataSource[indexPath.row]];
+    return cell;
+
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    bidModel *model = _dataSource[indexPath.row];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    if ([model.usr_id isEqualToString:vip?vip:@""]||[model.t_bidstate_id isEqualToString:@"4"]) {
+        B_C_TReadOnlyViewController *bidContenVC = [[B_C_TReadOnlyViewController alloc] init];
+        bidContenVC.model = model;
+        bidContenVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }else{
+        B_C_TViewController *bidContenVC = [[B_C_TViewController alloc] init];
+        bidContenVC.model = model;
+        bidContenVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers.lastObject;
+    MeVC *meVc = nav.viewControllers.firstObject;
+    meVc.isRequestData = YES;
+}
+
+#pragma mark - 点击事件
+- (IBAction)zaiShangWang:(id)sender {
+ 
+
+         /** 语言选择  */
+        SelectViewController *seVC = [[SelectViewController alloc] init];
+        NSArray *list = @[@"简体中文",@"繁体中文",@"English",@"日本の",@"한국의"];
+        NSArray *listValue = @[@"zh-Hans",@"zh-Hant",@"en",@"ja",@"ko"];
+        WS(weakSelf);
+//        seVC.titleText = CustomLocalizedString(@"Language", nil);
+//   seVC.titleText=@"Language";
+    seVC.titleText=CustomLocalizedString(@"language", nil);
+        seVC.dataSource = list;
+        seVC.didselc = ^(NSInteger a,NSString *str){
+            NSString *lan = [InternationalControl userLanguage];
+            
+            if([lan isEqualToString:listValue[a]]){//判断当前的语言，进行改变
+                
+            }else{
+                [InternationalControl setUserlanguage:listValue[a]];
+                //改变完成之后发送通知，告诉其他页面修改完成，提示刷新界面
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"changeLanguage" object:nil];
+                [weakSelf changeLanguage];
+            }
+            
+        };
+        
+        [self.tabBarController addChildViewController:seVC];
+        [self.view.window addSubview:seVC.view];
+        //*/
+        
+        /*
+        NSString *lan = [InternationalControl userLanguage];
+        if (![lan isEqualToString:@"en"]) {
+            HZLog(@"setUserlanguage: en");
+            [InternationalControl setUserlanguage:@"en"];
+            //改变完成之后发送通知，告诉其他页面修改完成，提示刷新界面
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"changeLanguage" object:nil];
+            //[self changeLanguage];
+        }*/
+//    }
+//    else{
+//        LoginViewController *loginVC = [[LoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:loginVC];
+//        nav.hidesBottomBarWhenPushed = YES;
+//        [self presentViewController:nav animated:YES completion:nil];
+//    }
+}
+-(void)changeLanguage{
+  
+    
+}
+
+- (IBAction)Release:(id)sender {
+    
+    
+
+        ReleaseTableViewController *releaseVC = [[ReleaseTableViewController alloc] init];
+        releaseVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:releaseVC animated:YES];
+
+}
+
+
+//类别按钮
+- (IBAction)ToClassify:(id)sender {
+
+    
+    BaseModel *model = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+//    SelectSubViewController *seVC = [[SelectSubViewController alloc] init];
+    
+      SelectSubClassViewController *seVC = [[SelectSubClassViewController alloc] init];
+    seVC.titleText = CustomLocalizedString(@"类别", nil);
+    seVC.allText = CustomLocalizedString(@"全部", nil);
+    seVC.dataSourceList = model.Products;
+   
+    WS(weakSelf);
+    seVC.didselc = ^(NSInteger a,NSString *str,NSString*value){
+        [weakSelf.classify setTitle:str forState:UIControlStateNormal];
+        [weakSelf changgeParameter:@"type" value:value];
+    };
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+
+}
+
+//地区按钮
+- (IBAction)ToLocation:(id)sender {
+    BaseModel *model = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    SelectSubLocationViewController *seVC = [[SelectSubLocationViewController alloc] init];
+//        SelectSubViewController *seVC = [[SelectSubViewController alloc] init];
+    seVC.titleText = CustomLocalizedString(@"地区", nil);
+    seVC.allText = CustomLocalizedString(@"全部国家", nil);
+    seVC.dataSourceList = model.Areas;
+    WS(weakSelf);
+    seVC.didselc = ^(NSInteger a,NSString *str,NSString*value){
+        [weakSelf.location setTitle:str forState:UIControlStateNormal];
+        [weakSelf changgeParameter:@"area" value:value];
+    };
+    
+    
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+   
+}
+- (void)changgeParameter:(NSString *)key value:(NSString *)value
+{
+    if (value) {
+        [_parameters setObject:value forKey:key];
+    }else{
+        [_parameters removeObjectForKey:key];
+    }
+    [_parameters setObject:@1 forKey:@"pageNo"];
+    [self addDatasourceIsDown:YES];
+}
+
+//列表按钮
+- (IBAction)ToListClass:(id)sender {
+    _iscollecList = !_iscollecList;
+    UIButton *btn = (UIButton *)sender;
+    if (_iscollecList) {
+        [btn setImage:[UIImage imageNamed:@"frone_listorgrid"] forState:UIControlStateNormal];
+        [btn setTitle:CustomLocalizedString(@"列表", nil) forState:UIControlStateNormal];
+    }else
+    {
+        [btn setImage:[UIImage imageNamed:@"frone_datu"] forState:UIControlStateNormal];
+        [btn setTitle:CustomLocalizedString(@"大图", nil) forState:UIControlStateNormal];
+    }
+    [self addListView];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(void)goSearchView
+{
+    SearchViewController *serchView = [[SearchViewController alloc] init];
+    serchView.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:serchView animated:YES];
+}
+-(void)dealloc
+{
+    _tableView.footer = nil;
+    _tableView.header = nil;
+    _collectionView.footer = nil;
+    _collectionView.header = nil;
+    
+    //   定期清理缓存
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDate *date = [NSDate date];
+    NSTimeInterval now = [date timeIntervalSince1970];
+    double time =  [defaults doubleForKey:@"ceanTime"];
+    if ((now-time)>60*60*24*10) {
+        if (time!=0) {
+            [cycleScrollView clearCache];
+            [[SDImageCache sharedImageCache] clearDisk];
+        }
+        [defaults setDouble:now forKey:@"ceanTime"];
+        [defaults removeObjectForKey:@"www"];
+        [defaults synchronize];
+    }
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+@end

@@ -1,0 +1,17 @@
+//
+//  ReleaseCellModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface ReleaseCellModel : NSObject
+@property(nonatomic,strong)NSString *title;//
+@property(nonatomic,strong)NSString *text;//内容
+@property(nonatomic,strong)NSString *rightText;//右边内容
+@property(nonatomic,strong)NSString *textId;//内容的id
+-(instancetype)initWithtitel:(NSString *)title andText:(NSString *)text;
+@end

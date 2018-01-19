@@ -1,0 +1,71 @@
+//
+//  C_ContenTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "C_ContenTableViewController.h"
+#import "C_ContenTableViewCell.h"
+#import "MJRefresh.h"
+#import "CreditContenModel.h"
+@interface C_ContenTableViewController ()
+
+@end
+
+@implementation C_ContenTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.pageNo =1;
+    self.dataSouc = [[NSMutableArray alloc] init];
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.tableView registerNib:[UINib nibWithNibName:@"C_ContenTableViewCell" bundle:nil] forCellReuseIdentifier:@"C_ContenTableViewCell"];
+    [self.tableView registerNib:[UINib nibWithNibName:@"B_R_BaoZJTableViewCell" bundle:nil] forCellReuseIdentifier:@"B_R_BaoZJTableViewCell"];
+    __weak UITableView *tableView = self.tableView;
+    WS(weakSelf);
+    // 上拉刷新
+    tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [weakSelf requestData];
+        [tableView.footer endRefreshing];
+    }];
+    [tableView.footer beginRefreshing];
+}
+- (void)requestData
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOST:JFDETAILED withparameters:@{@"vip":vip,@"pageNo":[NSNumber numberWithInteger:self.pageNo]} success:^(NSMutableDictionary *dic) {
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                CreditContenModel *model = [CreditContenModel ModelWith:temp];
+                [self.dataSouc addObject:model];
+            }
+            self.pageNo++;
+            [self.tableView reloadData];
+        }
+        
+    } error:nil HUDAddView:self.view];
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.dataSouc.count;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    C_ContenTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"C_ContenTableViewCell"];
+    [cell fillCellWithModel:self.dataSouc[indexPath.row]];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70;
+}
+@end

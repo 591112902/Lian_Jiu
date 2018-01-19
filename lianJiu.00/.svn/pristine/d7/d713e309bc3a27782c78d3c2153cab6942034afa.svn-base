@@ -1,0 +1,14 @@
+//
+//  B_W_SucceViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface B_W_SucceViewController : UIViewController
+@property(nonatomic,strong)NSString *money;//金额
+@property(nonatomic,strong)NSString *currency;//币种
+@end

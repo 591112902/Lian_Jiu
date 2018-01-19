@@ -1,0 +1,17 @@
+//
+//  Me2TableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/3.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "AccountModel.h"
+@interface Me2TableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *headImage;
+@property (strong, nonatomic) IBOutlet UILabel *nameLabel;
+@property (strong, nonatomic) IBOutlet UIButton *rightBtn;
+@property (strong, nonatomic) IBOutlet UILabel *rightLabel;
+-(void)fillCellWithModel:(AccountModel*)model;
+@end

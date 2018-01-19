@@ -1,0 +1,23 @@
+//
+//  B_WTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_WTableViewCell.h"
+
+@implementation B_WTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

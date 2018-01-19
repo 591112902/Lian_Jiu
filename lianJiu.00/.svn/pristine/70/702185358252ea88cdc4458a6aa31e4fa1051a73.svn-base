@@ -1,0 +1,16 @@
+//
+//  Re_4TableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "ReleaseCellModel.h"
+@interface Re_4TableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UIButton *leftBtn;
+@property (strong, nonatomic) IBOutlet UIButton *rightBtn;
+-(void)fillCellWithModel:(ReleaseCellModel *)model;
+@end

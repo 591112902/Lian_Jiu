@@ -1,0 +1,220 @@
+//
+//  ComeRecyclingVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SupplyAndDemandTableVC.h"
+#import "SelectSubLocationViewController.h"
+#import "SupplyAndDemandSearchViewController.h"
+#import "SupplyTableViewController.h"
+#import "PurchaseTableViewController.h"
+#import "BaseModel.h"
+@interface SupplyAndDemandTableVC ()
+@property (strong, nonatomic) IBOutlet UIButton *classify;
+@property (strong, nonatomic) IBOutlet UIButton *location;
+@property (strong, nonatomic) IBOutlet UIButton *list;
+
+
+@property(nonatomic,strong)SupplyTableViewController *supplyVC;
+@property(nonatomic,strong)PurchaseTableViewController *purchaseVC;
+@end
+
+@implementation SupplyAndDemandTableVC
+{
+    NSMutableArray *_dataSouc;
+    CGFloat segementedH;
+    UIButton *currBtn;
+    UIViewController *currViewcontroller;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    
+    [self addNavigationItem];
+    
+    [self addBtnList];
+    
+    self.supplyVC = [[SupplyTableViewController alloc] init];
+    [self addChildViewController:self.supplyVC];
+    self.supplyVC.view.frame = CGRectMake(0, 64+50, BOUND_WIDTH, BOUND_HIGHT-64-50-TARBARHEIGHT);;
+    [self.view addSubview:self.supplyVC.view];
+    currViewcontroller = self.supplyVC;
+    [self reloadViewText];
+}
+
+//重新刷新页面
+- (void)reloadSubViews
+{
+    [self reloadViewText];
+    [_supplyVC.tableView reloadData];
+    [_purchaseVC.tableView reloadData];
+}
+- (void)reloadViewText
+{
+    [self.classify setTitle:CustomLocalizedString(@"类别", nil) forState:UIControlStateNormal];
+    [self.location setTitle:CustomLocalizedString(@"地区", nil) forState:UIControlStateNormal];
+    [self.list setTitle:CustomLocalizedString(@"搜索", nil) forState:UIControlStateNormal];
+    self.navigationItem.backBarButtonItem.title = CustomLocalizedString(@"返回", nil);
+    
+    for (UIView *subV in currBtn.superview.subviews) {
+        if ([subV isKindOfClass:[UIButton class]]) {
+            UIButton *btn = (UIButton*)subV;
+            if (subV.tag==60) {
+                [btn setTitle:CustomLocalizedString(@"供应", nil) forState:UIControlStateSelected];
+                [btn setTitle:CustomLocalizedString(@"供应", nil) forState:UIControlStateNormal];
+            }else if(subV.tag==61){
+                [btn setTitle:CustomLocalizedString(@"采购", nil) forState:UIControlStateNormal];
+                [btn setTitle:CustomLocalizedString(@"采购", nil) forState:UIControlStateSelected];
+            }
+        }
+    }
+}
+- (void)addNavigationItem
+{
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    segementedH = 30;
+    NSArray *arr = @[CustomLocalizedString(@"供应", nil),CustomLocalizedString(@"采购", nil)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(10, 74, 200, segementedH)];
+    view.backgroundColor = [UIColor whiteColor];
+    view.layer.borderWidth = 1;
+    view.layer.borderColor = [UIColor whiteColor].CGColor;
+    view.layer.cornerRadius = 5;
+    view.clipsToBounds = YES;
+    for (int i = 0; i<arr.count; i++) {
+        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(i*200/arr.count, 0, 200/arr.count, segementedH)];
+        [btn addTarget:self action:@selector(chooseClass:) forControlEvents:UIControlEventTouchUpInside];
+        [btn setTitle:arr[i] forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [btn setTitleColor:MAINColor forState:UIControlStateSelected];
+        [btn setTitle:arr[i] forState:UIControlStateSelected];
+        [btn setBackgroundImage:[UIImage imageNamed:@"wihle_bg"] forState:UIControlStateSelected];
+        [btn setBackgroundImage:[UIImage imageNamed:@"l_tb_bg"] forState:UIControlStateNormal];
+        btn.tag = 60+i;
+        [view addSubview:btn];
+        if (i==0) {
+            btn.selected =YES;
+            currBtn = btn;
+        }
+    }
+    self.navigationItem.titleView = view;
+}
+- (PurchaseTableViewController *)purchaseVC
+{
+    if (!_purchaseVC) {
+        _purchaseVC = [[PurchaseTableViewController alloc] init];
+        _purchaseVC.view.frame = CGRectMake(0, 64+50, BOUND_WIDTH, BOUND_HIGHT-64-50-TARBARHEIGHT);
+        [self addChildViewController:_purchaseVC];
+    }
+    return _purchaseVC;
+}
+-(void)addBtnList
+{
+    self.classify.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.location.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.list.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    UIImageView *gapView1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 8, 0.5, self.location.frame.size.height-16)];
+    gapView1.backgroundColor = [UIColor grayColor];
+    [self.location addSubview:gapView1];
+    UIImageView *gapView2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 8, 0.5, self.location.frame.size.height-16)];
+    gapView2.backgroundColor = [UIColor grayColor];
+//    [self.location addSubview:gapView1];
+    [self.list addSubview:gapView2];
+}
+- (void)chooseClass:(UIButton *)btn
+{
+    if (currBtn==btn) {
+        return;
+    }
+    currBtn = btn;
+    for (UIButton *button in btn.superview.subviews) {
+        button.selected = NO;
+    }
+    btn.selected = YES;
+    if (btn.tag==60) {
+        [self transitionFromViewController:self.purchaseVC toViewController:self.supplyVC duration:0.4 options:UIViewAnimationOptionLayoutSubviews animations:nil completion:^(BOOL finished) {
+            currViewcontroller = self.supplyVC;
+        }];        
+    }else{
+        [self transitionFromViewController:self.supplyVC toViewController:self.purchaseVC duration:0.4 options:UIViewAnimationOptionLayoutSubviews animations:nil completion:^(BOOL finished) {
+            currViewcontroller = self.purchaseVC;
+        }];
+    }
+    
+}
+//分类
+- (IBAction)ToClassify:(id)sender {
+    
+    BaseModel *model = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    SelectSubViewController *seVC = [[SelectSubViewController alloc] init];
+    seVC.titleText = CustomLocalizedString(@"类别", nil);
+    seVC.allText = CustomLocalizedString(@"全部", nil);
+    seVC.dataSourceList = model.Products;
+    WS(weakSelf);
+    
+    
+    seVC.didselc = ^(NSInteger a,NSString *str,NSString*value){
+        [weakSelf.classify setTitle:str forState:UIControlStateNormal];
+        [weakSelf changgeParameter:@"type" value:value];
+    };
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+
+}
+
+//地区按钮
+- (IBAction)ToLocation:(id)sender {
+    BaseModel *model = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    SelectSubLocationViewController *seVC = [[SelectSubLocationViewController alloc] init];
+    seVC.titleText = CustomLocalizedString(@"地区", nil);
+    seVC.allText = CustomLocalizedString(@"全部", nil);
+    seVC.dataSourceList = model.Areas;
+    WS(weakSelf);
+    seVC.didselc = ^(NSInteger a,NSString *str,NSString*value){
+        [weakSelf.location setTitle:str forState:UIControlStateNormal];
+        [weakSelf changgeParameter:@"area" value:value];
+    };
+    
+    
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+
+    
+}
+//搜索按钮
+- (IBAction)ToScreen:(id)sender {
+    SupplyAndDemandSearchViewController *releaseVC = [[SupplyAndDemandSearchViewController alloc] init];
+    releaseVC.isGongYing = currBtn.tag==60;
+    releaseVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:releaseVC animated:YES];
+}
+- (void)changgeParameter:(NSString *)key value:(NSString *)value
+{
+    if (currViewcontroller == _supplyVC) {
+        if (value) {
+            [_supplyVC.parameters setObject:value forKey:key];
+        }else{
+            [_supplyVC.parameters removeObjectForKey:key];
+        }
+        
+        [_supplyVC.parameters setObject:@1 forKey:@"pageNo"];
+        [_supplyVC addDatasourceIsDown:YES];
+    }else
+    {
+        if (value) {
+            [_purchaseVC.parameters setObject:value forKey:key];
+        }else{
+            [_purchaseVC.parameters removeObjectForKey:key];
+        }
+        [_purchaseVC.parameters setObject:@1 forKey:@"pageNo"];
+        [_purchaseVC addDatasourceIsDown:YES];
+    }
+}
+
+@end

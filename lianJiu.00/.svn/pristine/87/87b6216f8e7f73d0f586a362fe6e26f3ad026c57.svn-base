@@ -1,0 +1,50 @@
+//
+//  B_ContenTViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_ContenTViewController.h"
+#import "B_R_BaoZJTableViewCell.h"
+#import "BanceDetailModel.h"
+@interface B_ContenTViewController ()
+
+@end
+
+@implementation B_ContenTViewController
+
+- (void)requestData
+{
+    
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOST:QUERYMONEY withparameters:@{@"vip":vip,@"pageNo":[NSNumber numberWithInteger:self.pageNo]} success:^(NSMutableDictionary *dic) {
+        HZLog(@"%d",self.pageNo);
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                BanceDetailModel *model = [BanceDetailModel ModelWith:temp];
+            
+                [self.dataSouc addObject:model];
+            }
+            self.pageNo++;
+            [self.tableView reloadData];
+        }
+        
+    } error:nil HUDAddView:self.view];
+}
+
+#pragma mark - Table view data source
+
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    B_R_BaoZJTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"B_R_BaoZJTableViewCell"];
+    [cell fillCellWithModel2:self.dataSouc[indexPath.row]];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+
+
+@end

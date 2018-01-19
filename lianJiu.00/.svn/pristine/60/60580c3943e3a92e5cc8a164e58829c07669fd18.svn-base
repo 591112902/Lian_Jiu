@@ -1,0 +1,17 @@
+//
+//  Au_PersonTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/3.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "AccountModel.h"
+
+
+@interface Au_PersonTableViewController : UITableViewController
+
+@property (nonatomic,strong)AccountModel *userModel;
+
+@end

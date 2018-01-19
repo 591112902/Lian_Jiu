@@ -1,0 +1,24 @@
+//
+//  PhotoTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "Re_1TableViewCell.h"
+#import "Re_2TableViewCell.h"
+#import "Re_3TableViewCell.h"
+#import "PhotoCollectionViewCell.h"
+#import "SelectViewController.h"
+#import "PhotoCollectionViewController.h"
+@interface PhotoTableViewController : UITableViewController <UITextViewDelegate,UITextFieldDelegate,SelectViewControllerDelegate,PhotoCollectionViewDelegate>
+@property(nonatomic,strong)NSMutableArray *dataScour;
+@property(nonatomic,strong)UIView *footView;
+@property (nonatomic,strong)PhotoCollectionViewController *photoCollec;
+@property(nonatomic,strong)UIButton *conmitBtn;
+-(void)addPhotoViiew:(CGFloat)H;
+-(BOOL)isDidAddPhoto;
+- (NSArray *)photoDataSoucToData;//返回data的数组，将图片转成data
+@end

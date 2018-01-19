@@ -1,0 +1,31 @@
+//
+//  MyOrderRecoverTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderRecoverTableViewCell.h"
+
+@implementation MyOrderRecoverTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.determineBtn.layer.borderColor = [UIColor orangeColor].CGColor;
+}
+
+-(void)fillCellWithModel:(MyOrderRecoverModel *)model
+{
+    self.titelL.text = model.w_detail;
+    if ([model.w_state isEqualToString:@"1"]) {
+        self.w_stateLabel.text = @"已收货";
+        self.determineBtn.hidden = YES;
+    }else{
+        self.w_stateLabel.text = @"未收货";
+        self.determineBtn.hidden = NO;
+    }
+    
+}
+
+@end

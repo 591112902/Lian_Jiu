@@ -1,0 +1,15 @@
+//
+//  B_W_AddCardViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/28.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface B_W_AddCardViewController : UIViewController
+@property (strong, nonatomic) IBOutlet UITextField *Cardholder;
+@property (strong, nonatomic) IBOutlet UITextField *cardNum;
+
+@end

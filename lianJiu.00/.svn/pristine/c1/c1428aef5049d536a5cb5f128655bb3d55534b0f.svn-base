@@ -1,0 +1,91 @@
+//
+//  SelectSubClassViewController.m
+//  zaiShang
+//
+//  Created by LIHONG on 16/5/17.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import "SelectSubClassViewController.h"
+
+@interface SelectSubClassViewController ()
+
+@end
+
+@implementation SelectSubClassViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
+- (void)reloadDataSource{
+    NSMutableArray *list=[[NSMutableArray alloc]init];
+    if (self.allText) {
+        [list addObject:self.allText];
+    }
+    
+    for (ProductsModel *PModel in self.dataSourceList) {
+        NSString *str=PModel.p_name;
+        [list addObject:str];
+    }
+
+    self.dataSource=list;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    WS(weakSelf);
+    if (self.allText) {
+        if (indexPath.row==0) {
+          
+        
+        if (self.didselc) {
+            self.didselc(indexPath.row,weakSelf.titleText,weakSelf.currValue);
+        }
+        [self.view removeFromSuperview];
+        [self removeFromParentViewController];
+        }else{
+        
+            ProductsModel *productsModel=self.dataSourceList[indexPath.row-1];
+            self.currValue=productsModel.p_id;
+            if (productsModel.p_subList.count>0) {
+                self.titleText=self.dataSource[indexPath.row];
+                self.dataSourceList=productsModel.p_subList;
+                [self addTableViewDataSource];
+            }else{
+                if (self.didselc) {
+                    self.didselc(indexPath.row,weakSelf.dataSource[indexPath.row],weakSelf.currValue);
+                }
+                [self.view removeFromSuperview];
+                [self removeFromParentViewController];
+            }
+            
+        }
+    }else{
+        ProductsModel *prModel=self.dataSourceList[indexPath.row];
+        self.currValue=prModel.p_id;
+        if (prModel.p_subList.count>0) {
+            self.titleText=self.dataSource[indexPath.row];
+            self.dataSourceList=prModel.p_subList;
+            [self addTableViewDataSource];
+        }else{
+            if (self.didselc) {
+                self.didselc(indexPath.row,weakSelf.dataSource[indexPath.row],weakSelf.currValue);
+                
+                
+            }
+            [self.view removeFromSuperview];
+            [self removeFromParentViewController];
+        }
+        
+    }
+    
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+@end

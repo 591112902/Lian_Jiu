@@ -1,0 +1,42 @@
+//
+//  AreasModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "AreasModel.h"
+
+@implementation AreasModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    AreasModel *model = [[self alloc] init];
+    model.a_id = dic[@"a_id"];
+    model.a_level = dic[@"a_level"];
+    model.a_name = dic[@"a_name"];
+    model.a_super = dic[@"a_super"];
+    model.a_subList = [[NSMutableArray alloc] init];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.a_id forKey:@"a_id"];
+    [aCoder encodeObject:self.a_level forKey:@"a_level"];
+    [aCoder encodeObject:self.a_name forKey:@"a_name"];
+    [aCoder encodeObject:self.a_super forKey:@"a_super"];
+    [aCoder encodeObject:self.a_subList forKey:@"a_subList"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.a_id = [aDecoder decodeObjectForKey:@"a_id"];
+        self.a_level = [aDecoder decodeObjectForKey:@"a_level"];
+        self.a_name = [aDecoder decodeObjectForKey:@"a_name"];
+        self.a_super = [aDecoder decodeObjectForKey:@"a_super"];
+        self.a_subList = [aDecoder decodeObjectForKey:@"a_subList"];
+    }
+    return self;
+}
+
+@end

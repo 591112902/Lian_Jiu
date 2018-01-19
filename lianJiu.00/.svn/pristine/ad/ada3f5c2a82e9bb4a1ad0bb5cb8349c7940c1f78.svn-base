@@ -1,0 +1,35 @@
+//
+//  BanceDetailModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/25.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BanceDetailModel.h"
+
+@implementation BanceDetailModel
++(id)ModelWith:(NSDictionary *)dic
+{
+    BanceDetailModel *model = [[self alloc] init];
+    model.address = dic[@"address"];
+    model.b_name = dic[@"b_name"];
+    model.b_no = dic[@"b_no"];
+    model.currency = dic[@"currency"];
+    model.d_id = dic[@"d_id"];
+    model.date = dic[@"date"];
+    model.icnb = dic[@"icnb"];
+    model.money = dic[@"money"];
+    model.p_name = dic[@"p_name"];
+    model.phone = dic[@"phone"];
+    model.photo = dic[@"photo"];
+    model.serial = dic[@"serial"];
+    model.state = dic[@"state"];
+    model.type = dic[@"type"];
+    model.v_id = dic[@"v_id"];
+    model.z_id = dic[@"z_id"];
+    model.a_bail = dic[@"a_bail"];
+    
+    return model;
+}
+@end

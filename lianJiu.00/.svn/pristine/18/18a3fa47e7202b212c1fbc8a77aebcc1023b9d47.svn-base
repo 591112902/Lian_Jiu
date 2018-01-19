@@ -1,0 +1,16 @@
+//
+//  CurrencysModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//币种
+#import <Foundation/Foundation.h>
+
+@interface CurrencysModel : NSObject<NSCoding>
+@property(nonatomic,copy)NSString *c_id;
+@property(nonatomic,copy)NSString *c_name;
++(instancetype)ModelWith:(NSDictionary *)dic;
+
+@end

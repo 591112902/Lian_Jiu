@@ -1,0 +1,32 @@
+//
+//  bidModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/16.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "superBidModel.h"
+
+@interface bidModel : superBidModel
+@property(nonatomic,copy)NSString *pass_time;
+@property(nonatomic,copy)NSString *size;
+@property(nonatomic,copy)NSString *t_attestation;
+@property(nonatomic,copy)NSString *t_austate_id;
+@property(nonatomic,copy)NSString *t_bidstate_id;
+@property(nonatomic,copy)NSString *t_date;
+@property(nonatomic,copy)NSString *t_detail;
+@property(nonatomic,copy)NSString *t_id;
+@property(nonatomic,copy)NSString *t_phone;
+@property(nonatomic,copy)NSString *t_picktime;
+@property(nonatomic,copy)NSString *t_price;
+@property(nonatomic,copy)NSString *t_quality;
+@property(nonatomic,copy)NSString *t_reson;
+@property(nonatomic,copy)NSString *t_tendertype;
+@property(nonatomic,copy)NSString *t_title;
+@property(nonatomic,copy)NSString *t_type;
+@property(nonatomic,copy)NSString *t_surestate_id;
+@property(nonatomic,copy)NSString *dw_id;
+
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

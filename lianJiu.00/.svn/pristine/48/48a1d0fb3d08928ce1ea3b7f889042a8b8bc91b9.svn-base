@@ -1,0 +1,25 @@
+//
+//  MainTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/19.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "bidModel.h"
+#import "UIImageView+WebCache.h"
+@interface MainTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *topimageView;
+@property (strong, nonatomic) IBOutlet UIImageView *leftImageView;
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UILabel *num;
+@property (strong, nonatomic) IBOutlet UILabel *numLStringLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationLstringLabel;
+
+@property (strong, nonatomic) IBOutlet UILabel *location;
+@property (strong, nonatomic) IBOutlet UIImageView *rigthImage;
+
+@property (strong, nonatomic) IBOutlet UILabel *rigthLabe;
+-(void)fillCellWithModel:(bidModel*)model;
+@end

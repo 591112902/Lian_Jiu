@@ -1,0 +1,20 @@
+//
+//  AuthenticateFootView.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface AuthenticateFootView : UIView
+@property (strong, nonatomic) IBOutlet UILabel *leftLabel;
+@property (strong, nonatomic) IBOutlet UIButton *leftPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *rightPhotoBtn;
+@property (strong, nonatomic) IBOutlet UIButton *commitBTn;
+@property (strong, nonatomic) IBOutlet UILabel *rihtLabel;
+@property (strong, nonatomic) IBOutlet UILabel *beCarefulLabel;
+@property (strong, nonatomic) IBOutlet UILabel *beCarefulValueLabel;
+
+@end

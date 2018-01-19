@@ -1,0 +1,28 @@
+//
+//  MyOrederTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/25.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SupplyModel.h"
+#import "PurchaseModel.h"
+#import "bidManageModel.h"
+@interface MyOrederTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *BidID;
+@property (strong, nonatomic) IBOutlet UILabel *stader;
+@property (strong, nonatomic) IBOutlet UIImageView *imageV;
+@property (strong, nonatomic) IBOutlet UILabel *nameValue;
+@property (strong, nonatomic) IBOutlet UILabel *numLabel;
+@property (strong, nonatomic) IBOutlet UILabel *numValue;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationValue;
+@property (strong, nonatomic) IBOutlet UIButton *bidManageBtn;
+
+-(void)fillCellWithModel:(SupplyModel *)model;
+-(void)fillCellWithModel2:(PurchaseModel *)model;
+-(void)fillCellWithModel3:(bidManageModel *)model;
+-(void)fillCellWithModel4:(bidManageModel *)model;
+@end

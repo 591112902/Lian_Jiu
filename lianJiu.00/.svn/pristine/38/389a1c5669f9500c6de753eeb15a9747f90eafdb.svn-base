@@ -1,0 +1,25 @@
+//
+//  Re_2TableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Re_2TableViewCell.h"
+
+@implementation Re_2TableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.rigthBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+}
+
+
+-(void)fillCellWithModel:(ReleaseCellModel *)model
+{
+    self.title.text = model.title;
+    self.valueTF.text = model.text;
+    self.rightLable.text = model.rightText;
+}
+@end

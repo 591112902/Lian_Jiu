@@ -1,0 +1,18 @@
+//
+//  BankModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/17.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//银行model
+#import <Foundation/Foundation.h>
+
+@interface BankModel : NSObject
+@property(nonatomic,copy)NSString *bank;
+@property(nonatomic,copy)NSString *log;
+@property(nonatomic,copy)NSString *name;
+@property(nonatomic,copy)NSString *no;
+@property(nonatomic,copy)NSString *number;
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

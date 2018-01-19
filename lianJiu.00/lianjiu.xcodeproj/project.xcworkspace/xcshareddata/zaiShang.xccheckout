@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B943A6C3-BEAD-479F-B444-97245BD1A040</string>
+	<key>IDESourceControlProjectName</key>
+	<string>zaiShang</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696</key>
+		<string>http://192.168.1.168:10000/svn/project/zaishang/ZaiShangIos</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>zaiShang.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696</key>
+		<string>http://192.168.1.168:10000/svn/project</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>http://192.168.1.168:10000/svn/project/zaishang/ZaiShangIos/zaiShang.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ZaiShangIosSVN</string>
+		</dict>
+	</array>
+</dict>
+</plist>

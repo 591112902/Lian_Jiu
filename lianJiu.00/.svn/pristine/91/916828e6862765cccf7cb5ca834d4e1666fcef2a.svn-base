@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="KGk-i7-Jjw" customClass="PhoneRecyceTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zXw-ov-GfA">
+                        <rect key="frame" x="15" y="4" width="70" height="35"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="v7t-BA-rfT"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="dif-kZ-2aV">
+                        <rect key="frame" x="90" y="4" width="207" height="35"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits"/>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="dif-kZ-2aV" firstAttribute="leading" secondItem="zXw-ov-GfA" secondAttribute="trailing" constant="5" id="AIx-xd-TX2"/>
+                    <constraint firstItem="dif-kZ-2aV" firstAttribute="height" secondItem="zXw-ov-GfA" secondAttribute="height" id="KoQ-8D-6Ox"/>
+                    <constraint firstItem="dif-kZ-2aV" firstAttribute="top" secondItem="zXw-ov-GfA" secondAttribute="top" id="Rej-OL-zJF"/>
+                    <constraint firstItem="zXw-ov-GfA" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="V9w-fZ-6hf"/>
+                    <constraint firstAttribute="bottom" secondItem="zXw-ov-GfA" secondAttribute="bottom" constant="4" id="XSS-Or-Gcn"/>
+                    <constraint firstItem="zXw-ov-GfA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="khg-rq-UgB"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="dif-kZ-2aV" secondAttribute="trailing" constant="15" id="ujH-B2-QXB"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="tilteL" destination="zXw-ov-GfA" id="zgS-xX-MYx"/>
+                <outlet property="valueTF" destination="dif-kZ-2aV" id="feE-cr-Wtr"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

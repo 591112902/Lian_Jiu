@@ -1,0 +1,413 @@
+//
+//  B_W_DTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_W_DTableViewController.h"
+#import "B_W_DTableViewCell.h"
+#import "B_W_SucceViewController.h"
+#import "DictionnaryModel.h"
+#import "SelectViewController.h"
+#import "BaseModel.h"
+#import "validate.h"
+#import "CommitSuccseViewController.h"
+@interface B_W_DTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate>
+@property(nonatomic,strong)NSMutableArray *dataSource;
+@end
+
+@implementation B_W_DTableViewController
+{
+    NSString *cellreuseIdentifier;
+    UILabel *alabelL;//现金账户余额
+    UILabel *clabelL;//可提现余额
+    UIButton *conmitBtn;//提交按钮
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    cellreuseIdentifier =@"B_W_DTableViewCell";
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.showsVerticalScrollIndicator = NO;
+    [self.tableView registerNib:[UINib nibWithNibName:cellreuseIdentifier bundle:nil] forCellReuseIdentifier:cellreuseIdentifier];
+//    [self addself.dataSource];
+    [self addheadView];
+    [self addfootview];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+-(AccountModel *)userModel
+{
+    if (!_userModel) {
+        _userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+    }
+    return _userModel;
+}
+//添加头部View
+- (void)addheadView
+{
+    CGFloat h = 5;
+    CGFloat boundW = BOUND_WIDTH;
+    CGFloat headviewW = BOUND_WIDTH-30*2;
+    UIView *headview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, boundW, 150)];
+    self.tableView.tableHeaderView = headview;
+    
+    UILabel *dlabel = [[UILabel alloc] initWithFrame:CGRectMake(30, h, headviewW, 40)];
+    dlabel.font = UIFont13;
+    dlabel.numberOfLines = 0;
+    dlabel.text = CustomLocalizedString(@"用户可以随时申请提现，申请提交成功后，3个工作日内到账（节假日顺延）。", nil);
+    [headview addSubview:dlabel];
+    h+=40+10;
+    
+    UILabel *alabelR = [[UILabel alloc] initWithFrame:CGRectMake(0, h, boundW/2,30)];
+    alabelR.font = UIFont13;
+    alabelR.textAlignment = NSTextAlignmentRight;
+    alabelR.text = CustomLocalizedString(@"现金账户余额：", nil);
+    [headview addSubview:alabelR];
+    alabelL = [[UILabel alloc] initWithFrame:CGRectMake(boundW/2, h, boundW/2,30)];
+    alabelL.font = UIFont13;
+    alabelL.textColor = [UIColor orangeColor];
+    [headview addSubview:alabelL];
+    h+=30;
+    
+    UILabel *clabelR = [[UILabel alloc] initWithFrame:CGRectMake(0, h, boundW/2,30)];
+    clabelR.font = UIFont13;
+    clabelR.textAlignment = NSTextAlignmentRight;
+    clabelR.text = CustomLocalizedString(@"可提现余额：", nil);
+    [headview addSubview:clabelR];
+    clabelL = [[UILabel alloc] initWithFrame:CGRectMake(boundW/2, h, boundW/2,30)];
+    clabelL.font = UIFont13;
+    clabelL.textColor = [UIColor orangeColor];
+    [headview addSubview:clabelL];
+    h+=30+15;
+    
+    UILabel *wlabelL = [[UILabel alloc] initWithFrame:CGRectMake(0, h, boundW,20)];
+    wlabelL.font = UIFont13;
+    wlabelL.text = CustomLocalizedString(@"请填写详细提款（收款）明细", nil);
+    wlabelL.textAlignment = NSTextAlignmentCenter;
+    [headview addSubview:wlabelL];
+}
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    clabelL.text = [self.userModel.account_balance stringValue];
+    //    double account_balance = [self.userModel.account_balance doubleValue];
+    //    double ensure_money = [self.userModel.ensure_money doubleValue];
+    //    double money =account_balance+ensure_money;
+    //    alabelL.text = [NSString stringWithFormat:@"%.2f",money];
+    alabelL.text = [self.userModel.account_balance stringValue];
+    
+    CGFloat money = [self.userModel.account_balance floatValue];
+    if (money<=1000) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:CustomLocalizedString(@"您好，提现金额最低为1000元，是否将余额全部提出", nil) delegate:nil cancelButtonTitle:CustomLocalizedString(@"确定", nil) otherButtonTitles:nil, nil];
+        [alert show];
+    }
+
+
+}
+- (void)addfootview{
+    UIView *footview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, 70)];
+    conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(118+5, 20, 90, 30)];
+    //    [conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    conmitBtn.backgroundColor = [UIColor orangeColor];
+    [conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [self.conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn setTitle:CustomLocalizedString(@"提交", nil) forState:UIControlStateNormal];
+    [footview addSubview:conmitBtn];
+    self.tableView.tableFooterView = footview;
+}
+
+-(NSMutableArray *)dataSource
+{
+    if (!_dataSource) {
+        _dataSource = [[NSMutableArray alloc] init];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *name = [defaults objectForKey:@"name"];
+//        NSString *phone = [defaults objectForKey:@"phone"];
+        for (int i=0; i<self.tableList.count; i++) {
+            NSString *str = self.tableList[i];
+            DictionnaryModel *model = [DictionnaryModel ModelWithDictionnary:@{str:@""}];
+            
+            if (i==0) {
+                CGFloat money = [self.userModel.account_balance floatValue];
+                if (money<=1000) {
+                    model.value = [self.userModel.account_balance stringValue];
+                }
+            }else if (i==2) {
+                model.value = name;
+            }else if(i==self.tableList.count-2){
+                model.value =nil;
+            }
+            [_dataSource addObject:model];
+        }
+    }
+    return _dataSource;
+}
+-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+    [self.view endEditing:YES];
+}
+
+- (void)ToCommit
+{
+    for (DictionnaryModel *model in self.dataSource) {
+        if (model.value.length<1) {
+            [MBProgressHUD showNotPhotoError:[NSString stringWithFormat:@"%@%@",CustomLocalizedString(@"请填写", nil),model.title] toView:self.view];
+            return;
+        }
+
+    }
+   
+    DictionnaryModel *model1 = self.dataSource[0];
+    
+    CGFloat money = [self.userModel.account_balance floatValue];
+    if (money>=1000) {
+        if ([model1.value floatValue]<1000) {
+            [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"您好，提现金额最低为1000元", nil) toView:self.view];
+            return;
+        }
+        if (![validate CheckInputMoney:model1.value]) {
+            return;
+        }
+    }else{
+        if ([model1.value floatValue] != money) {//是否全部提出
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"温馨提示" message:CustomLocalizedString(@"您好，提现金额最低为1000元，是否将余额全部提出", nil) delegate:self cancelButtonTitle:CustomLocalizedString(@"确定", nil) otherButtonTitles:CustomLocalizedString(@"取消", nil), nil];
+            [alert show];
+
+            return;
+        }
+    }
+    DictionnaryModel *modelPhone = self.dataSource[_dataSource.count-2];
+    if (![validate CheckInputPhone:modelPhone.title withText:modelPhone.value]) {
+        return;
+    }
+    NSString *url;
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:@{@"vip":vip}];
+
+    NSArray *pNArr = @[@"money",@"currency",@"name",@"branch",@"no",@"address",@"phone",@"payment",];
+    NSArray *pWArr = @[@"money",@"currency",@"name",@"branch",@"no",@"icnb",@"address",@"phone",@"payment",];
+    NSArray *dataArr;
+    if (self.isGuoNei) {
+        dataArr = pNArr;
+        url = GNWITHDRAWALS;
+    }else{
+        dataArr = pWArr;
+        url = GWWITHDRAWALS;
+    }
+    for (int i=0; i<dataArr.count; i++) {
+        NSString *key = dataArr[i];
+        DictionnaryModel *model = self.dataSource[i];
+        NSString *value;
+        if (i==1) {
+            value = model.valueID;
+        }else{
+            value = model.value;
+        }
+        [parameters setObject:value forKey:key];
+    }
+    
+    
+    [networking AFNPOST:url withparameters:parameters success:^(NSMutableDictionary *dic) {
+//        if (self.userModel) {
+//            double account_balance = [self.userModel.account_balance doubleValue];
+//            account_balance = [parameters[@"money"] doubleValue];
+//            self.userModel.account_balance = [NSNumber numberWithDouble:account_balance];
+//        }
+
+        CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+        CMVC.title = self.title;
+        CMVC.contenValue = CustomLocalizedString(@"提交成功", nil);
+        NSMutableString *curStr = [NSMutableString stringWithString:CustomLocalizedString(@"你的提现编号是100，提交成功，提交审核后3个工作日内到账（节假日延顺）", nil)];
+        NSRange range = [curStr rangeOfString:@"100"];
+        [curStr replaceCharactersInRange:range withString:dic[@"response"]];
+        CMVC.subValue = curStr;
+
+        CMVC.image = [UIImage imageNamed:@"sucsses"];
+        [self.navigationController pushViewController:CMVC animated:YES];
+        conmitBtn.userInteractionEnabled = NO;
+        conmitBtn.alpha = 0.4;
+    } error:nil HUDAddView:self.view];
+    
+}
+//判断字符串是否为空
+- (BOOL)strIsNilName:(NSString*)name WithText:(NSString *)text
+{
+    name = [name substringToIndex:name.length-1];
+    if (text.length==0) {
+        [MBProgressHUD showNotPhotoError:[NSString stringWithFormat:@"%@:%@",CustomLocalizedString(@"请填写", nil),name] toView:self.view];
+        return NO;
+    }
+    return YES;
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+         DictionnaryModel *model1 = self.dataSource[0];
+        model1.value = [self.userModel.account_balance stringValue];
+        [self.tableView reloadData];
+    }
+}
+
+#pragma mark - Table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.dataSource.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 40.0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    B_W_DTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellreuseIdentifier];
+    DictionnaryModel *model = self.dataSource[indexPath.row];
+    cell.title.text = model.title;
+    cell.textf.text = model.value;
+    cell.textf.delegate =self;
+    cell.textf.tag = 480+indexPath.row;
+    if (indexPath.row==0||indexPath.row==1||indexPath.row==2) {
+        cell.textFW.constant = 60;
+        cell.yuanlabel.hidden=YES;
+       
+        if (indexPath.row==0) {
+            cell.yuanlabel.hidden=NO;
+            cell.yuanlabel.text=@"元";
+        }
+    }else{
+        cell.textFW.constant = 15;
+    }
+    
+    if (indexPath.row==1) {
+        UIButton *RBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+        [RBtn setImage:[UIImage imageNamed:@"sel_jiantou_xia"] forState:UIControlStateNormal];
+        cell.textf.rightView = RBtn;
+        RBtn.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        cell.textf.rightViewMode = UITextFieldViewModeAlways;
+        cell.textf.userInteractionEnabled = NO;
+    }else{
+        cell.textf.rightView = nil;
+        cell.textf.userInteractionEnabled = YES;
+    }
+    if (indexPath.row==0||indexPath.row==4) {
+        cell.textf.keyboardType = UIKeyboardTypeDecimalPad;
+    }else{
+        cell.textf.keyboardType = UIKeyboardTypeDefault;
+    }
+   
+    if (indexPath.row==self.dataSource.count-1) {
+        cell.textf.secureTextEntry = YES;
+    }else{
+        cell.textf.secureTextEntry = NO;
+    }
+    if (indexPath.row==0) {
+        cell.textf.placeholder = @"1.00";
+    }else{
+        cell.textf.placeholder = nil;
+    }
+    // Configure the cell...
+    
+    return cell;
+}
+
+
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==1) {
+        [self tableViewSelect:1];
+    }
+}
+//选择币种
+- (void)tableViewSelect:(NSInteger)row
+{
+   BaseModel *baseModel = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    SelectViewController *seVC = [[SelectViewController alloc] init];
+    DictionnaryModel *model = self.dataSource[row];
+    seVC.titleText = model.title;
+    NSMutableArray *list = [[NSMutableArray alloc] init];
+    NSMutableArray *ValueIdlist = [[NSMutableArray alloc] init];
+    for (CurrencysModel *model in baseModel.Currencys) {
+        [list addObject:model.c_name];
+        [ValueIdlist addObject:model.c_id];
+    }
+    seVC.dataSource = list;
+    __weak __typeof(UITableView *)weaktableView = self.tableView;
+    
+    seVC.didselc = ^(NSInteger a,NSString *str){
+        model.value = str;
+        model.valueID = ValueIdlist[a];
+        NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:0];
+        [weaktableView reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
+    };
+    
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+}
+#pragma mark - uitextFileDelegate
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    NSInteger index = textField.tag-480;
+    DictionnaryModel *modle = self.dataSource[index];
+    modle.value = textField.text;
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@" "]&&textField.text.length<1) {
+        return NO;
+    }
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }
+    NSInteger index = textField.tag-480;
+    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (index==0)
+    {
+        if ([aString length] > 10) {
+            textField.text = [aString substringToIndex:10];
+            return NO;
+        }
+    }else if(index==2){
+        if ([aString length] > 15) {
+            textField.text = [aString substringToIndex:15];
+            return NO;
+        }
+    }else if(index==3||index==4||index==_dataSource.count-1){
+        if ([aString length] > 20) {
+            textField.text = [aString substringToIndex:20];
+            return NO;
+        }
+    }else if(index==_dataSource.count-2){
+        if ([aString length] > 11) {
+            textField.text = [aString substringToIndex:11];
+            return NO;
+        }
+    }else {
+        if ([aString length] > 50) {
+            textField.text = [aString substringToIndex:50];
+            return NO;
+        }
+    }
+    conmitBtn.userInteractionEnabled = YES;
+    conmitBtn.alpha = 1;
+    return YES;
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    
+    UITextField *tf = [self.tableView viewWithTag:textField.tag+1];
+    if (tf) {
+        [tf becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
+@end

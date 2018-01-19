@@ -1,0 +1,19 @@
+//
+//  B_R_BaoZJTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "BanceDetailModel.h"
+
+@interface B_R_BaoZJTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleL;
+@property (strong, nonatomic) IBOutlet UILabel *dateL;
+@property (strong, nonatomic) IBOutlet UILabel *stateL;
+@property (strong, nonatomic) IBOutlet UILabel *moneyL;
+-(void)fillCellWithModel:(BanceDetailModel*)model;
+-(void)fillCellWithModel2:(BanceDetailModel*)model;
+@end

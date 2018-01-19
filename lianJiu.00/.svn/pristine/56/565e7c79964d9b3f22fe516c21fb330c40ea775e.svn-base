@@ -1,0 +1,391 @@
+//
+//  AppDelegate.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "AppDelegate.h"
+#import "PRJTabBarViewController.h"
+#import "LaunchViewController.h"
+#import "UIImageView+WebCache.h"
+//华移
+//#import "CnmobiAppManagement(1).h"
+
+//账号：2315540268
+//密码：hsjt28103837.
+#import "XGPush.h"
+#import "XGSetting.h"
+
+//账号：3102949991@qq.com
+//密码：hsjt28103837.
+//没有啊 recycle_market@163.com
+
+//密码是 Yinhelisaite03.
+
+//ShareSDK zhanghao
+//2568673911@qq.com
+//密码：hsjt28103837.
+#import <ShareSDK/ShareSDK.h>
+#import <ShareSDKConnector/ShareSDKConnector.h>
+
+//腾讯开放平台（对应QQ和QQ空间）SDK头文件
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/QQApiInterface.h>
+//微信SDK头文件
+#import "WXApi.h"
+//新浪微博SDK头文件
+#import "WeiboSDK.h"
+//新浪微博SDK需要在项目Build Settings中的Other Linker Flags添加"-ObjC"
+
+#define _IPHONE80_ 80000
+@interface AppDelegate ()
+
+@end
+@implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    
+    BOOL userHasOnboarded = [[NSUserDefaults standardUserDefaults] boolForKey:@"user_has_onboarded"];
+
+    if (!userHasOnboarded) {
+        LaunchViewController *mainVC = [[LaunchViewController alloc] init];
+        self.window.rootViewController = mainVC;
+    }
+    
+    // otherwise set the root view controller to the onboarding view controller
+    else {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        self.window.rootViewController = [storyboard instantiateInitialViewController];
+    }
+    
+    [self.window makeKeyAndVisible];
+    
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setBarTintColor:MAINColor];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                    [UIColor whiteColor], NSForegroundColorAttributeName,
+                                                                     [UIFont boldSystemFontOfSize:20], NSFontAttributeName,
+                                                                     nil]];
+    
+    [self xunGePlus:launchOptions];
+
+    [self shareSDK];
+
+
+    [SDImageCache sharedImageCache].maxCacheSize = 1024*1024*8;
+
+    //增加登陆时间限制
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [userDefaults boolForKey:@"islogin"];
+    NSDate *loginDate = (NSDate *)[userDefaults objectForKey:@"loginDate"];
+    NSDate *nowDate = [NSDate date];
+    NSTimeInterval timeInterVal = [nowDate timeIntervalSinceDate:loginDate];
+    if (islogin && loginDate && timeInterVal > 60 * 60 * 24 *30) {
+        [userDefaults setObject:nowDate forKey:@"loginDate"];
+        [userDefaults setBool:NO forKey:@"islogin"];
+        [userDefaults synchronize];
+    }
+    return YES;
+}
+- (void)shareSDK
+{
+    [ShareSDK registerApp:@"e0b7706e7ad7" activePlatforms:@[
+                                                        @(SSDKPlatformTypeSinaWeibo),
+//                                                        @(SSDKPlatformTypeWechat),
+                                                        @(SSDKPlatformSubTypeWechatTimeline),
+                                                        @(SSDKPlatformSubTypeWechatSession),
+                                                        @(SSDKPlatformTypeQQ),
+                                                        @(SSDKPlatformSubTypeQQFriend),
+                                                        @(SSDKPlatformSubTypeQZone),
+//                                                        @(SSDKPlatformTypeMail),
+//                                                        @(SSDKPlatformTypeSMS),
+//                                                        @(SSDKPlatformTypeTwitter),
+//                                                        @(SSDKPlatformTypeFacebook),
+//                                                        @(SSDKPlatformTypeLinkedIn),
+                                                        ] onImport:^(SSDKPlatformType platformType)
+     {
+         switch (platformType)
+         {
+             case SSDKPlatformTypeSinaWeibo:
+                 [ShareSDKConnector connectWeibo:[WeiboSDK class]];
+                 break;
+             case SSDKPlatformTypeWechat:
+                 [ShareSDKConnector connectWeChat:[WXApi class]];
+                 break;
+             case SSDKPlatformSubTypeWechatTimeline:
+                 [ShareSDKConnector connectWeChat:[WXApi class]];
+                 break;
+             case SSDKPlatformSubTypeWechatSession:
+                 [ShareSDKConnector connectWeChat:[WXApi class]];
+                 break;
+             case SSDKPlatformTypeQQ:
+                 [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+                 break;
+             case SSDKPlatformSubTypeQQFriend:
+                 [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+                 break;
+             case SSDKPlatformSubTypeQZone:
+                 [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+                 break;
+//             case SSDKPlatformTypeMail:
+//                 [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+//                 break;
+             default:
+                 break;
+         }
+     } onConfiguration:^(SSDKPlatformType platformType, NSMutableDictionary *appInfo) {
+         switch (platformType)
+         {
+             case SSDKPlatformTypeSinaWeibo:
+                 //设置新浪微博应用信息,其中authType设置为使用SSO＋Web形式授权
+                 [appInfo SSDKSetupSinaWeiboByAppKey:@"551561221"
+                                           appSecret:@"f1f5b61f7637952a2a41ba67145b474d"
+//                                         redirectUri:@"http://www.sharesdk.cn"
+                   redirectUri:@"https://api.weibo.com/oauth2/default.html"
+                                            authType:SSDKAuthTypeBoth];
+                 break;
+             case SSDKPlatformTypeWechat:
+                 [appInfo SSDKSetupWeChatByAppId:@"wx77f8b42d3163922d"
+                                       appSecret:@"e00d816d020292d13148d9fe08c944db"];
+                 break;
+             case SSDKPlatformSubTypeWechatTimeline:
+                 [appInfo SSDKSetupWeChatByAppId:@"wx77f8b42d3163922d"
+                                       appSecret:@"e00d816d020292d13148d9fe08c944db"];
+                 break;
+             case SSDKPlatformSubTypeWechatSession:
+                 [appInfo SSDKSetupWeChatByAppId:@"wx77f8b42d3163922d"
+                                       appSecret:@"e00d816d020292d13148d9fe08c944db"];
+                 break;
+             case SSDKPlatformTypeQQ:
+                 [appInfo SSDKSetupQQByAppId:@"1105038497"
+                                      appKey:@"t33qkcJNrlGT9duR"
+                                    authType:SSDKAuthTypeBoth];
+                 break;
+             case SSDKPlatformSubTypeQQFriend:
+                 [appInfo SSDKSetupQQByAppId:@"1105038497"
+                                      appKey:@"t33qkcJNrlGT9duR"
+                                    authType:SSDKAuthTypeBoth];
+                 break;
+             case SSDKPlatformSubTypeQZone:
+                 [appInfo SSDKSetupQQByAppId:@"1105038497"
+                                      appKey:@"t33qkcJNrlGT9duR"
+                                    authType:SSDKAuthTypeBoth];
+                 break;
+             case SSDKPlatformTypeMail:
+                 [appInfo SSDKSetupMailParamsByText:@"欢迎使用再商网" title:@"分享" images:nil attachments:nil recipients:nil ccRecipients:nil bccRecipients:nil type:SSDKContentTypeAuto];
+                 break;
+//             case SSDKPlatformTypeSMS:
+//                 [appInfo SSDKSetupSMSParamsByText:@"欢迎使用再商网http://www.zs21.cn" title:@"分享" images:nil attachments:nil recipients:@[@"400",@"401",@"10086"] type:SSDKContentTypeAuto];
+//                 break;
+             case SSDKPlatformTypeTwitter:
+                 [appInfo SSDKSetupTwitterByConsumerKey:@"226427" consumerSecret:@"fc5b8aed373c4c27a05b712acba0f8c3" redirectUri:@"f29df781abdd4f49beca5a2194676ca4"];
+                 break;
+             case SSDKPlatformTypeFacebook:
+                 [appInfo SSDKSetupFacebookByApiKey:@"232554794995.apps.googleusercontent.com" appSecret:@"PEdFgtrMw97aCvf0joQj7EMk" authType:SSDKAuthTypeBoth];
+             case SSDKPlatformTypeLinkedIn:
+                 [appInfo SSDKSetupLinkedInByApiKey:@"232554794995.apps.googleusercontent.com" secretKey:@"232554794995.apps.googleusercontent.com" redirectUrl:@"http://localhost"];
+                 break;
+             default:
+                 break;
+         }
+     }];
+
+}
+#pragma mark - 推送开始
+- (void)xunGePlus:(NSDictionary *)launchOptions
+{
+    [XGPush startApp:2200166888 appKey:@"IK881YJ2LP5B"];
+    
+    //注销之后需要再次注册前的准备
+    void (^successCallback)(void) = ^(void){
+        //如果变成需要注册状态
+        if(![XGPush isUnRegisterStatus])
+        {
+            //iOS8注册push方法
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= _IPHONE80_
+            
+            float sysVer = [[[UIDevice currentDevice] systemVersion] floatValue];
+            if(sysVer < 8){
+                [self registerPush];
+            }
+            else{
+                [self registerPushForIOS8];
+            }
+#else
+            //iOS8之前注册push方法
+            //注册Push服务，注册后才能收到推送
+            [self registerPush];
+#endif
+        }
+    };
+    [XGPush initForReregister:successCallback];
+    
+    //推送反馈(app不在前台运行时，点击推送激活时)
+    [XGPush handleLaunching:launchOptions];
+    //角标清0
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    
+    //清除所有通知(包含本地通知)
+//    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+
+    
+    [InternationalControl initUserLanguage];//初始化应用语言
+}
+
+- (void)registerPushForIOS8{
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= _IPHONE80_
+    
+    //Types
+    UIUserNotificationType types = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+    
+    //Actions
+    UIMutableUserNotificationAction *acceptAction = [[UIMutableUserNotificationAction alloc] init];
+    
+    acceptAction.identifier = @"ACCEPT_IDENTIFIER";
+    acceptAction.title = @"Accept";
+    
+    acceptAction.activationMode = UIUserNotificationActivationModeForeground;
+    acceptAction.destructive = NO;
+    acceptAction.authenticationRequired = NO;
+    
+    //Categories
+    UIMutableUserNotificationCategory *inviteCategory = [[UIMutableUserNotificationCategory alloc] init];
+    
+    inviteCategory.identifier = @"INVITE_CATEGORY";
+    
+    [inviteCategory setActions:@[acceptAction] forContext:UIUserNotificationActionContextDefault];
+    
+    [inviteCategory setActions:@[acceptAction] forContext:UIUserNotificationActionContextMinimal];
+
+    
+    NSSet *categories = [NSSet setWithObjects:inviteCategory, nil];
+    
+    
+    UIUserNotificationSettings *mySettings = [UIUserNotificationSettings settingsForTypes:types categories:categories];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
+    
+    
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+#endif
+}
+- (void)registerPush{
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+}
+
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= _IPHONE80_
+
+
+//按钮点击事件回调
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler{
+    if([identifier isEqualToString:@"ACCEPT_IDENTIFIER"]){
+        HZLog(@"ACCEPT_IDENTIFIER is clicked");
+    }
+    
+    completionHandler();
+}
+
+#endif
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [defaults objectForKey:@"vip"];
+    
+    [XGPush setAccount:vip?vip:@"testAccount"];
+    NSString * deviceTokenStr = [XGPush registerDevice:deviceToken];
+    [defaults setObject:deviceTokenStr forKey:@"plusToken"];
+    //注册设备
+//    XGSetting *setting = (XGSetting *)[XGSetting getInstance];
+
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    if (islogin&&deviceTokenStr) {
+        
+        NSDictionary *parameters = @{@"vip":vip,@"token":deviceTokenStr};
+        [networking AFNPOSTNotHUD:SETTOKEN withparameters:parameters success:^(NSMutableDictionary *dic) {
+        } error:nil];
+    }
+    //打印获取的deviceToken的字符串
+    HZLog(@"[XGPush Demo] deviceTokenStr is %@",deviceTokenStr);
+}
+
+//如果deviceToken获取不到会进入此事件
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+//    NSString *str = [NSString stringWithFormat: @"Error: %@",err];
+//
+//    HZLog(@"[XGPush Demo]%@",str);
+
+    
+}
+
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
+{
+    //推送反馈(app运行时)
+    [XGPush handleReceiveNotification:userInfo];
+    if (application.applicationState == UIApplicationStateActive || application.applicationState == UIApplicationStateBackground) {
+        HZLog(@"%@",userInfo);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"收到一条消息", nil) message:userInfo[@"aps"][@"alert"] delegate:self cancelButtonTitle:CustomLocalizedString(@"取消", nil) otherButtonTitles:CustomLocalizedString(@"确定", nil), nil];
+        [alertView show];
+        
+    }
+    UITabBarController *tab = (UITabBarController*)self.window.rootViewController;
+    UINavigationController *nav = (UINavigationController *)tab.viewControllers.lastObject;
+    MeVC *meVC = nav.viewControllers.firstObject;
+    meVC.isRequestData = YES;
+}
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    completionHandler(UIBackgroundFetchResultNewData);
+    // 打印到日志 textView 中
+    //    HZLog(@"********** iOS7.0之后 background **********");
+    // 应用在前台 或者后台开启状态下，不跳转页面，让用户选择。
+    if (application.applicationState == UIApplicationStateActive || application.applicationState == UIApplicationStateBackground) {
+//        HZLog(@"%@",userInfo);
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"收到一条消息", nil) message:userInfo[@"aps"][@"alert"] delegate:self cancelButtonTitle:CustomLocalizedString(@"取消", nil) otherButtonTitles:CustomLocalizedString(@"确定", nil), nil];
+        [alertView show];
+    }
+    UITabBarController *tab = (UITabBarController*)self.window.rootViewController;
+    UINavigationController *nav = (UINavigationController *)tab.viewControllers.lastObject;
+    MeVC *meVC = nav.viewControllers.firstObject;
+    meVC.isRequestData = YES;
+    
+}
+#pragma mark - 推送结束
+- (void)applicationWillResignActive:(UIApplication *)application {
+    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+    [[SDImageCache sharedImageCache] clearMemory];
+    [[SDWebImageManager sharedManager] cancelAll];
+//    UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"内存警告" message:@"程序可能会被杀掉" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+//    [alerView show];
+}
+
+@end

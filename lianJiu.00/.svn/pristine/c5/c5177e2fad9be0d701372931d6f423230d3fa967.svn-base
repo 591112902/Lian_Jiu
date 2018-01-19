@@ -1,0 +1,14 @@
+//
+//  S_ContenViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface S_ContenViewController : UIViewController
+@property (nonatomic,strong)NSMutableArray *dataSouc;
+@property (nonatomic,strong)NSMutableDictionary *parameters;
+@end

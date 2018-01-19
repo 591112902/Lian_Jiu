@@ -1,0 +1,22 @@
+//
+//  Re_4TableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Re_4TableViewCell.h"
+
+@implementation Re_4TableViewCell
+
+
+
+
+-(void)fillCellWithModel:(ReleaseCellModel *)model
+{
+    self.title.text = model.title;
+    self.leftBtn.selected = [model.text isEqualToString:@"0"];
+    self.rightBtn.selected = [model.text isEqualToString:@"1"];
+}
+@end

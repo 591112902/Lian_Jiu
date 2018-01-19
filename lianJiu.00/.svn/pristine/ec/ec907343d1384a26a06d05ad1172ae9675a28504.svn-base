@@ -1,0 +1,13 @@
+//
+//  ReleaseTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+/** 招标 */
+
+#import <UIKit/UIKit.h>
+@class AccountModel;
+@interface ReleaseTableViewController : UITableViewController
+@property (nonatomic,strong)AccountModel *userModel;
+@end

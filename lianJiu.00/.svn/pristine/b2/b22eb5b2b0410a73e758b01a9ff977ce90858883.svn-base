@@ -1,0 +1,13 @@
+//
+//  B_WithdrawNViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "AccountModel.h"
+@interface B_WithdrawNViewController : UIViewController
+@property (nonatomic,strong)AccountModel *userModel;
+@end

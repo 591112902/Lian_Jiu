@@ -1,0 +1,13 @@
+//
+//  DateSelectViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/8.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface DateSelectViewController : UIViewController
+@property (nonatomic,copy)void (^didselc)(NSString*);
+@end

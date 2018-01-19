@@ -1,0 +1,62 @@
+//
+//  PhonwRecoveryCollectionViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PhonwRecoveryCollectionViewCell.h"
+
+@implementation PhonwRecoveryCollectionViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+-(void)fillCellWithDic:(PhoneRecycParmModel *)model AndBoundWidth:(CGFloat)width
+{
+   
+    
+   CGSize tSize = [self autoSizeWith:model.title and:UIFont13 AndBoundWidth:width];
+    if (20<tSize.height) {
+        self.titleLableH.constant = tSize.height+2;
+    }else
+    {
+        self.titleLableH.constant = 20;
+    }
+    
+    CGSize cSize = [self autoSizeWith:model.conten and:[UIFont systemFontOfSize:10] AndBoundWidth:width];
+    if (20<cSize.height) {
+        self.contenH.constant = cSize.height+2;
+    }else
+    {
+        self.contenH.constant = 20;
+    }
+    self.titleLabel.text = model.title;
+    self.contenLabel.text = model.conten;
+    if (model.isselect) {
+        self.backgroundColor = [UIColor colorWithRed:255/255.0 green:249/255.0 blue:234/255.0 alpha:1];
+        self.layer.borderColor = [UIColor orangeColor].CGColor;
+    }else
+    {
+        self.backgroundColor = [UIColor whiteColor];
+        self.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    }
+}
+- (CGSize)autoSizeWith:(NSString *)text and:(UIFont*)font AndBoundWidth:(CGFloat)width
+{
+    NSDictionary * dic = [NSDictionary dictionaryWithObjectsAndKeys:font,NSFontAttributeName,nil];
+    CGSize  actualsize;
+    //ios7方法，获取文本需要的size，限制宽度
+    if (isIOS7) {
+        actualsize =[text boundingRectWithSize:CGSizeMake((width-40)/3-4, 70) options:NSStringDrawingUsesLineFragmentOrigin  attributes:dic context:nil].size;
+    }else
+    {
+        actualsize = [text sizeWithFont:font constrainedToSize:CGSizeMake((width-40)/3-4, 70) lineBreakMode:NSLineBreakByWordWrapping];
+     
+    }
+    return actualsize;
+   
+}
+
+@end

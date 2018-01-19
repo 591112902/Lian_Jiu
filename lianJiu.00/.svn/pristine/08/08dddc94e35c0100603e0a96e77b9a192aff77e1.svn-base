@@ -1,0 +1,184 @@
+//
+//  MyOrderRecoverViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderRecoverViewController.h"
+#import "MyOrderRecoverModel.h"
+#import "MyOrderRecoverTableViewCell.h"
+#import "PRJTabBarViewController.h"
+#import "MJRefresh.h"
+#import "MeVC.h"
+#import "MyOrderRecoverContenViewController.h"
+@interface MyOrderRecoverViewController ()<UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic,strong)UITableView *tableView;
+@property (nonatomic,strong)NSMutableArray *dataSource;//数据源
+@property (nonatomic,strong)NSMutableDictionary *parameters;//申请数据参数
+@end
+
+@implementation MyOrderRecoverViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    MeVC *mevc = self.navigationController.viewControllers.firstObject;
+    if ([mevc.isHuiShouShang isEqualToNumber:@0]) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, 60)];
+        label.textAlignment = NSTextAlignmentCenter;
+        label.text = CustomLocalizedString(@"您还未加盟回收商", nil);
+        [self.view addSubview:label];
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        btn.frame = CGRectMake(10, 90, BOUND_WIDTH-20, 44);
+        [btn setTitle:CustomLocalizedString(@"加盟回收商", nil) forState:UIControlStateNormal];
+//        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but.png"] forState:UIControlStateNormal];
+        [btn addTarget:self action:@selector(affiliate) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:btn];
+        return;
+    }
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, BOUND_HIGHT-64-46)];
+    self.tableView.backgroundColor = BGColor;
+    self.tableView.delegate = self;
+    self.tableView.dataSource =self;
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [self.tableView registerNib:[UINib nibWithNibName:@"MyOrderRecoverTableViewCell" bundle:nil] forCellReuseIdentifier:@"MyOrderRecoverTableViewCell"];
+    [self.view addSubview:_tableView];
+    
+    __weak UITableView *tableView = self.tableView;
+    WS(weakSelf);
+    // 下拉刷新
+    tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf requestDataIsDown:YES];
+        // 结束刷新
+        [tableView.header endRefreshing];
+    }];
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.header.automaticallyChangeAlpha = YES;
+    [tableView.header beginRefreshing];
+    // 上拉刷新
+    tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [weakSelf requestDataIsDown:NO];
+        // 结束刷新
+        [tableView.footer endRefreshing];
+    }];
+    tableView.footer.automaticallyChangeAlpha = YES;
+}
+
+//添加数据源
+- (NSMutableArray *)dataSource
+{
+    if (!_dataSource) {
+        _dataSource = [[NSMutableArray alloc] init];
+    }
+    return _dataSource;
+}
+- (NSMutableDictionary *)parameters
+{
+    if (!_parameters) {
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        NSString *vip = [def objectForKey:@"vip"];
+        _parameters = [[NSMutableDictionary alloc] initWithDictionary:@{@"vip":vip,@"pageNo":@1}];
+    }
+    return _parameters;
+}
+-(void)requestDataIsDown:(BOOL)isDown
+{
+    NSMutableDictionary *para = [self.parameters mutableCopy];
+    
+    if (isDown) {
+        [para setObject:@1 forKey:@"pageNo"];
+    }
+    HZLog(@"%@",para);
+    [networking AFNPOST:QUERYRECOVERY withparameters:para success:^(NSMutableDictionary *dic) {
+        if (isDown) {
+            [_dataSource removeAllObjects];
+        }
+        
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                MyOrderRecoverModel *model = [MyOrderRecoverModel ModelWith:temp];
+                [self.dataSource addObject:model];
+            }
+        }
+        [self.tableView reloadData];
+        NSNumber *pageNub = _parameters[@"pageNo"];
+        NSInteger pInt = [pageNub integerValue];
+        pInt++;
+        if (isDown) {
+            [self.parameters setObject:@2 forKey:@"pageNo"];
+        }else{
+            [self.parameters setObject:[NSNumber numberWithInteger:pInt] forKey:@"pageNo"];
+        }
+        
+    } error:nil HUDAddView:self.view];
+}
+
+#pragma mark - Table view data source
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.dataSource.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MyOrderRecoverTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MyOrderRecoverTableViewCell"];
+    MyOrderRecoverModel *model = _dataSource[indexPath.section];
+    [cell fillCellWithModel:model];
+    if ([model.w_state isEqualToString:@"0"]) {
+        cell.determineBtn.tag = indexPath.section+4400;
+        [cell.determineBtn addTarget:self action:@selector(determine:) forControlEvents:UIControlEventTouchUpInside];
+    }else{
+        [cell.determineBtn removeTarget:self action:@selector(determine:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70.0;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MyOrderRecoverContenViewController *contentVC=[[MyOrderRecoverContenViewController alloc] init];
+    contentVC.model = _dataSource[indexPath.section];
+    [self.navigationController pushViewController:contentVC animated:YES];
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 8;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 1;
+}
+//加盟回收商
+-(void)affiliate
+{
+    NSInteger tabarIndex = 2;
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers[tabarIndex];
+    [nav popToRootViewControllerAnimated:NO];
+    tabar.toIndex = tabarIndex;
+    RecoveryVC *VC = nav.viewControllers.firstObject;
+    [VC tosubViewController:2];
+}
+- (void)determine:(UIButton *)btn
+{
+    NSInteger index = btn.tag-4400;
+    MyOrderRecoverModel *model = _dataSource[index];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOST:CONFIRMTAKE withparameters:@{@"vip":vip,@"hid":model.w_id} success:^(NSMutableDictionary *dic) {
+        model.w_state = @"1";
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        [_tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } error:nil HUDAddView:self.view];
+    
+}
+@end

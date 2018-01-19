@@ -1,0 +1,18 @@
+//
+//  MyNewsTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/8.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "MyNewsModel.h"
+@interface MyNewsTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleL;
+@property (strong, nonatomic) IBOutlet UILabel *timeL;
+
+@property (strong, nonatomic) IBOutlet UIImageView *imgeV;
+@property (strong, nonatomic) IBOutlet UILabel *contenL;
+-(void)fillCellWithModel:(MyNewsModel*)model;
+@end

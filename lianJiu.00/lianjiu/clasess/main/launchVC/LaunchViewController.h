@@ -1,0 +1,15 @@
+//
+//  LaunchViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/24.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "PRJTabBarViewController.h"
+
+
+@interface LaunchViewController : UIViewController
+
+@end

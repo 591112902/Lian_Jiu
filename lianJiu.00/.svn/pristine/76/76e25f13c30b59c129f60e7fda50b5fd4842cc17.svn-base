@@ -1,0 +1,13 @@
+//
+//  B_W_sucessViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/28.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface B_W_sucessViewController : UIViewController
+
+@end

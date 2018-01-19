@@ -1,0 +1,199 @@
+//
+//  PhotoTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PhotoTableViewController.h"
+
+
+@interface PhotoTableViewController ()
+
+@end
+
+@implementation PhotoTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = BGColor;
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+
+    [self adjustmentTableView];
+    [self addDataScour];
+    [self addFootView];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    //设置成NO表示当前控件响应后会传播到其他控件上，默认为YES。
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    //将触摸事件添加到当前view
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+}
+-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+    [self.view endEditing:YES];
+}
+-(void)addDataScour
+{
+    self.dataScour = [[NSMutableArray alloc] init];
+    NSArray *arr1 = @[@"产品名称:",@"产品数量:",@"产品价格:",@"产品详情:"];
+    NSArray *arr2 = @[@"联系电话:",@"所在地区:",@"交易方式:",@"供应期限:"];
+    [self.dataScour addObject:arr1];
+    [self.dataScour addObject:arr2];
+}
+//配置tableView
+- (void)adjustmentTableView
+{
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.backgroundColor = BGColor;
+    for (int i=1; i<=3; i++) {
+        NSString *className = [NSString stringWithFormat:@"Re_%dTableViewCell",i];
+        [self.tableView registerNib:[UINib nibWithNibName:className bundle:nil] forCellReuseIdentifier:className];
+    }
+    
+    
+}
+//加上底部view
+-(void)addFootView
+{
+    CGFloat H = 5;
+     self.footView = [[UIView alloc] init];
+    [self addPhotoViiew:H];
+    
+}
+
+-(void)addPhotoViiew:(CGFloat)H
+{
+    self.footView.frame = CGRectMake(0, 0, BOUND_WIDTH, H+(BOUND_WIDTH-40)/3+20+10+44+20);
+    UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc ]init];
+    self.photoCollec = [[PhotoCollectionViewController alloc] initWithCollectionViewLayout:flowLayout];
+    self.photoCollec.photoNumber = 9;
+    self.photoCollec.delegate = self;
+    self.photoCollec.view.frame = CGRectMake(0, H, self.view.frame.size.width, (self.view.frame.size.width-40)/3+20);
+    [self addChildViewController:_photoCollec];
+    [self.footView addSubview:_photoCollec.view];
+    [_photoCollec didMoveToParentViewController:self];
+    H +=(BOUND_WIDTH-40)/3+20+10;
+    
+    self.conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, H, BOUND_WIDTH-20, 44)];
+    [self.conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [self.conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [self.conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [self.conmitBtn setTitle:CustomLocalizedString(@"提交", nil) forState:UIControlStateNormal];
+    H += 44+20;
+    self.footView.frame = CGRectMake(0, 0, BOUND_WIDTH, H);
+    self.tableView.tableFooterView =self.footView;
+    [self.footView addSubview:self.conmitBtn];
+    [self.tableView reloadData];
+    
+}
+
+#pragma mark - photoCollectionViewDelegate
+-(void)collectionView:(UIView *)view ChangeHeight:(CGFloat)Chageheight
+{
+    CGRect rect = self.footView.frame;
+    rect.size.height += Chageheight;
+    self.footView.frame = rect;
+    self.tableView.tableFooterView = self.footView;
+    BOOL isAddHeigth = NO;
+    for (UIView *subview in self.footView.subviews) {
+        if (view==subview) {
+            isAddHeigth = YES;
+            continue;
+        }
+        if (isAddHeigth) {
+            CGRect oldrect = subview.frame;
+            oldrect.origin.y +=Chageheight;
+            subview.frame = oldrect;
+        }
+    }
+}
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+
+    return self.dataScour.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    NSArray *arr = self.dataScour[section];
+    return arr.count;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==0&&indexPath.row==3) {
+        return 80;
+    }
+    return 44;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"identifier"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"identifier"];
+    }
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 1;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10;
+}
+
+//selectTabeleview delegate
+- (void)AddTableViewDidSelect:(NSInteger)row
+{
+    
+}
+//提交
+-(void)ToCommit
+{}
+//判断是否已经添加图片
+-(BOOL)isDidAddPhoto
+{
+    if (!(self.photoCollec.photoDataSouc.count>0)) {
+        [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请添加照片", nil) toView:self.view];
+        return NO;
+    }
+    return YES;
+}
+//压缩图片
+- (NSArray *)photoDataSoucToData
+{
+    NSMutableArray *dataArr= [[NSMutableArray alloc] init];
+    
+    for (int i = 0; i<self.photoCollec.photoDataSouc.count;i++) {
+        UIImage *image =self.photoCollec.photoDataSouc[i];
+        NSData *data = [image imageCompress];
+        [dataArr addObject:data];     
+    }
+    return dataArr;
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    
+   UITextField *tf = [self.tableView viewWithTag:textField.tag+1];
+    if (tf) {
+        [tf becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
+
+-(void)dealloc
+{
+    HZLog(@"%@----dealloc",self.class);
+    //    UIViewController *viewController = self.childViewControllers.lastObject;
+    //    [viewController.view removeFromSuperview];
+    //    [viewController removeFromParentViewController];
+}
+@end

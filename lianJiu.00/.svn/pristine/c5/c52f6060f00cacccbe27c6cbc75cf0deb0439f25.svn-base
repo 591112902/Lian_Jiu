@@ -1,0 +1,17 @@
+//
+//  ReleaseTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+
+@interface ReleaseTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *imge;
+@property (strong, nonatomic) IBOutlet UILabel *label;
+@property (strong, nonatomic) IBOutlet UIImageView *gapimge;
+
+@end

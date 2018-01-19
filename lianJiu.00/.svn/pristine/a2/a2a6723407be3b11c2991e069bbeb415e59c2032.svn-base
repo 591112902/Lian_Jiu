@@ -1,0 +1,23 @@
+//
+//  Re_3TableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Re_3TableViewCell.h"
+
+@implementation Re_3TableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+
+-(void)fillCellWithModel:(ReleaseCellModel *)model
+{
+    self.title.text = model.title;
+    self.valueTV.text = model.text;
+}
+@end

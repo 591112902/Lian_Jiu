@@ -1,0 +1,110 @@
+//
+//  ServicesTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ServicesTableViewController.h"
+#import "ServicesTableViewCell.h"
+#import "ServicesModel.h"
+@interface ServicesTableViewController ()
+@property (nonatomic,strong)NSMutableArray *dataScour;
+@end
+
+@implementation ServicesTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self adjustmentTableView];
+    [self addDataScour];
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+    [self.view endEditing:YES];
+}
+-(void)addDataScour
+{
+    _dataScour = [[NSMutableArray alloc] init];
+    [networking AFNRequest:ALLDETAILS withparameters:nil success:^(NSMutableDictionary *dic) {
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                ServicesModel *model =[ServicesModel ModelWithDictionnary:@{temp[@"r_title"]:temp[@"r_content"]} andScreeW:self.view.bounds.size.width];
+                [_dataScour addObject:model];
+            }
+            [self.tableView reloadData];
+        }
+    } error:nil HUDAddView:self.view];
+
+    
+
+}
+- (void)adjustmentTableView
+{
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:@"ServicesTableViewCell" bundle:nil] forCellReuseIdentifier:@"ServicesTableViewCell"];
+    
+}
+
+
+- (void)ToCommit
+{
+    
+}
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return  self.dataScour.count;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ServicesModel *modle = _dataScour[indexPath.row];
+    return modle.cellH;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    ServicesTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ServicesTableViewCell"];
+    [cell fillCellWithModel:_dataScour[indexPath.row]];
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 50.0;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 50.0;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH-30, 50)];
+    label.text = CustomLocalizedString(@"再商网指定回收商上门收废范围:", nil);
+    label.font = [UIFont systemFontOfSize:15];
+    label.textAlignment = NSTextAlignmentCenter;
+    return label;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *fooview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, 50)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15, 0, BOUND_WIDTH-30, 50)];
+    label.text = CustomLocalizedString(@"其他废旧物资以及一切可再生利用废旧物资", nil);;
+    label.font = [UIFont systemFontOfSize:14];
+    [fooview addSubview:label];
+    return fooview;
+}
+-(void)dealloc
+{
+    HZLog(@"%@----dealloc",self.class);
+    //    UIViewController *viewController = self.childViewControllers.lastObject;
+    //    [viewController.view removeFromSuperview];
+    //    [viewController removeFromParentViewController];
+}
+@end

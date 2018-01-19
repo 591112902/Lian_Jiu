@@ -1,0 +1,96 @@
+//
+//  MyOrderRecoverContenViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderRecoverContenViewController.h"
+#import "PhotoCollectionViewCell.h"
+#import "UIImageView+WebCache.h"
+@interface MyOrderRecoverContenViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
+@property (strong, nonatomic) IBOutlet UILabel *dateLabel;
+@property (strong, nonatomic) IBOutlet UITextField *nameTextfile;
+@property (strong, nonatomic) IBOutlet UITextField *phoneTextfile;
+@property (strong, nonatomic) IBOutlet UITextView *locationTextfile;
+@property (strong, nonatomic) IBOutlet UITextField *weightTextfile;
+@property (strong, nonatomic) IBOutlet UITextView *detailedTextView;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *collectionviewH;
+@property (strong, nonatomic) IBOutlet UICollectionView *collectionView;
+
+@property (strong, nonatomic) IBOutlet UILabel *nameTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *phoneTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *weightTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *detaileTitleLabel;
+
+@end
+
+@implementation MyOrderRecoverContenViewController
+{
+    NSMutableArray *urlStrs;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"回收单", nil);
+    [self.collectionView registerNib:[UINib nibWithNibName:@"PhotoCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"PhotoCollectionViewCell"];
+    
+    self.dateLabel.text = self.model.w_date;
+    self.nameTextfile.text = self.model.w_name;
+    self.phoneTextfile.text = self.model.w_phone;
+    self.locationTextfile.text = self.model.w_address;
+    self.weightTextfile.text = self.model.w_weight;
+    self.detailedTextView.text = self.model.w_detail;
+    
+    _nameTitleLabel.text=CustomLocalizedString(@"姓名:", nil);
+    _phoneTitleLabel.text=CustomLocalizedString(@"电话:", nil);
+    _locationTitleLabel.text=CustomLocalizedString(@"地址:", nil);
+    _weightTitleLabel.text=CustomLocalizedString(@"货物重量:", nil);
+    _detaileTitleLabel.text=CustomLocalizedString(@"货物详细:", nil);
+    
+    NSArray*arr = [self.model.w_photo?self.model.w_photo:@"" removeSymbol];
+    urlStrs = [[NSMutableArray alloc] init];
+    for (NSString *str in arr) {
+        NSString *url = [PHOTOLOADPATH stringByAppendingString:str];
+        [urlStrs addObject:url];
+    }
+    [self.collectionView reloadData];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    CGRect rect = _collectionView.frame;
+    rect.size.height = ceil (urlStrs.count/3.0) *(BOUND_WIDTH-40)/3+(ceil (urlStrs.count/3.0)+1)*10;
+    self.collectionviewH.constant = rect.size.height;
+}
+#pragma mark - collectionViewDelegate
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return urlStrs.count;
+}
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PhotoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCollectionViewCell" forIndexPath:indexPath];
+    [cell.photoImage sd_setImageWithURL:[NSURL URLWithString:urlStrs[indexPath.row]] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    return cell;
+}
+//定义每个UICollectionView 的大小
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    return CGSizeMake((BOUND_WIDTH-40)/3, (BOUND_WIDTH-40)/3);
+}
+//定义每个UICollectionView 的 margin
+-(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    return UIEdgeInsetsMake(10, 10, 10, 10);
+}
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+@end

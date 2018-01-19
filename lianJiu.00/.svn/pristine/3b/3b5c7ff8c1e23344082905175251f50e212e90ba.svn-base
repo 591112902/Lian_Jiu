@@ -1,0 +1,52 @@
+//
+//  B_B_succseViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_B_succseViewController.h"
+
+@interface B_B_succseViewController ()
+
+@end
+
+@implementation B_B_succseViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = BGColor;
+    CGFloat H = 15+64;
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, H, BOUND_WIDTH, 30)];
+    titleLabel.text = self.titleText;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.font = [UIFont systemFontOfSize:15];
+    titleLabel.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:titleLabel];
+    
+    H +=30+30;
+    UILabel *contenLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, H, BOUND_WIDTH-2*40, 90)];
+    contenLabel.text = self.contenText;
+    contenLabel.numberOfLines = 0;
+    contenLabel.textAlignment = NSTextAlignmentCenter;
+    contenLabel.font = [UIFont systemFontOfSize:15];
+    [self.view addSubview:contenLabel];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

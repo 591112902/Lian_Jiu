@@ -1,0 +1,17 @@
+//
+//  ModifyTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/4.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import "R_SuperTableViewController.h"
+#import "bidModel.h"
+@interface ModifyTableViewController : R_SuperTableViewController
+@property(nonatomic,strong)bidModel *bidModel;//获取标  id 
+@property(nonatomic,strong)NSMutableArray *mainPhotos;
+@property(nonatomic,strong)NSMutableArray *detailPhotos;
+@property(nonatomic,strong)NSMutableArray *files;
+@property(nonatomic,copy)void (^modifySuccess)();
+@end

@@ -1,0 +1,34 @@
+//
+//  PurchaseModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PurchaseModel.h"
+
+@implementation PurchaseModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    PurchaseModel *model = [[self alloc] init];
+    
+    [model initlWith:dic];
+    model.pur_address = dic[@"pur_address"];
+    model.pur_attestation = dic[@"pur_attestation"];
+    model.pur_date = dic[@"pur_date"];
+    model.pur_detail = dic[@"pur_detail"];
+    model.pur_id = dic[@"pur_id"];
+    model.pur_phone = dic[@"pur_phone"];
+    model.pur_price = dic[@"pur_price"];
+    model.pur_quality = dic[@"pur_quality"];
+    model.pur_state = dic[@"pur_state"];
+    model.pur_title = dic[@"pur_title"];
+    model.pur_type = dic[@"pur_type"];
+    model.trade_id = dic[@"trade_id"];
+    model.unit_id = dic[@"unit_id"];
+    model.usr_id = dic[@"usr_id"];
+    
+    return model;
+}
+@end

@@ -1,0 +1,238 @@
+//
+//  BalanceViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BalanceViewController.h"
+#import "B_ContenTViewController.h"
+#import "B_RechargeTableViewController.h"
+#import "B_R_BaoZJTableViewController.h"
+#import "B_WithdrawNViewController.h"
+#import "BidVC.h"
+
+
+@interface BalanceViewController ()
+@property (strong, nonatomic) IBOutlet UILabel *rechargeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *withdrawalsLabel;
+
+
+@end
+
+@implementation BalanceViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    [self.RechargeBtn setBackgroundImage:[UIImage imageNamed:@"l_tb_bg"] forState:UIControlStateHighlighted];
+    [self.WithdrawalsBtn setBackgroundImage:[UIImage imageNamed:@"l_tb_bg"] forState:UIControlStateHighlighted];
+    
+    [_banceDetailBtn setTitle:CustomLocalizedString(@"账户明细", nil) forState:UIControlStateNormal];
+    [_ensureDetailBtn setTitle:CustomLocalizedString(@"保证金明细", nil) forState:UIControlStateNormal];
+    _rechargeLabel.text = CustomLocalizedString(@"充值", nil);
+    _withdrawalsLabel.text = CustomLocalizedString(@"提现", nil);
+  
+}
+
+//#warning 查询是否已经实名认证
+-(void)queryPersonReadNameID{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    NSString *vip = [defaults objectForKey:@"vip"];
+    
+    if (!islogin) {
+        return;
+    }else{
+        
+        
+        [networking AFNPOSTNotHUD:QUERYGRSMRZ withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+            if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response=dic[@"response"];
+                if (response.count>0) {
+                    [defaults setBool:YES forKey:@"isRealName"];
+                    
+                    [defaults synchronize];
+                    
+                }
+            }
+        } error:nil];
+        
+    }
+    
+}
+
+-(void)queryBusinessReadNameID{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    NSString *vip = [defaults objectForKey:@"vip"];
+    if (!islogin) {
+        return; 
+    }else{
+       
+        
+        [networking AFNPOSTNotHUD:QUERYQYSMRZ withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+            if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response=dic[@"response"];
+                if (response.count>0) {
+                    
+                    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+                    [def setBool:YES forKey:@"isRealName"];
+                    [def synchronize];
+                    
+                }
+            }
+        } error:nil];
+        
+    }
+}
+
+
+        
+        
+        
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self queryPersonReadNameID];
+    [self queryBusinessReadNameID];
+    
+#pragma 帐号信息 余额查询网络请求
+//#warning  显示是网络请求的数据
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOSTNotCode:USER withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+        NSNumber *code=dic[@"code"];
+        if ([code isEqualToNumber:@0]) {
+            NSDictionary *response = dic[@"response"];
+//            self.zuJi = response[@"zjtj"];
+//            _souCang = response[@"sctj"];
+//            self.xiaoXi = response[@"MessAge"];;
+//            self.isHuiShouShang = response[@"HS"];
+
+            self.userModel = [AccountModel ModelWith:response[@"user"]];
+            
+            [NSKeyedArchiver archiveRootObject:self.userModel toFile:ACCOUNTPATH];
+               [self.view layoutSubviews];
+            
+            
+            NSString *banceStr = [self.userModel.account_balance  stringValue];
+            STRINGNONIL(banceStr);
+            
+            NSString *str1 = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"现金账户余额：", nil),self.userModel.account_balance,CustomLocalizedString(@"元", nil)];
+            if (isIOS7) {
+                NSMutableAttributedString *noteStr = [[NSMutableAttributedString alloc] initWithString:str1];
+                NSRange redRange = NSMakeRange([[noteStr string] rangeOfString:banceStr].location, [[noteStr string] rangeOfString:banceStr].length);
+                [noteStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:redRange];
+                [noteStr addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:17] range:redRange];
+                [self.banceLabel setAttributedText:noteStr];
+                //        [self.banceLabel sizeToFit];
+            }else{
+                self.banceLabel.text = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"现金账户余额：", nil),self.userModel.account_balance,CustomLocalizedString(@"元", nil)];
+            }
+            
+            
+            NSString *ensureStr = [self.userModel.ensure_money  stringValue];
+            STRINGNONIL(ensureStr);
+            NSString *str2 = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"保证金冻结金额：", nil),self.userModel.ensure_money,CustomLocalizedString(@"元", nil)];
+            if (isIOS7) {
+                NSMutableAttributedString *noteStr = [[NSMutableAttributedString alloc] initWithString:str2];
+                NSRange redRange = NSMakeRange([[noteStr string] rangeOfString:ensureStr].location, [[noteStr string] rangeOfString:ensureStr].length);
+                [noteStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:redRange];
+                [noteStr addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:17] range:redRange];
+                [self.ensureLabel setAttributedText:noteStr];
+                //        [self.ensureLabel sizeToFit];
+            }else{
+                self.ensureLabel.text = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"保证金冻结金额：", nil),self.userModel.ensure_money,CustomLocalizedString(@"元", nil)];
+            }
+ 
+        }
+    } error:^(NSError *error) {
+//        self.userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+//   [self.view layoutSubviews];
+        
+    } HUDAddView:self.view];
+
+
+    
+  }
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    CGFloat banceDetailBtnW = self.banceDetailBtn.frame.size.width;
+    self.banceLayoutC.constant = -(banceDetailBtnW+5)/2;
+    CGFloat ensureDetailBtnW = self.ensureDetailBtn.frame.size.width;
+    self.ensureLayoutC.constant = -(ensureDetailBtnW+5)/2;
+}
+-(AccountModel *)userModel
+{
+    if (!_userModel) {
+//        _userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+        _userModel=[[AccountModel alloc]init];
+    }
+    return _userModel;
+}
+- (IBAction)BalanceConten:(id)sender {
+    B_ContenTViewController *BCVC = [[B_ContenTViewController alloc] init];
+    BCVC.title = CustomLocalizedString(@"账户明细", nil);
+    [self.navigationController pushViewController:BCVC animated:YES];
+}
+- (IBAction)BaoZhengjinMingxi:(id)sender {
+    UIButton *btn = (UIButton *)sender;
+    B_R_BaoZJTableViewController *BRBVC = [[B_R_BaoZJTableViewController alloc] init];
+    BRBVC.title = btn.titleLabel.text;
+    BRBVC.ensure_money = self.userModel.ensure_money;
+    [self.navigationController pushViewController:BRBVC animated:YES];
+    
+}
+- (IBAction)ToRechargeBtn:(id)sender {
+   
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+
+    
+    
+    if (![def boolForKey:@"isRealName"])  {
+        
+        [MBProgressHUD showError:CustomLocalizedString(@"您好，请先进行实名认证", nil) toView:self.view];
+        return;
+    }else{
+    
+    B_RechargeTableViewController *BRVC = [[B_RechargeTableViewController alloc] init];
+ 
+    BRVC.userModel = self.userModel;
+    BRVC.title = CustomLocalizedString(@"充值", nil);
+    [self.navigationController pushViewController:BRVC animated:YES];
+    }
+}
+
+- (IBAction)ToWithdrawals:(id)sender {
+    
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+    if (![def boolForKey:@"isRealName"])  {
+        
+        [MBProgressHUD showError:CustomLocalizedString(@"您好，请先进行实名认证", nil) toView:self.view];
+        return;
+    }else{
+        
+    B_WithdrawNViewController *BWVC = [[B_WithdrawNViewController alloc] init];
+    BWVC.title = CustomLocalizedString(@"提现", nil);
+    BWVC.userModel =self.userModel;
+    [self.navigationController pushViewController:BWVC animated:YES];
+    }
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+
+@end

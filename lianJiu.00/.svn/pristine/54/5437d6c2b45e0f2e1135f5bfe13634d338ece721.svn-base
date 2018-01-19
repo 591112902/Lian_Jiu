@@ -1,0 +1,15 @@
+//
+//  B_C_GViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/11.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SupplyModel.h"
+#import "PurchaseModel.h"
+@interface B_C_GViewController : UIViewController
+@property(nonatomic,strong)SupplyModel *model;
+@property(nonatomic,strong)PurchaseModel *Purmodel;
+@end

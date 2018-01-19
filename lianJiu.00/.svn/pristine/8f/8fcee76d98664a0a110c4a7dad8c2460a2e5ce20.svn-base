@@ -1,0 +1,25 @@
+//
+//  MyOrderRecoverModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//订单管理-回收model
+#import <Foundation/Foundation.h>
+
+@interface MyOrderRecoverModel : NSObject
+@property (nonatomic,copy)NSString *s_state;
+@property (nonatomic,copy)NSString *usr_id;
+@property (nonatomic,copy)NSString *w_address;
+@property (nonatomic,copy)NSString *w_date;
+@property (nonatomic,copy)NSString *w_detail;
+@property (nonatomic,copy)NSString *w_id;
+@property (nonatomic,copy)NSString *w_name;
+@property (nonatomic,copy)NSString *w_phone;
+@property (nonatomic,copy)NSString *w_photo;
+@property (nonatomic,copy)NSString *w_state;
+@property (nonatomic,copy)NSString *w_weight;
+
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

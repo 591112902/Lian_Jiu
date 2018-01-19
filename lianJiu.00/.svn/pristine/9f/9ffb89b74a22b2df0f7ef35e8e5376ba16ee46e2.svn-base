@@ -1,0 +1,13 @@
+//
+//  AccountInformationViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class AccountModel;
+@interface AccountInformationViewController : UIViewController
+@property (nonatomic,strong)AccountModel *userModel;
+@end

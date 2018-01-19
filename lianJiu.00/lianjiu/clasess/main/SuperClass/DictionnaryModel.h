@@ -1,0 +1,25 @@
+//
+//  DictionnaryModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/7.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface DictionnaryModel : NSObject
+
+
+
+@property(nonatomic,strong)NSString *title;
+@property(nonatomic,strong)NSString *value;
+@property(nonatomic,strong)NSString *valueID;
+@property(nonatomic)UIKeyboardType keyboardType;
+@property(nonatomic)NSInteger maxLength;
+
+
+
+@property(nonatomic,copy)BOOL(^check)(NSString *name, NSString *text);//检查输入是否合法
++(instancetype)ModelWithDictionnary:(NSDictionary *)dic;
+@end

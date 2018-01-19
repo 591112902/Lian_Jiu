@@ -1,0 +1,34 @@
+//
+//  TradesModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "TradesModel.h"
+
+@implementation TradesModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    TradesModel *model = [[self alloc] init];
+    model.t_id = dic[@"t_id"];
+    model.t_type = dic[@"t_type"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.t_id forKey:@"t_id"];
+    [aCoder encodeObject:self.t_type forKey:@"t_type"];
+
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.t_id = [aDecoder decodeObjectForKey:@"t_id"];
+        self.t_type = [aDecoder decodeObjectForKey:@"t_type"];
+    }
+    return self;
+}
+
+@end

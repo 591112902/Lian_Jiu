@@ -1,0 +1,33 @@
+//
+//  SupplyModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SupplyModel.h"
+
+@implementation SupplyModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    SupplyModel *model = [[self alloc] init];
+    
+    [model initlWith:dic];
+    model.pass_time = dic[@"pass_time"];
+    model.s_address = dic[@"s_address"];
+    model.s_attestation = dic[@"s_attestation"];
+    model.s_date = dic[@"s_date"];
+    model.s_detail = dic[@"s_detail"];
+    model.s_id = dic[@"s_id"];
+    model.s_phone = dic[@"s_phone"];
+    model.s_price = dic[@"s_price"];
+    model.s_quality = dic[@"s_quality"];
+    model.s_state = dic[@"s_state"];
+    model.s_title = dic[@"s_title"];
+    model.s_type = dic[@"s_type"];
+    
+    return model;
+}
+
+@end

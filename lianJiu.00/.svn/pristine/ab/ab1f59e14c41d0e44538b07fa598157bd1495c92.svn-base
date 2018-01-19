@@ -1,0 +1,194 @@
+//
+//  MyOrederTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/25.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrederTableViewCell.h"
+#import "UIImageView+WebCache.h"
+@implementation MyOrederTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.bidManageBtn.layer.borderColor = [UIColor colorWithRed:1 green:40/255.0 blue:45/255.0 alpha:1].CGColor;
+}
+
+-(void)fillCellWithModel:(SupplyModel *)model
+{
+    self.BidID.text = model.s_id;
+    self.nameValue.text = model.s_title;
+    self.numValue.text = model.s_quality;
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.imageV sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    
+    if ([model.s_state isEqualToString:@"0"]) {
+        self.stader.text = CustomLocalizedString(@"审核中", nil);
+    }else if ([model.s_state isEqualToString:@"1"]) {
+        self.stader.text = CustomLocalizedString(@"审核通过", nil);
+    }else if ([model.s_state isEqualToString:@"2"]) {
+        self.stader.text = CustomLocalizedString(@"审核不通过", nil);
+    }else if ([model.s_state isEqualToString:@"3"]) {
+        self.stader.text = CustomLocalizedString(@"已过期", nil);
+    }
+//    self.locationLabel.text = nil;
+    if ([model.a_level isEqualToString:@"3"]) {
+        self.locationValue.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.locationValue.text = model.dz_name;
+    }
+    
+        [self.bidManageBtn setTitle:CustomLocalizedString(@"修改", nil) forState:UIControlStateNormal];
+        self.bidManageBtn.hidden = NO;
+    
+ 
+    self.numLabel.text = CustomLocalizedString(@"数量:", nil);
+    self.bidManageBtn.hidden = YES;
+    self.locationLabel.text = CustomLocalizedString(@"地区:", nil);
+}
+-(void)fillCellWithModel2:(PurchaseModel *)model
+{
+    self.BidID.text = model.pur_id;
+    self.nameValue.text = model.pur_title;
+    self.numValue.text = model.pur_quality;
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.imageV sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    if ([model.pur_state isEqualToString:@"0"]) {
+        self.stader.text = CustomLocalizedString(@"审核中", nil);
+    }else if ([model.pur_state isEqualToString:@"1"]) {
+        self.stader.text = CustomLocalizedString(@"审核通过", nil);
+    }else if ([model.pur_state isEqualToString:@"2"]) {
+        self.stader.text = CustomLocalizedString(@"审核不通过", nil);
+    }else if ([model.pur_state isEqualToString:@"3"]) {
+        self.stader.text = CustomLocalizedString(@"已过期", nil);
+    }
+//    self.locationLabel.text = nil;
+    
+    if ([model.a_level isEqualToString:@"3"]) {
+        self.locationValue.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.locationValue.text = model.dz_name;
+    }
+    self.numLabel.text = CustomLocalizedString(@"数量:", nil);
+    self.bidManageBtn.hidden = YES;
+    
+      self.locationLabel.text = CustomLocalizedString(@"地区:", nil);
+    
+    [self.bidManageBtn setTitle:CustomLocalizedString(@"修改", nil) forState:UIControlStateNormal];
+  
+}
+-(void)fillCellWithModel3:(bidManageModel *)model
+{
+    self.BidID.text = model.t_id;
+    self.nameValue.text = model.t_title;
+    STRINGNONIL(model.t_quality);
+    self.numValue.text = [model.t_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.imageV sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+//    if ([model.t_bidstate_id isEqualToString:@"0"]) {
+//        self.stader.text = @"投标中";
+//    }else if ([model.t_bidstate_id isEqualToString:@"1"]) {
+//        self.stader.text = @"审核中";
+//    }else if ([model.t_bidstate_id isEqualToString:@"2"]) {
+//        self.stader.text = @"未通过";
+//    }else if ([model.t_bidstate_id isEqualToString:@"3"]) {
+//        self.stader.text = @"已完成";
+//    }else if ([model.t_bidstate_id isEqualToString:@"4"]) {
+//        self.stader.text = @"已流标";
+//    }
+    if ([model.a_level isEqualToString:@"3"]) {
+        self.locationValue.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.locationValue.text = model.dz_name;
+    }
+    self.stader.text = model.state;
+    if (model.type==1) {
+        if ([model.t_bidstate_id isEqualToString:@"0"]) {
+            [self.bidManageBtn setTitle:CustomLocalizedString(@"中标管理", nil) forState:UIControlStateNormal];
+        }else{
+            if([model.t_surestate_id isEqualToString:@"0"])
+            {
+                [self.bidManageBtn setTitle:CustomLocalizedString(@"待对方确认", nil) forState:UIControlStateNormal];
+            }else{
+                [self.bidManageBtn setTitle:CustomLocalizedString(@"确定成交", nil) forState:UIControlStateNormal];
+            }
+//            [self.bidManageBtn setTitle:@"确定成交" forState:UIControlStateNormal];
+        }
+        self.bidManageBtn.hidden = NO;
+    }else if(model.type==3){
+        [self.bidManageBtn setTitle:CustomLocalizedString(@"修改", nil) forState:UIControlStateNormal];
+        self.bidManageBtn.hidden = NO;
+//    }else if(model.type==4){
+//        [self.bidManageBtn setTitle:@"评价" forState:UIControlStateNormal];
+//        self.bidManageBtn.hidden = NO;
+    }else{
+        [self.bidManageBtn setTitle:nil forState:UIControlStateNormal];
+        self.bidManageBtn.hidden = YES;
+    }
+    self.numLabel.text = CustomLocalizedString(@"数量:", nil);
+    self.locationLabel.text = CustomLocalizedString(@"地区:", nil);
+}
+-(void)fillCellWithModel4:(bidManageModel *)model
+{
+    self.BidID.text = model.t_id;
+    self.nameValue.text = model.t_title;
+    STRINGNONIL(model.t_quality);
+    self.numValue.text = [model.t_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.imageV sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+//        if ([model.t_bidstate_id isEqualToString:@"0"]) {
+//            self.stader.text = @"投标中";
+//        }else if ([model.t_bidstate_id isEqualToString:@"1"]) {
+//            self.stader.text = @"审核中";
+//        }else if ([model.t_bidstate_id isEqualToString:@"2"]) {
+//            self.stader.text = @"未通过";
+//        }else if ([model.t_bidstate_id isEqualToString:@"3"]) {
+//            self.stader.text = @"已完成";
+//        }else if ([model.t_bidstate_id isEqualToString:@"4"]) {
+//            self.stader.text = @"已流标";
+//        }
+    if ([model.a_level isEqualToString:@"3"]) {
+        self.locationValue.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.locationValue.text = model.dz_name;
+    }
+    self.stader.text = model.state;
+    if (model.type==2) {
+        
+            if ([model.t_surestate_id isEqualToString:@"1"]) {
+                [self.bidManageBtn setTitle:CustomLocalizedString(@"待对方确认", nil) forState:UIControlStateNormal];
+            }else{
+                [self.bidManageBtn setTitle:CustomLocalizedString(@"确定成交", nil) forState:UIControlStateNormal];
+            }
+//            [self.bidManageBtn setTitle:@"待对方确认" forState:UIControlStateNormal];
+        
+        self.bidManageBtn.hidden = NO;
+//    }else if(model.type==4){
+//        [self.bidManageBtn setTitle:@"评价" forState:UIControlStateNormal];
+//        self.bidManageBtn.hidden = NO;
+    }else{
+        [self.bidManageBtn setTitle:nil forState:UIControlStateNormal];
+        self.bidManageBtn.hidden = YES;
+    }
+    self.numLabel.text = CustomLocalizedString(@"数量:", nil);
+    self.locationLabel.text = CustomLocalizedString(@"地区:", nil);
+}
+
+@end

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SetUpViewController">
+            <connections>
+                <outlet property="setMIMaBtn" destination="vjQ-Pw-CPS" id="nbX-G8-LEz"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2r9-nY-8u9">
+                    <rect key="frame" x="0.0" y="66" width="375" height="40"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="375" id="5KL-yc-Wa8"/>
+                        <constraint firstAttribute="height" constant="40" id="Ddo-Qb-VZB"/>
+                    </constraints>
+                    <state key="normal" title="   修改手机号码">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="xiugaiPhoneAction:" destination="-1" eventType="touchUpInside" id="qwh-XX-8zc"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="con_btn_open.png" translatesAutoresizingMaskIntoConstraints="NO" id="eH6-Cs-i14">
+                    <rect key="frame" x="345" y="77" width="11" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="1x1-wV-n9f"/>
+                        <constraint firstAttribute="width" constant="11" id="gsg-69-9bo"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vjQ-Pw-CPS">
+                    <rect key="frame" x="0.0" y="107" width="375" height="40"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="375" id="9cC-rE-wPw"/>
+                        <constraint firstAttribute="height" constant="40" id="j3M-On-vfO"/>
+                    </constraints>
+                    <state key="normal" title="   设置密码">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="setMimaAction:" destination="-1" eventType="touchUpInside" id="5Ec-kM-rf3"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="con_btn_open.png" translatesAutoresizingMaskIntoConstraints="NO" id="jlb-n4-a33">
+                    <rect key="frame" x="345" y="118" width="11" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="QTo-sT-cQi"/>
+                        <constraint firstAttribute="width" constant="11" id="kt3-hO-AgC"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xFd-Do-YyK">
+                    <rect key="frame" x="0.0" y="148" width="375" height="40"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="375" id="0eU-u1-sQa"/>
+                        <constraint firstAttribute="height" constant="40" id="7vB-BR-SZ0"/>
+                    </constraints>
+                    <state key="normal" title="   联系链旧客服">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="lianxiKefuAction:" destination="-1" eventType="touchUpInside" id="fHI-HQ-Msu"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="con_btn_open.png" translatesAutoresizingMaskIntoConstraints="NO" id="gwu-Tl-K9n">
+                    <rect key="frame" x="345" y="159" width="11" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="11" id="Qtm-QW-eor"/>
+                        <constraint firstAttribute="height" constant="18" id="fAP-EV-hl2"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5cC-i5-xu5">
+                    <rect key="frame" x="0.0" y="206" width="375" height="40"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="n3d-Pf-Mzz"/>
+                        <constraint firstAttribute="width" constant="375" id="zui-zp-wFp"/>
+                    </constraints>
+                    <state key="normal" title="   退出登录">
+                        <color key="titleColor" red="0.01475328041" green="0.8191631171" blue="0.0080837673609999994" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="tuichudengluAction:" destination="-1" eventType="touchUpInside" id="Ir3-Zm-tCi"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="xFd-Do-YyK" secondAttribute="trailing" id="12B-zn-i0g"/>
+                <constraint firstItem="xFd-Do-YyK" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="5Yo-Og-eXd"/>
+                <constraint firstItem="jlb-n4-a33" firstAttribute="top" secondItem="2r9-nY-8u9" secondAttribute="bottom" constant="12" id="64P-At-Whh"/>
+                <constraint firstItem="vjQ-Pw-CPS" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Jqv-Wn-sho"/>
+                <constraint firstItem="2r9-nY-8u9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="66" id="ObO-R3-yHB"/>
+                <constraint firstItem="vjQ-Pw-CPS" firstAttribute="top" secondItem="2r9-nY-8u9" secondAttribute="bottom" constant="1" id="Sjt-t3-cV0"/>
+                <constraint firstAttribute="trailing" secondItem="vjQ-Pw-CPS" secondAttribute="trailing" id="aoI-Fh-kJn"/>
+                <constraint firstAttribute="trailing" secondItem="jlb-n4-a33" secondAttribute="trailing" constant="19" id="ctB-Pr-7CZ"/>
+                <constraint firstAttribute="trailing" secondItem="gwu-Tl-K9n" secondAttribute="trailing" constant="19" id="een-KL-Djy"/>
+                <constraint firstItem="gwu-Tl-K9n" firstAttribute="top" secondItem="vjQ-Pw-CPS" secondAttribute="bottom" constant="12" id="iJn-mS-XC7"/>
+                <constraint firstAttribute="trailing" secondItem="eH6-Cs-i14" secondAttribute="trailing" constant="19" id="jOG-02-SQG"/>
+                <constraint firstAttribute="trailing" secondItem="5cC-i5-xu5" secondAttribute="trailing" id="k9l-Ty-XeE"/>
+                <constraint firstItem="5cC-i5-xu5" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="lec-td-hOc"/>
+                <constraint firstItem="xFd-Do-YyK" firstAttribute="top" secondItem="vjQ-Pw-CPS" secondAttribute="bottom" constant="1" id="o8p-tC-3KT"/>
+                <constraint firstItem="2r9-nY-8u9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pVi-6e-Osh"/>
+                <constraint firstItem="eH6-Cs-i14" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="77" id="vox-EI-7y1"/>
+                <constraint firstItem="5cC-i5-xu5" firstAttribute="top" secondItem="xFd-Do-YyK" secondAttribute="bottom" constant="18" id="wYB-x8-vAa"/>
+                <constraint firstAttribute="trailing" secondItem="2r9-nY-8u9" secondAttribute="trailing" id="yJb-sL-NDB"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+            <point key="canvasLocation" x="25.5" y="51.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="con_btn_open.png" width="12" height="20"/>
+    </resources>
+</document>

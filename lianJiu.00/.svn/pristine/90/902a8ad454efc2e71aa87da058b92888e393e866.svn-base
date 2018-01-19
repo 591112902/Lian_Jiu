@@ -1,0 +1,23 @@
+//
+//  MainTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/19.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SupplyModel.h"
+#import "PurchaseModel.h"
+@interface SATableViewCell : UITableViewCell
+
+@property (strong, nonatomic) IBOutlet UIImageView *leftImageView;
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UILabel *numValueLabel;
+@property (strong, nonatomic) IBOutlet UILabel *dateLabel;
+@property (strong, nonatomic) IBOutlet UILabel *location;
+@property (strong, nonatomic) IBOutlet UILabel *numTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationTitleLabel;
+-(void)fillCellWithModel:(SupplyModel*)model;
+-(void)fillCellWithModel2:(PurchaseModel*)model;
+@end

@@ -1,0 +1,18 @@
+//
+//  C_ContenTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "CreditContenModel.h"
+
+@interface C_ContenTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleL;
+@property (strong, nonatomic) IBOutlet UILabel *timeL;
+@property (strong, nonatomic) IBOutlet UILabel *ValueL;
+-(void)fillCellWithModel:(CreditContenModel*)model;
+
+@end

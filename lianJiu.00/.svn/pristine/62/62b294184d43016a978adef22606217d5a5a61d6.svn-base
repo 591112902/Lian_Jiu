@@ -1,0 +1,86 @@
+//
+//  PurchaseTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/12.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PurchaseTableViewController.h"
+#import "PurchaseModel.h"
+#import "B_C_GViewController.h"
+#import "PRJTabBarViewController.h"
+@interface PurchaseTableViewController ()
+@end
+
+@implementation PurchaseTableViewController
+- (void)addDatasourceIsDown:(BOOL)isDown
+{
+    NSMutableDictionary *parameters = [self.parameters mutableCopy];
+    if (isDown) {
+        [parameters setObject:@1 forKey:@"pageNo"];
+    }
+    HZLog(@"%@",parameters);
+    [networking AFNRequest:QUERYPURCHASE withparameters:parameters success:^(NSMutableDictionary *dic) {
+        if (isDown) {
+            [self.dataSource removeAllObjects];
+        }
+        HZLog(@"%@",dic[@"message"]);
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                PurchaseModel *supply = [PurchaseModel ModelWith:temp];
+                [self.dataSource addObject:supply];
+            }
+            if (isDown) {
+                [self.parameters setObject:@2 forKey:@"pageNo"];
+            }else{
+                NSInteger pageNo = [self.parameters[@"pageNo"] integerValue];
+                pageNo ++;
+                [self.parameters setObject:[NSNumber numberWithInteger:pageNo] forKey:@"pageNo"];
+            }
+        }
+        [self.tableView reloadData];
+    } error:nil HUDAddView:self.view];
+}
+
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row%2==0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+            cell.backgroundColor = BGColor;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        return cell;
+    }else{
+
+        SATableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SATableViewCell"];
+        [cell fillCellWithModel2:self.dataSource[indexPath.row/2]];
+        
+        //        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.row%2==0) {
+        return;
+    }
+    B_C_GViewController *bidContenVC = [[B_C_GViewController alloc] init];
+    bidContenVC.Purmodel = self.dataSource[indexPath.row/2];
+
+    bidContenVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:bidContenVC animated:YES];
+    
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers.lastObject;
+    MeVC *meVc = nav.viewControllers.firstObject;
+    meVc.isRequestData = YES;
+}
+
+
+@end

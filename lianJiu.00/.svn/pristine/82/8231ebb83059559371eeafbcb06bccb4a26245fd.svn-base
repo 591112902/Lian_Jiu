@@ -1,0 +1,52 @@
+//
+//  R_SuperTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+
+
+#import <UIKit/UIKit.h>
+#import "Re_1TableViewCell.h"
+#import "Re_2TableViewCell.h"
+#import "Re_3TableViewCell.h"
+#import "Re_4TableViewCell.h"
+#import "PhotoCollectionViewCell.h"
+#import "PhonwRecoveryCollectionReusableView.h"
+
+#import "SelectViewController.h"
+#import "SelectSubLocationViewController.h"
+#import "PhotoCollectionViewController.h"
+#import "GWLPhotoLibrayController.h"
+#import "MulPhotoCollectionViewController.h"
+#import "CommitSuccseViewController.h"
+
+#import "BaseModel.h"
+#import "ReleaseCellModel.h"
+
+
+
+@interface R_SuperTableViewController : UITableViewController<UIActionSheetDelegate,UIAlertViewDelegate,UITextViewDelegate,UITextFieldDelegate,SelectViewControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,PhotoCollectionViewDelegate>
+{
+    UIButton *conmitBtn;//!>提交按钮
+    UIButton *readBtn;//!>交易规则选框
+}
+@property(nonatomic,strong)NSMutableArray *dataScour;
+
+@property(nonatomic,strong)UIView *footView;
+@property(nonatomic,strong)BaseModel *baseModel;
+@property(nonatomic,strong)MulPhotoCollectionViewController *photoVC;
+@property(nonatomic)BOOL isBackPreView;//返回上级页面
+@property(nonatomic)BOOL isGongYing;
+
+
+@property(nonatomic,strong)SelectSubViewController *seVC;
+-(void)selectHuoWuLeibie;
+- (void)selectDiqu:(NSInteger)row;
+- (NSArray *)photoDataSoucToData:(NSArray*) arr;//压缩图片
+- (void)readBtnOnclik:(UIButton *)btn;
+- (void)jiaoshiGuize;
+- (void)ToCommit;
+@end

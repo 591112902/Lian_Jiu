@@ -1,0 +1,15 @@
+//
+//  SearchSupplyContenViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/13.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface SearchSupplyContenViewController : UIViewController
+@property (nonatomic,strong)NSMutableArray *dataSouc;
+@property (nonatomic,strong)NSMutableDictionary *parameters;
+@property (nonatomic)BOOL isGongYing;
+@end

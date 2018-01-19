@@ -1,0 +1,14 @@
+//
+//  S_AbaotViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface S_AbaotViewController : UIViewController
+@property (strong, nonatomic) IBOutlet UILabel *versionLabel;
+
+@end

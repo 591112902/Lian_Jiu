@@ -1,0 +1,61 @@
+//
+//  CreditViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "CreditViewController.h"
+#import "C_ContenTableViewController.h"
+#import "UIImageView+WebCache.h"
+@interface CreditViewController ()
+{
+    NSInteger imgValue;
+}
+@end
+
+@implementation CreditViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    
+    NSInteger rating = [CreditViewController MyCreditRating:self.userModel.line_credit];
+    self.headImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"vip_lv%ld",(long)rating]];
+    
+    self.GradeLabel.text = [self.userModel.line_credit stringValue];
+    self.GradeContenBtn.layer.cornerRadius = 3;
+    self.GradeContenBtn.clipsToBounds = YES;
+    self.GradeContenBtn.layer.borderWidth = 1;
+    self.GradeContenBtn.layer.borderColor = [UIColor colorWithRed:245/255.0 green:191/255.0 blue:0 alpha:1].CGColor;
+    
+    [self.GradeContenBtn setTitle:CustomLocalizedString(@"信用明细", nil) forState:UIControlStateNormal];
+   
+}
+
+- (IBAction)ToGradeConten:(id)sender {
+    C_ContenTableViewController *CCVC =[[C_ContenTableViewController alloc] init];
+    CCVC.title = CustomLocalizedString(@"信用明细", nil);
+    [self.navigationController pushViewController:CCVC animated:YES];
+    
+}
+
++ (NSInteger)MyCreditRating:(NSNumber*)credit
+{
+    NSArray *arr = @[@0,@1000,@2500,@4500,@6500,@8500,@16500,@32500,@64500,@127500,@255500,@511500];
+    NSInteger rating = 0;
+    for (NSNumber *num in arr) {
+        if ([credit compare:num] == NSOrderedDescending) {
+            rating++;
+        }else{
+            break;
+        }
+    }
+    return rating==0?1:rating;
+}
+
+@end

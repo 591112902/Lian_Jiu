@@ -1,0 +1,192 @@
+//
+//  BiddingViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+/**中标管理界面*/
+
+#import "BiddingViewController.h"
+#import "BiddingTableViewCell.h"
+#import "biddingModel.h"
+#import "BaseModel.h"
+@interface BiddingViewController ()<UITableViewDataSource,UITableViewDelegate>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;//标题
+@property (strong, nonatomic) IBOutlet UILabel *numberLable;//数量
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;//地址
+@property (strong, nonatomic) IBOutlet UILabel *endTimeLabel;//结束时间
+@property (strong, nonatomic) IBOutlet UILabel *DeliveryTimeLabel;//取货时间
+
+@property (strong, nonatomic) IBOutlet UILabel *titleTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *numberTitltLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *endTimeTitleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *deliveryTimeTitleLabel;
+
+@property (strong, nonatomic) BaseModel *baseModel;
+@property (strong, nonatomic)  NSTimer *timer;
+
+@end
+
+@implementation BiddingViewController
+{
+    NSMutableArray *_dataSouc;
+    NSString *cellidentifier;
+    
+    int days;
+    int hours;
+    int minute;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    cellidentifier = @"BiddingTableViewCell";
+    self.title = self.bidMangeModel.t_id;
+    self.titleLabel.text = self.bidMangeModel.t_title;
+    STRINGNONIL(self.bidMangeModel.t_quality);
+    STRINGNONIL(self.bidMangeModel.dw_name);
+    self.numberLable.text = [self.bidMangeModel.t_quality stringByAppendingString:self.bidMangeModel.dw_name];
+    self.locationLabel.text = self.bidMangeModel.dz_name;
+    
+    
+        STRINGNONIL(self.bidMangeModel.t_date);
+    
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSInteger valueDate = [self.bidMangeModel.t_date integerValue];
+    valueDate = valueDate *24*60*60;
+    NSDate *passTime = [dateFormatter dateFromString:self.bidMangeModel.pass_time];
+    passTime = [passTime initWithTimeInterval:valueDate sinceDate:passTime];
+    NSTimeInterval timetamp = [passTime timeIntervalSinceNow];
+
+    
+    NSString *daysText=CustomLocalizedString(@"天",nil);
+    NSString *hoursText=CustomLocalizedString(@"小时", nil);
+    NSString *minuteText=CustomLocalizedString(@"分",nil);
+    int myDays = timetamp/3600/24;
+    int myHours = (int)timetamp%(3600*24)/3600;
+    int myMinute = (int)timetamp%(3600*24)%3600/60;
+    self.endTimeLabel.text=[NSString stringWithFormat:@"%d%@ %d%@ %d%@",myDays,daysText,myHours,hoursText,myMinute,minuteText];
+    
+    self.timer=[NSTimer timerWithTimeInterval:1 target:self selector:(@selector(timeFire)) userInfo:nil repeats:YES];
+    if (timetamp<0) {
+        
+        self.endTimeLabel.text = CustomLocalizedString(@"已结束", nil);
+        [self.timer invalidate];
+        
+    }
+    [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+
+   
+    
+    self.DeliveryTimeLabel.text = [NSString stringWithFormat:@"%@%@",self.bidMangeModel.t_picktime,CustomLocalizedString(@"天", nil)];
+    [self requestData];
+    
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [self.tableView registerNib:[UINib nibWithNibName:cellidentifier bundle:nil] forCellReuseIdentifier:cellidentifier];
+    
+    _titleTitleLabel.text = CustomLocalizedString(@"招标名称:", nil);
+    _numberTitltLabel.text = CustomLocalizedString(@"招标数量:", nil);
+    _locationTitleLabel.text = CustomLocalizedString(@"招标地区:", nil);
+    _endTimeTitleLabel.text = CustomLocalizedString(@"结束时间:", nil);
+    _deliveryTimeTitleLabel.text = CustomLocalizedString(@"投标成功后买家提货时间:", nil);
+
+}
+
+//倒计时 一秒动作
+-(void)timeFire{
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    STRINGNONIL(self.bidMangeModel.t_date);
+    NSInteger valueDate = [self.bidMangeModel.t_date integerValue];
+    valueDate = valueDate *24*60*60; // 天数
+    
+    NSDate *passTime = [dateFormatter dateFromString:self.bidMangeModel.pass_time];
+    passTime = [passTime initWithTimeInterval:valueDate sinceDate:passTime];// 过去 和 天数的间隔
+    
+    NSTimeInterval timetamp = [passTime timeIntervalSinceNow];// 这是一个时间差
+    if (timetamp<0) {
+        
+        self.endTimeLabel.text = CustomLocalizedString(@"已结束", nil);
+        [self.timer invalidate];
+        
+    }
+    NSString *daysText=CustomLocalizedString(@"天",nil);
+    NSString *hoursText=CustomLocalizedString(@"小时", nil);
+    NSString *minuteText=CustomLocalizedString(@"分",nil);
+   
+    days = timetamp/3600/24;
+    hours = (int)timetamp%(3600*24)/3600;
+    minute = (int)timetamp%(3600*24)%3600/60;
+    self.endTimeLabel.text=[NSString stringWithFormat:@"%d%@ %d%@ %d%@",days,daysText,hours,hoursText,minute,minuteText];
+    
+}
+
+
+//申请数据
+-(void)requestData
+{
+    _dataSouc = [[NSMutableArray alloc] init];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    [networking AFNPOST:BIDMANAGEMENT withparameters:@{@"vip":vip,@"bid":self.bidMangeModel.t_id} success:^(NSMutableDictionary *dic) {
+        NSDictionary *response = dic[@"response"];
+        if ([response[@"JBRinfo"] isKindOfClass:[NSArray class]]) {
+            for (NSDictionary *temp in response[@"JBRinfo"]) {
+                biddingModel *model = [biddingModel ModelWith:temp];
+                [_dataSouc addObject:model];
+            }
+        }
+        [self.tableView reloadData];
+    } error:nil HUDAddView:self.view];
+}
+- (BaseModel *)baseModel
+{
+    if (!_baseModel) {
+        _baseModel = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    }
+    return _baseModel;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _dataSouc.count;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BiddingTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellidentifier];
+    biddingModel *model = _dataSouc[indexPath.row];
+    [cell fillCellWithModel:model];
+    cell.locationLabel.text = [self.baseModel findLocationNameWithId:model.district];
+    
+    cell.dealBtn.tag = indexPath.row +45500;
+    [cell.dealBtn addTarget:self action:@selector(deal:) forControlEvents:UIControlEventTouchUpInside];
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 78;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    
+}
+- (void)deal:(UIButton *)btn
+{
+    NSInteger index = btn.tag-45500;
+    biddingModel *biddingModel = _dataSouc[index];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    NSDictionary *parameters = @{@"vip":vip,@"bid":self.bidMangeModel.t_id,@"zbrid":biddingModel.zbrid,@"cjid":biddingModel.cjid};
+    WS(weakSelf);
+    [networking AFNPOST:DEAL withparameters:parameters success:^(NSMutableDictionary *dic) {
+        [MBProgressHUD showSuccess:CustomLocalizedString(@"成交成功", nil) toView:[UIApplication sharedApplication].keyWindow];
+        weakSelf.bidMangeModel.t_bidstate_id = @"1";
+        [weakSelf.navigationController popViewControllerAnimated:YES];
+    } error:nil HUDAddView:self.view];
+}
+
+@end

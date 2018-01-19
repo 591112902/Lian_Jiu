@@ -1,0 +1,13 @@
+//
+//  PhoneRecyceTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/10.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PhotoTableViewController.h"
+
+@interface PhoneRecyceTableViewController : PhotoTableViewController
+
+@end

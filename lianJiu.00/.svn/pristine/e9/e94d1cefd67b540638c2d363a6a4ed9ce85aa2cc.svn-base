@@ -1,0 +1,15 @@
+//
+//  PhoneRecyceTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/10.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface PhoneRecyceTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *tilteL;
+@property (strong, nonatomic) IBOutlet UITextField *valueTF;
+
+@end

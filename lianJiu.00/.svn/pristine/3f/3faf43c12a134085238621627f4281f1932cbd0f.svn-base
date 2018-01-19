@@ -1,0 +1,23 @@
+//
+//  B_R_BaoZJTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/18.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+#import "bidModel.h"
+@interface B_R_BaoZJTableViewController : UITableViewController
+{
+ NSMutableArray *_dataSouc;
+}
+
+
+
+
+@property (nonatomic,strong)bidModel *bidModel;
+@property(nonatomic,strong)NSNumber *ensure_money;//保证金冻结金额
+
+@end

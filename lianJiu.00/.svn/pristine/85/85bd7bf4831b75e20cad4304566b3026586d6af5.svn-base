@@ -1,0 +1,188 @@
+//
+//  B_WithdrawalsViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_WithdrawalsViewController.h"
+#import "MOSTableViewCell.h"
+#import "B_WTableViewCell.h"
+#import "passwordView.h"
+#import "B_W_AddCardViewController.h"
+#import "B_W_sucessViewController.h"
+@interface B_WithdrawalsViewController ()<UITableViewDataSource, UITableViewDelegate>
+@property (strong, nonatomic) IBOutlet UIButton *cardLabel;
+@property (strong, nonatomic) IBOutlet UIButton *seleCardBtn;
+@property (strong, nonatomic) IBOutlet UITextField *amoutTF;
+@property (strong, nonatomic) IBOutlet UIButton *nextBtn;
+@property (strong, nonatomic) UITableView * tableView;
+@end
+
+@implementation B_WithdrawalsViewController
+{
+    NSArray *_dataSouc;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    _dataSouc = @[@"建设银行储蓄卡（1603）",@"建设银行储蓄卡（1603）",@"建设银行储蓄卡（1603）",@"last"];
+    
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    self.amoutTF.keyboardType = UIKeyboardTypeNumberPad;
+    [self.amoutTF becomeFirstResponder];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeybord)];
+    [self.view addGestureRecognizer:tap];
+}
+- (void)hideKeybord
+{
+    [self.amoutTF resignFirstResponder];
+
+}
+
+- (IBAction)ToselectCard:(id)sender {
+    [self.amoutTF resignFirstResponder];
+    UIImageView *image = [self addbackgroundImageView];
+    [self.view.window addSubview:image];
+    
+    UITableView *table = [[UITableView alloc] initWithFrame:CGRectMake(10, 100+64, BOUND_WIDTH-20, 44*_dataSouc.count)];
+    [table registerNib:[UINib nibWithNibName:@"MOSTableViewCell" bundle:nil] forCellReuseIdentifier:@"MOSTableViewCell"];
+    [table registerNib:[UINib nibWithNibName:@"B_WTableViewCell" bundle:nil] forCellReuseIdentifier:@"B_WTableViewCell"];
+    table.separatorStyle = UITableViewCellSelectionStyleNone;
+    table.delegate = self;
+    table.dataSource = self;
+    table.layer.cornerRadius = 8;
+    table.clipsToBounds = YES;
+
+    table.alpha = 0;
+
+    [self.view.window addSubview:table];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        table.alpha = 1;
+        image.alpha = 0.3;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+- (UIImageView *)addbackgroundImageView
+{
+    UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,BOUND_WIDTH, BOUND_HIGHT)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapImage2:)];
+    [image addGestureRecognizer:tap];
+    image.userInteractionEnabled = YES;
+    image.backgroundColor = [UIColor blackColor];
+    image.alpha = 0;
+    return image;
+}
+- (void)tapImage2:(UITapGestureRecognizer *)tap
+{
+    UIView *v = self.view.window.subviews.lastObject;
+    [UIView animateWithDuration:0.5 animations:^{
+        v.alpha = 0;
+        tap.view.alpha = 0;
+    } completion:^(BOOL finished) {
+        
+        [v removeFromSuperview];
+        [tap.view removeFromSuperview];
+        [self.amoutTF becomeFirstResponder];
+//        for (UIView *view in self.view.window.subviews) {
+//            HZLog(@"%@",view);
+//        }
+    }];
+}
+- (void)removeSeleCArdTableView
+{
+
+    UIView *v = self.view.window.subviews.lastObject;
+    [v removeFromSuperview];
+    v = self.view.window.subviews.lastObject;
+    [v removeFromSuperview];
+    v =nil;
+}
+- (IBAction)ToNext:(id)sender {
+    [self.amoutTF resignFirstResponder];
+    UIImageView *image = [self addbackgroundImageView];
+    [self.view.window addSubview:image];
+    NSArray *arr =  [[NSBundle mainBundle] loadNibNamed:@"passwordView" owner:self options:nil];
+    passwordView *pWV =  arr.lastObject;
+    CGFloat pwvY;
+    if (BOUND_HIGHT>480) {
+        pwvY = 40+64+60;
+    }else{pwvY = 40+64;}
+    pWV.frame =  CGRectMake(10, pwvY, BOUND_WIDTH-20, 150);
+    InputPasswordView *inputView = pWV.passwordV;
+    [inputView setFinishedInputBlock:^(NSString * payPassword) {
+        HZLog(@"payPassword %@", payPassword);
+        [self removeSeleCArdTableView];
+        B_W_sucessViewController *bWSVC = [[B_W_sucessViewController alloc] init ];
+        bWSVC.title = @"提现详情";
+        [self.navigationController pushViewController:bWSVC animated:YES];
+    }];
+//    [pWV.passwordV becomeFirstResponder];
+    [self.view.window addSubview:pWV];
+    [inputView.responsder becomeFirstResponder];
+    pWV.alpha = 0;
+    [UIView animateWithDuration:0.5 animations:^{
+        pWV.alpha = 1;
+        image.alpha = 0.3;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
+#pragma mark - Table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    
+    return _dataSouc.count;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == _dataSouc.count-1) {
+        B_WTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"B_WTableViewCell"];
+        return cell;
+    }else{
+        MOSTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MOSTableViewCell"];
+        
+        cell.label.text = _dataSouc[indexPath.row];
+        return cell;
+    }
+    
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self removeSeleCArdTableView];
+    if (indexPath.row==_dataSouc.count-1) {
+        B_W_AddCardViewController *bWAVC = [[B_W_AddCardViewController alloc] init];
+        bWAVC.title = @"添加银行卡";
+        [self.navigationController pushViewController:bWAVC animated:YES];
+    }
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+-(void)dealloc{
+    HZLog(@"%@-----dealloc",self);
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

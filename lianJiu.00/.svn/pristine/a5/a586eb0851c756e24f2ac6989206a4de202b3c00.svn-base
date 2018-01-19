@@ -1,0 +1,183 @@
+//
+//  SearchViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/20.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SearchViewController.h"
+#import "HotSearchCollectionViewCell.h"
+#import "S_ContenViewController.h"
+#import "SearchSupplyContenViewController.h"
+#import "bidModel.h"
+@interface SearchViewController () <UITextFieldDelegate,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout>
+@property (nonatomic,strong)NSMutableDictionary *parameter;
+@property (nonatomic,strong)NSMutableArray *historyList;
+
+@end
+
+@implementation SearchViewController
+{
+    UITextField *serchTF;
+    UILabel *hotSearchLable;
+    UICollectionView *listView;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"搜索", nil);
+//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+//    backItem.title = CustomLocalizedString(@"返回", nil);
+//    self.navigationItem.backBarButtonItem = backItem;
+    self.view.backgroundColor = BGColor;
+    UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(20, 90, BOUND_WIDTH-20*2, 50)];
+    imgView.userInteractionEnabled =YES;
+    imgView.image = [UIImage imageNamed:@"select_kuang"];
+    
+    [self.view addSubview:imgView];
+    
+    serchTF = [[UITextField alloc] initWithFrame:CGRectMake(30, 10, BOUND_WIDTH-20*2-100, 30)];
+    serchTF.delegate = self;
+
+    serchTF.placeholder = CustomLocalizedString(@"搜索产品投标信息", nil);
+
+    serchTF.textColor = [UIColor grayColor];
+    serchTF.font = UIFont15;
+    [imgView addSubview:serchTF];
+//    
+    UIButton *searchBtn = [[UIButton alloc] initWithFrame:CGRectMake((BOUND_WIDTH-20*2)/5.0*4, 0, (BOUND_WIDTH-20*2)/5.0, 50)];
+    [searchBtn setBackgroundImage:[UIImage imageNamed:@"select_but"] forState:UIControlStateNormal];
+    [searchBtn setImage:[UIImage imageNamed:@"mp_3_09"] forState:UIControlStateNormal];
+    [searchBtn addTarget:self action:@selector(Tosearch) forControlEvents:UIControlEventTouchUpInside];
+    [imgView addSubview:searchBtn];
+    
+    hotSearchLable = [[UILabel alloc] initWithFrame:CGRectMake(25, 160, 100, 20)];
+    hotSearchLable.text = CustomLocalizedString(@"历史搜索:", nil);
+    hotSearchLable.hidden = YES;
+    hotSearchLable.font = UIFont15;
+    [self.view addSubview:hotSearchLable];
+    
+    UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc ]init];
+    flowLayout.itemSize = CGSizeMake((BOUND_WIDTH-60)/3, 50);
+    flowLayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    listView = [[UICollectionView alloc] initWithFrame:CGRectMake(10, 180, BOUND_WIDTH-20, BOUND_HIGHT-170-TARBARHEIGHT) collectionViewLayout:flowLayout];
+    listView.backgroundColor = BGColor;
+    listView.delegate = self;
+    listView.dataSource = self;
+    [listView registerNib:[UINib nibWithNibName:@"HotSearchCollectionViewCell" bundle:nil] forCellWithReuseIdentifier:@"HotSearchCollectionViewCell"];
+    [self.view addSubview:listView];
+    
+
+    
+    // Do any additional setup after loading the view from its nib.
+}
+
+-(NSMutableDictionary *)parameter
+{
+    if (!_parameter) {
+        _parameter = [[NSMutableDictionary alloc] initWithDictionary:@{@"title":serchTF.text,@"pageNo":@1}];
+    }
+    return _parameter;
+}
+-(NSMutableArray *)historyList
+{
+    if (!_historyList) {
+        _historyList = [NSMutableArray arrayWithContentsOfFile:[self documentsPath:@"searchHistory.ling"]];
+        if (_historyList) {
+            hotSearchLable.hidden = NO;
+        }else{
+            _historyList = [[NSMutableArray alloc] init];
+        }
+    }
+    return _historyList;
+}
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.historyList.count;
+}
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    HotSearchCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"HotSearchCollectionViewCell" forIndexPath:indexPath];
+    cell.label.text =self.historyList[indexPath.row];
+    cell.label.backgroundColor = [UIColor whiteColor];
+    return cell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    serchTF.text = self.historyList[indexPath.row];
+    [self.parameter setObject:serchTF.text forKey:@"title"];
+    [self Tosearch];
+}
+- (void)Tosearch
+{
+    [serchTF resignFirstResponder];
+    if (![serchTF.text isEqualToString:@""]) {
+        for (NSString *str in self.historyList) {
+            if ([str isEqualToString:serchTF.text]) {
+                [self.historyList removeObject:str];
+                break;
+            }
+        }
+        [self.historyList insertObject:serchTF.text atIndex:0];
+        if (self.historyList.count>6) {
+            [self.historyList removeObjectsInRange:NSMakeRange(6, self.historyList.count-6)];
+        }
+        hotSearchLable.hidden = NO;
+        [listView reloadData];
+        HZLog(@"%@",self.parameter);
+        [networking AFNPOST:QUERYTENDERBYTITLE withparameters:self.parameter success:^(NSMutableDictionary *dic) {
+            HZLog(@"%@",dic);
+            if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+                NSArray *response = dic[@"response"];
+                if (response.count>0) {
+                    NSMutableArray *dataList = [[NSMutableArray alloc] init];
+                    for (NSDictionary *temp in response) {
+                        bidModel *model = [bidModel ModelWith:temp];
+                        [dataList addObject:model];
+                    }
+                    
+                    S_ContenViewController *SCVC = [[S_ContenViewController alloc] init];
+                    SCVC.title = serchTF.text;
+                    SCVC.dataSouc = dataList;
+                    NSMutableDictionary *praDic = [self.parameter mutableCopy];
+                    [praDic setObject:@2 forKey:@"pageNo"];
+                    SCVC.parameters = praDic;
+                    [self.navigationController pushViewController:SCVC animated:YES];
+                }else{
+                    [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"无记录", nil) toView:self.view];
+                }
+            }
+        } error:nil HUDAddView:self.view];
+    }
+    
+    
+
+    
+}
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    [self.parameter setObject:textField.text forKey:@"title"];
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [serchTF resignFirstResponder];
+    return YES;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [serchTF resignFirstResponder];
+}
+-(NSString *)documentsPath:(NSString *)fileName {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    return [documentsDirectory stringByAppendingPathComponent:fileName];
+}
+-(void)dealloc
+{
+    [self.historyList writeToFile:[self documentsPath:@"searchHistory.ling"] atomically:YES];
+}
+
+@end

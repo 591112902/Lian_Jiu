@@ -1,0 +1,46 @@
+//
+//  S_AbaotViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "S_AbaotViewController.h"
+
+@interface S_AbaotViewController ()
+@property (strong, nonatomic) IBOutlet UILabel *versionTitleLabel;
+
+@end
+
+@implementation S_AbaotViewController
+
+- (void)viewDidLoad {
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *currentVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    self.versionLabel.text = currentVersion;
+    _versionTitleLabel.text = CustomLocalizedString(@"版本号", nil);
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+- (IBAction)Toversion:(id)sender {
+}
+- (IBAction)ToShare:(id)sender {
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

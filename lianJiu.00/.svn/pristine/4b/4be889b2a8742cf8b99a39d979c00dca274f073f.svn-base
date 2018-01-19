@@ -1,0 +1,13 @@
+//
+//  R_P_CViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/23.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "KeyboardViewController.h"
+
+@interface R_P_CViewController : KeyboardViewController
+@property (nonatomic,assign)NSInteger number;//0：登录密码;1：支付密码
+@end

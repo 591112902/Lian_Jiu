@@ -1,0 +1,22 @@
+//
+//  Re_1TableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Re_1TableViewCell.h"
+
+@implementation Re_1TableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+-(void)fillCellWithModel:(ReleaseCellModel *)model
+{
+    self.title.text = model.title;
+    self.valueTF.text = model.text;
+}
+@end

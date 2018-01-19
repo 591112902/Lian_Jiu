@@ -1,0 +1,233 @@
+//
+//  BondViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/11.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BondViewController.h"
+#import "BondSucesseViewController.h"
+#import "AccountModel.h"
+#import "validate.h"
+#import "B_RechargeTableViewController.h"
+#import "B_R_BaoZJTableViewController.h"
+#import "ForgotViewController.h"
+
+
+#import "BanceDetailModel.h"
+@interface BondViewController ()<UIAlertViewDelegate>
+@property(nonatomic,strong) BanceDetailModel *baozj;
+@end
+
+@implementation BondViewController
+{
+//    UITextField *headContenTF;
+    UILabel *headLabel;
+    UITextField *passwordTF;
+    AccountModel *userModel;
+    UILabel *Balance;//账户余额
+    NSInteger pageNo;
+  
+    
+
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    pageNo=1;
+    // 保证金明细
+    [self requestData];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    self.view.backgroundColor = [UIColor whiteColor];
+    CGFloat H=20+64;
+
+    CGFloat legap = 40;
+    CGFloat labelH = 30;
+    headLabel= [[UILabel alloc] initWithFrame:CGRectMake(legap, H, BOUND_WIDTH, labelH)];
+    headLabel.font = UIFont15;
+    [self.view addSubview:headLabel];
+    
+    H+=labelH+15-80;
+    CGFloat ContenViewH = 50;
+    
+    H+=ContenViewH+15;
+    Balance = [[UILabel alloc] init];
+    Balance.font = UIFont15;
+
+    userModel=[NSKeyedUnarchiver unarchiveObjectWithFile:ACCOUNTPATH];
+    [self.view layoutSubviews];//刷新数据
+   
+ 
+  
+
+    if (userModel.account_balance) {
+          Balance.text = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"你的现金余额为:", nil),userModel.account_balance,CustomLocalizedString(@"元", nil)];
+    }else{
+        Balance.text = CustomLocalizedString(@"你的现金余额为0:", nil);
+    };
+    
+
+    CGRect rect = [Balance.text boundingRectWithSize:CGSizeMake(1000, 20) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
+    [self.view addSubview:Balance];
+    Balance.frame = CGRectMake(legap, H, rect.size.width+20, labelH);
+    double account_balance = [self.baozj.a_bail doubleValue];
+    
+    if (account_balance<[self.baozj.a_bail  doubleValue]) {
+        UIButton *chonZhiBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+        [chonZhiBtn setTitle:CustomLocalizedString(@"余额不足请充值", nil) forState:UIControlStateNormal];
+        [chonZhiBtn addTarget:self action:@selector(toChongZhi) forControlEvents:UIControlEventTouchUpInside];
+        chonZhiBtn.frame = CGRectMake(Balance.frame.origin.x+Balance.frame.size.width, Balance.frame.origin.y, BOUND_WIDTH-legap-Balance.frame.size.width>110?110:BOUND_WIDTH-legap-Balance.frame.size.width, Balance.frame.size.height);
+        [self.view addSubview:chonZhiBtn];
+    }
+    
+    H+=labelH+15;
+    UIView *passwordView = [[UIView alloc] initWithFrame:CGRectMake(legap, H, BOUND_WIDTH-2*(legap),ContenViewH)];
+    passwordTF = [[UITextField alloc] initWithFrame:CGRectMake(20, 0, BOUND_WIDTH-2*(legap+5)-20,ContenViewH)];
+    passwordTF.placeholder = CustomLocalizedString(@"请输入支付密码", nil);
+    passwordTF.secureTextEntry = YES;
+    passwordTF.delegate = self;
+    [passwordView addSubview:passwordTF];
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    [btn setImage:[UIImage imageNamed:@"mima_ming"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets = UIEdgeInsetsMake(10, 15, 10, 5);
+    [btn addTarget:self action:@selector(PasswordMingWen) forControlEvents:UIControlEventTouchUpInside];
+    btn.highlighted = NO;
+    passwordTF.rightView = btn;
+    passwordTF.rightViewMode = UITextFieldViewModeAlways;
+    
+    passwordView.backgroundColor = BGColor;
+    passwordView.layer.borderWidth = 0.3;
+    passwordView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    [self.view addSubview:passwordView];
+    
+    H+=ContenViewH+5;
+    UILabel *passwordExplain = [[UILabel alloc] initWithFrame:CGRectMake(legap, H, BOUND_WIDTH-legap, labelH)];
+    passwordExplain.text = CustomLocalizedString(@"如未修改默认为登录密码", nil);
+    passwordExplain.textColor = [UIColor lightGrayColor];
+    passwordExplain.font = UIFont13;
+    [self.view addSubview:passwordExplain];
+    
+    UIButton *button=[UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame=CGRectMake(BOUND_WIDTH-legap-100, H, BOUND_WIDTH-legap-200, labelH);
+//    button.backgroundColor=[UIColor redColor];
+    [button setTitle:CustomLocalizedString(@"找回密码",nil) forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    button.titleLabel.font=UIFont13;
+    [button addTarget:self action:@selector(findPayPwd) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
+    
+    H+=labelH+30;
+    CGFloat bidH = 44;
+    UIButton *bid = [UIButton buttonWithType:UIButtonTypeCustom];
+    bid.frame = CGRectMake(10, H, BOUND_WIDTH-20, bidH);
+    [bid setTitle:CustomLocalizedString(@"确认提交", nil) forState:UIControlStateNormal];
+    [bid setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    bid.layer.cornerRadius = 5;
+    bid.clipsToBounds = YES;
+    [bid addTarget:self action:@selector(commit) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:bid];
+    
+}
+
+-(void)findPayPwd{
+    
+    ForgotViewController *forgotVC=[[ForgotViewController alloc]init];
+    forgotVC.number=@1;
+    [self.navigationController pushViewController:forgotVC animated:YES];
+    
+    
+}
+
+-(void)PasswordMingWen
+{
+    passwordTF.secureTextEntry  = !passwordTF.secureTextEntry;
+}
+
+
+- (void)requestData
+{
+    [networking AFNRequest:QUERYBZJ withparameters:@{@"bid":self.bidModel.t_id} success:^(NSMutableDictionary *dic) {
+         if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+             
+             self.baozj=[BanceDetailModel  ModelWith:dic[@"response"]];
+           
+              headLabel.text=[NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"保证金金额:", nil),self.baozj.a_bail,CustomLocalizedString(@"元", nil)];
+                        pageNo++;
+             
+                        [self.view layoutSubviews];
+           
+        }
+    } error:^(NSError *error) {
+    
+    } HUDAddView:self.view];
+
+    
+}
+- (void)commit
+{
+
+
+    if (userModel.account_balance>self.baozj.a_bail) {
+            CGFloat money = [self.baozj.a_bail floatValue];
+
+        [validate CheckInputAccount:CustomLocalizedString(@"密码", nil) withText:passwordTF.text withminNum:1 withMaxNum:20];
+
+        double account_balance = [userModel.account_balance doubleValue];
+        
+        if (account_balance<money) {
+        UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:CustomLocalizedString(@"温馨提示", nil) message:CustomLocalizedString(@"您的账户余额不足，是否需要充值", nil) delegate:self cancelButtonTitle:CustomLocalizedString(@"是", nil) otherButtonTitles:CustomLocalizedString(@"否", nil), nil];
+            [alerView show];
+            return;
+        }
+
+
+          NSDictionary *parameters = @{@"vip":self.vip,@"tbid":self.bidModel.t_id,@"money":self.baozj.a_bail,@"payment":passwordTF.text};
+        [networking AFNPOST:SUBMITBZJ withparameters:parameters success:^(NSMutableDictionary *dic) {
+            
+            if (userModel) {
+                double account_balance = [self.baozj.a_bail doubleValue];
+            
+                account_balance -= [parameters[@"money"] floatValue];
+                userModel.account_balance = [NSNumber numberWithDouble:account_balance];
+//                baozj.a_abail = [NSNumber numberWithDouble:baozj.a_abail];
+                Balance.text = [NSString stringWithFormat:@"%@%.2f%@",CustomLocalizedString(@"你的现金余额为:",nil),account_balance,CustomLocalizedString(@"元", nil)];
+//                Balance.text = [NSString stringWithFormat:@"你的现金账户可用余额为%@元",userModel.account_balance];
+                [NSKeyedArchiver archiveRootObject:userModel toFile:ACCOUNTPATH];
+            }
+            if (_preVC) {
+                _preVC.isSuccessBond = YES;
+                _preVC.isDidBond = YES;
+            }
+            BondSucesseViewController *BSVC = [[BondSucesseViewController alloc] init];
+            BSVC.text = [NSString stringWithFormat:@"%@%@%@",CustomLocalizedString(@"你已提交投标保证金",nil),parameters[@"money"],CustomLocalizedString(@"元", nil)];
+            BSVC.bidModel =self.bidModel;
+            BSVC.vip = self.vip;
+            BSVC.title = self.title;
+            BSVC.preVC = _preVC;
+            [self.navigationController pushViewController:BSVC animated:YES];
+        } error:nil HUDAddView:self.view];
+    }
+    
+    
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==0) {
+        [self toChongZhi];
+    }
+}
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.view endEditing:YES];
+}
+//充值
+- (void)toChongZhi
+{
+    B_RechargeTableViewController *BRVC = [[B_RechargeTableViewController alloc] init];
+    BRVC.userModel = userModel;
+    BRVC.title = CustomLocalizedString(@"充值", nil);
+    [self.navigationController pushViewController:BRVC animated:YES];
+}
+@end

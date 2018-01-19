@@ -1,0 +1,20 @@
+//
+//  BiddingTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "biddingModel.h"
+@interface BiddingTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *headImage;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *priceLabel;
+@property (strong, nonatomic) IBOutlet UILabel *dateLabel;
+@property (strong, nonatomic) IBOutlet UILabel *timeLabel;
+@property (strong, nonatomic) IBOutlet UIButton *dealBtn;
+@property (strong, nonatomic) IBOutlet UILabel *priceTitleLabel;
+-(void)fillCellWithModel:(biddingModel *)model;
+@end

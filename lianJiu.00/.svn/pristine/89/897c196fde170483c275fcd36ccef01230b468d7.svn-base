@@ -1,0 +1,23 @@
+//
+//  M_collction2TableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/11.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "M_collction2TableViewCell.h"
+
+@implementation M_collction2TableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

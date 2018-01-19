@@ -1,0 +1,37 @@
+//
+//  bidVC.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "SelectSubLocationViewController.h"
+
+#import "SDCycleScrollView.h"
+#import "MainTableViewCell.h"
+#import "MainCollectionViewCell.h"
+#import "ZSWViewController.h"
+#import "SearchViewController.h"
+#import "ReleaseTableViewController.h"
+#import "SelectViewController.h"
+#import "SelectSubClassViewController.h"
+#import "MJRefresh.h"
+#import "B_C_GViewController.h"
+#import "B_C_TViewController.h"
+#import "B_C_TReadOnlyViewController.h"
+#import "LoginViewController.h"
+#import "BaseModel.h"
+#import "PRJTabBarViewController.h"
+#import "InternationalControl.h"
+
+#import "networking.h"
+#import "NSString+MD5.h"
+
+@interface BidVC : UIViewController
+@property(nonatomic,strong)bidModel *bid;
+- (void)addDatasourceIsDown:(BOOL)isDown;
+- (void)reloadSubViews;
+
+@end

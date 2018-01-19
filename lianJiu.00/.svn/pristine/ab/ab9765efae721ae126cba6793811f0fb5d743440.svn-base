@@ -1,0 +1,223 @@
+//
+//  ModifySupplyAndPurchaseVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 16/5/28.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+typedef enum {
+    HUOWULEIMU=0,
+    
+    SHULIANG=3,
+    
+    JIAGE=4,
+    
+    HUOWUBAOZHUANG = 5,
+    
+    JIAOYIFANGSHI = 6,
+    
+    SUOZAIDIQU =7,
+    
+    GONGYINGQIXIAN = 10
+    
+    
+}SELECTTABLEVIEW;//
+
+
+#import "ModifySupplyAndPurchaseVC.h"
+
+@interface ModifySupplyAndPurchaseVC ()
+
+@end
+
+@implementation ModifySupplyAndPurchaseVC
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
+
+- (void)addfootView
+{
+    
+    CGFloat H =5;
+    self.footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, ((self.view.frame.size.width-40)/3+50)*3+44+20+10+60)];
+    
+    UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc ]init];
+    flowLayout.headerReferenceSize =  CGSizeMake(BOUND_WIDTH, 30);
+    self.photoVC = [[MulPhotoCollectionViewController alloc] initWithCollectionViewLayout:flowLayout];
+    self.photoVC.view.frame = CGRectMake(0, H, BOUND_WIDTH, ((self.view.frame.size.width-40)/3+50)*3);
+    self.photoVC.dataSource = [[NSMutableArray alloc] init];
+    PhotoMultModel *model = [[PhotoMultModel alloc] init];
+    model.photoDataSouc = self.mainPhotos;
+    model.headTitle = CustomLocalizedString(@"货物主图:", nil);
+    [self.photoVC.dataSource addObject:model];
+    
+    PhotoMultModel *model2 = [[PhotoMultModel alloc] init];
+    model2.photoDataSouc = self.detailPhotos;
+    model2.headTitle = CustomLocalizedString(@"货物详情图:", nil);
+    [self.photoVC.dataSource addObject:model2];
+    
+    PhotoMultModel *model3 = [[PhotoMultModel alloc] init];
+    model3.photoDataSouc = self.files;
+    model3.headTitle = CustomLocalizedString(@"货物清单:", nil);
+    [self.photoVC.dataSource addObject:model3];
+    self.photoVC.delegate =self;
+    [self addChildViewController:self.photoVC];
+    [self.footView addSubview:self.photoVC.view];
+    [self.photoVC didMoveToParentViewController:self];
+    H+=((self.view.frame.size.width-40)/3+50)*3+10;
+    
+    
+    conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, H, BOUND_WIDTH-20, 44)];
+    [conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn setTitle:@"提交" forState:UIControlStateNormal];
+    H += 44+20;
+    [self.footView addSubview:conmitBtn];
+    
+    NSString *Btntitle = CustomLocalizedString(@"《声明》", nil);
+    CGSize labSize = [Btntitle boundingRectWithSize:CGSizeMake(10000, 15) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:13.0f]} context:nil].size;
+    CGFloat readBtnW = 40;
+    
+    readBtn = [[UIButton alloc] init];
+    readBtn.frame = CGRectMake((BOUND_WIDTH-labSize.width-readBtnW)/2, H, readBtnW, readBtnW);
+    readBtn.imageEdgeInsets = UIEdgeInsetsMake(10,10,10,10);
+    [readBtn setImage:[UIImage imageNamed:@"cb_glossy_off"] forState:UIControlStateNormal];
+    [readBtn setImage:[UIImage imageNamed:@"cb_green_on"] forState:UIControlStateSelected];
+    [readBtn addTarget:self action:@selector(readBtnOnclik:) forControlEvents:UIControlEventTouchUpInside];
+    [self.footView addSubview:readBtn];
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom] ;
+    [rightBtn addTarget:self action:@selector(jiaoshiGuize) forControlEvents:UIControlEventTouchUpInside];
+    [rightBtn setTitle:Btntitle forState:UIControlStateNormal];
+    [rightBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    rightBtn.titleLabel.font = UIFont13;
+    rightBtn.frame  = CGRectMake(readBtn.frame.origin.x+readBtnW,H, labSize.width+5,readBtnW);
+    [self.footView addSubview:rightBtn];
+    
+    self.tableView.tableFooterView =self.footView;
+    //    H+=readBtnW+20;
+}
+//点击图片
+-(void)upload
+{
+    
+    PhotoMultModel *model = self.photoVC.dataSource.firstObject;
+    NSString *url1 = @"";
+    NSMutableArray *imageArr1 = [[NSMutableArray alloc] init];
+    for (id temp in model.photoDataSouc) {
+        if ([temp isKindOfClass:[NSString class]]) {
+            url1 = [url1 stringByAppendingString:[NSString stringWithFormat:@"%@,",temp]];
+        }else if([temp isKindOfClass:[UIImage class]]){
+            [imageArr1 addObject:temp];
+        }
+    }
+    NSArray *dataArr= [self photoDataSoucToData:imageArr1];
+    
+    //上传新图片
+    [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr success:^(NSMutableDictionary *dic) {
+        
+        //             NSString *photostr1= dic[@"response"];
+        NSString *photostr1=nil;
+        
+        photostr1 = [url1 stringByAppendingString:dic[@"response"]];
+        
+        PhotoMultModel *model2 = self.photoVC.dataSource[1];
+        NSString *url2 = @"";
+        NSMutableArray *imageArr2 = [[NSMutableArray alloc] init];
+        for (id temp in model2.photoDataSouc) {
+            if ([temp isKindOfClass:[NSString class]]) {
+                url2 = [url2 stringByAppendingString:[NSString stringWithFormat:@"%@,",temp]];
+            }else if([temp isKindOfClass:[UIImage class]]){
+                [imageArr2 addObject:temp];
+            }
+        }
+        NSArray *dataArr2= [self photoDataSoucToData:imageArr2];
+        [networking AFNPOSTMutableArrfile:LOADFILE withparameters:nil dataName:@"file" dataSource:dataArr2 success:^(NSMutableDictionary *dic) {
+            //                NSString *photostr2 = dic[@"response"];
+            //赋值前需要初始化
+            NSString *photostr2 =nil;
+            //                 photostr2 = dic[@"response"];
+            photostr2 = [url2 stringByAppendingString:dic[@"response"]];
+            //                PhotoMultModel *model3 = self.photoVC.dataSource[2];
+            
+            PhotoMultModel *model3=nil;
+            model3=self.photoVC.dataSource[2];
+            if (model3.photoDataSouc.count>0) {
+                NSMutableArray *urls = [[NSMutableArray alloc] init];
+                for (NSString *str in model3.photoDataSouc) {
+                    
+                    //                        NSString *fullPath = [LIBRARRY stringByAppendingPathComponent:@"Pfile"];
+                    NSString *fullPath=nil;
+                    //                        fullPath=[LIBRARRY stringByAppendingPathComponent:@"Pfile"];
+                    fullPath = [LIBRARRY stringByAppendingPathComponent:str];
+                    [urls addObject:fullPath];
+                }
+                [networking AFNPOSTMutableArrUrlFile:LOADFILE withparameters:nil dataName:@"file" pahts:urls success:^(NSMutableDictionary *dic) {
+                    NSString *photostr3 = dic[@"response"];
+                    [self postDataPFile:photostr1 pDetail:photostr2 pCargolist:photostr3 pRar:nil listRar:nil];
+                } error:nil HUDAddView:self.view];
+            }else{
+                [self postDataPFile:photostr1 pDetail:photostr2 pCargolist:nil pRar:nil listRar:nil];
+            }
+        } error:nil HUDAddView:self.view];
+        
+        
+    } error:nil HUDAddView:self.view];
+}
+
+-(void)postDataPFile:(NSString *)pFile pDetail:(NSString *)pDetail pCargolist:(NSString *)pCargolist pRar:(NSString *)pRar listRar:(NSString *)listRar
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *usrId = [def objectForKey:@"vip"];
+    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] initWithDictionary:@{@"usrId":usrId,@"pFile":pFile,@"pDetail":pDetail,@"pRar":pRar?pRar:@"",@"pCargolist":pCargolist?pCargolist:@"",@"listRar":listRar?listRar:@""}];
+    ReleaseCellModel *model3 = self.dataScour[3];
+    [parameters setObject:model3.textId forKey:@"unitId"];
+    ReleaseCellModel *model4 = self.dataScour[4];
+    [parameters setObject:model4.textId forKey:@"currencyId"];
+    NSArray *p;
+    if (self.isGongYing) {
+        SupplyModel *model = (SupplyModel *)self.model;
+        [parameters setObject:model.s_id forKey:@"sid"];
+        p =@[@"pId",@"sTitle",@"sType",@"sQuality",@"sPrice",@"packId",@"tradeId",@"areaId",@"sPhone",@"sAddress",@"sDate",@"sDetail"];
+
+    }else{
+        PurchaseModel *model = (PurchaseModel *)self.model;
+        [parameters setObject:model.pur_id forKey:@"purId"];
+        p =@[@"pId",@"purTitle",@"purType",@"purQuality",@"purPrice",@"packId",@"tradeId",@"areaId",@"purPhone",@"purAddress",@"purDate",@"purDetail"];
+    }
+    for (int i=0; i<p.count; i++) {
+        ReleaseCellModel *modle = self.dataScour[i];
+        if (modle.text) {
+            if (i==2)
+            {
+                if ([modle.text isEqualToString:@"0"]) {
+                    [parameters setObject:@"全新" forKey:p[i]];
+                }else{
+                    [parameters setObject:@"旧" forKey:p[i]];
+                }
+                
+            }else if(i==HUOWULEIMU||i==HUOWUBAOZHUANG|i==JIAOYIFANGSHI||i==SUOZAIDIQU||i==GONGYINGQIXIAN){
+                [parameters setObject:modle.textId forKey:p[i]];
+            }else{
+                [parameters setObject:modle.text forKey:p[i]];
+            }
+        }
+        
+    }
+    
+    NSString *url =self.isGongYing?MODIFYSUPPLY:MODIFYPURCHASE;
+    [networking AFNPOST:url withparameters:parameters success:^(NSMutableDictionary *dic) {
+        
+        CommitSuccseViewController *CMVC = [[CommitSuccseViewController alloc] init];
+        CMVC.title = self.title;
+        CMVC.contenValue = CustomLocalizedString(@"提交成功", nil);
+        CMVC.subValue = self.isGongYing?CustomLocalizedString(@"你的供应信息已经提交成功", nil):CustomLocalizedString(@"你的采购信息已经提交成功", nil);
+        CMVC.image = [UIImage imageNamed:@"sucsses"];
+        [self.navigationController pushViewController:CMVC animated:YES];
+        self.isBackPreView = YES;
+    } error:nil HUDAddView:self.tableView];
+    
+}
+@end

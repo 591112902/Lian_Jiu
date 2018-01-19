@@ -1,0 +1,26 @@
+//
+//  Au_companyFootView.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Au_companyFootView.h"
+
+@implementation Au_companyFootView
+
+-(void)awakeFromNib
+{
+    _top1Label.text = CustomLocalizedString(@"上传营业执照", nil);
+    _top2Label.text = CustomLocalizedString(@"图片需清晰：注册号、企业名称、法人代表、年检章等需清晰可辨别", nil);
+    _beCarefulLabel.text = CustomLocalizedString(@"注意:", nil);
+    _beCarefulValueLabel.text = CustomLocalizedString(@"请按照样图上传图片，证件需要清晰有效且为原件数码照，虚假者将封号并信用减半！仅支持.jpg.jpeg.png.gif的图片格式，图片大小不超过10M", nil);
+    _topPhotosLabel.text = CustomLocalizedString(@"以下三种证也需要原建数码照（非必选）", nil);
+    _leftLabel.text = CustomLocalizedString(@"税务登记证", nil);
+    _midLabel.text = CustomLocalizedString(@"组织机构代码证", nil);
+    _rightLabel.text = CustomLocalizedString(@"基本账户开户许可证", nil);
+    
+}
+
+@end

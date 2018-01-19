@@ -1,0 +1,34 @@
+//
+//  BiddingTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BiddingTableViewCell.h"
+#import "UIImageView+WebCache.h"
+#import "BaseModel.h"
+@implementation BiddingTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+-(void)fillCellWithModel:(biddingModel *)model{
+    NSString *url = [PHOTOLOADPATH stringByAppendingPathComponent:model.photo?model.photo:@""];
+    [self.headImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    self.priceLabel.text = [NSString stringWithFormat:@"%@%@",model.tb_price,CustomLocalizedString(@"元", nil)];
+   NSArray *arr = [model.date componentsSeparatedByString:@" "];
+    if (arr.count>0) {
+        self.dateLabel.text = arr.firstObject;
+        self.timeLabel.text = arr.lastObject;
+    }
+//    if (model.a_level ) {
+//        <#statements#>
+//    }
+    self.priceTitleLabel.text = CustomLocalizedString(@"出价", nil);
+    [self.dealBtn setTitle: CustomLocalizedString(@"成交", nil) forState:UIControlStateNormal];
+}
+
+@end

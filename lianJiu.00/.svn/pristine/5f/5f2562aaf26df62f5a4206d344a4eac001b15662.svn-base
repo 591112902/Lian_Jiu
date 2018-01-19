@@ -1,0 +1,14 @@
+//
+//  HotSearchCollectionViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/20.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface HotSearchCollectionViewCell : UICollectionViewCell
+@property (strong, nonatomic) IBOutlet UILabel *label;
+
+@end

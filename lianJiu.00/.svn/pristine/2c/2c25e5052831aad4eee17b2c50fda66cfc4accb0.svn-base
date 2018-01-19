@@ -1,0 +1,13 @@
+//
+//  ZSWViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/20.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ZSWViewController : UIViewController
+@property (nonatomic,strong)NSString *url;
+@end

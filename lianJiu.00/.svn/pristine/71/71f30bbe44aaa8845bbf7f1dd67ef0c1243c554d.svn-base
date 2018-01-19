@@ -1,0 +1,16 @@
+//
+//  PacksModle.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//包装
+#import <Foundation/Foundation.h>
+
+@interface PacksModle : NSObject<NSCoding>
+@property(nonatomic,copy)NSString *p_id;
+@property(nonatomic,copy)NSString *p_type;
++(instancetype)ModelWith:(NSDictionary *)dic;
+
+@end

@@ -1,0 +1,88 @@
+//
+//  SelectSubLocationViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/15.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SelectSubLocationViewController.h"
+
+@interface SelectSubLocationViewController ()
+
+@end
+
+@implementation SelectSubLocationViewController
+
+
+- (void)reloadDataSource
+{
+    
+    NSMutableArray *list = [[NSMutableArray alloc] init];
+    if (self.allText) {
+        [list addObject:self.allText];
+    }
+    for (AreasModel *dic in self.dataSourceList) {
+        NSString *str = dic.a_name;
+        [list addObject:str];
+    }
+    self.dataSource = list;
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+ 
+     WS(weakSelf);
+    if (self.allText) {
+        if (indexPath.row==0) {
+            if (self.didselc) {
+                self.didselc(indexPath.row,weakSelf.titleText,weakSelf.currValue);
+            }
+            [self.view removeFromSuperview];
+            [self removeFromParentViewController];
+            
+        }else{
+            
+            AreasModel *model = self.dataSourceList[indexPath.row-1];
+            
+            self.currValue = model.a_id;
+            if (model.a_subList.count>0) {
+                self.titleText = self.dataSource[indexPath.row];
+                self.dataSourceList = model.a_subList;
+                [self addTableViewDataSource];
+                
+            }else{
+                if (self.didselc) {
+                    self.didselc(indexPath.row,weakSelf.dataSource[indexPath.row],weakSelf.currValue);
+                }
+                
+                [self.view removeFromSuperview];
+                [self removeFromParentViewController];
+            }
+        }
+    }else{
+        AreasModel *model = self.dataSourceList[indexPath.row];
+        self.currValue = model.a_id;
+        if (model.a_subList.count>0) {
+            self.titleText = self.dataSource[indexPath.row];
+            self.dataSourceList = model.a_subList;
+            [self addTableViewDataSource];
+            
+        }else{
+            if (self.didselc) {
+                self.didselc(indexPath.row,weakSelf.dataSource[indexPath.row],weakSelf.currValue);
+            }
+            [self.view removeFromSuperview];
+            [self removeFromParentViewController];
+        }
+
+        
+    }
+    
+
+}
+
+
+
+@end

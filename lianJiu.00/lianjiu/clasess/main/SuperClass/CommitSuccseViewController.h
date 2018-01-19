@@ -1,0 +1,22 @@
+//
+//  CommitSuccseViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CommitSuccseViewController : UIViewController
+@property (nonatomic,strong)UIImageView *imageView;
+@property (nonatomic,strong)UILabel *contenLable;
+@property (nonatomic,strong)UILabel *subLable;
+
+@property (nonatomic,strong)UIImage *image;
+@property (nonatomic,strong)NSString *contenValue;
+@property (nonatomic,strong)NSString *subValue;
+
+
+@property (nonatomic,strong)NSString *zhuangtai;
+@end

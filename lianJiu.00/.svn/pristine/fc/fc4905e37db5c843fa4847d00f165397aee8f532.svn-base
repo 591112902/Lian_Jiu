@@ -1,0 +1,263 @@
+//
+//  AI_personTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "AI_personTableViewController.h"
+#import "TextFileTableViewCell.h"
+#import "DictionnaryModel.h"
+#import "SelectSubLocationViewController.h"
+@interface AI_personTableViewController ()<UITextFieldDelegate>
+@property (nonatomic,strong)NSMutableArray *dataScour;
+@property(nonatomic,strong)BaseModel *baseModel;
+@end
+
+@implementation AI_personTableViewController
+{
+    UIButton *currPhotoBtn;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self adjustmentTableView];
+    [self addDataScour];
+    [self addFootView];
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardHide:)];
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+-(void)keyboardHide:(UITapGestureRecognizer*)tap{
+    [self.view endEditing:YES];
+}
+-(void)addDataScour
+{
+    self.dataScour = [[NSMutableArray alloc] init];
+    NSArray *arr1 = @[CustomLocalizedString(@"修改联系方式", nil)];
+    NSArray *list = @[CustomLocalizedString(@"传真:", nil),CustomLocalizedString(@"QQ:", nil),CustomLocalizedString(@"国家/地区:", nil),CustomLocalizedString(@"详细地址:", nil),CustomLocalizedString(@"邮编:", nil)];
+    NSMutableArray *arr2 = [[NSMutableArray alloc] init];
+    for (NSString *title in list) {
+        DictionnaryModel *model = [DictionnaryModel ModelWithDictionnary:@{title:@""}];
+        [arr2 addObject:model];
+    }
+    
+    [self.dataScour addObject:arr1];
+    [self.dataScour addObject:arr2];
+    
+    if (self.userModel.vip) {
+        [networking AFNPOSTNotCode:QUERYUINFO withparameters:@{@"vip":self.userModel.vip} success:^(NSMutableDictionary *dic) {
+            if ([dic[@"code"] isEqualToNumber:@0]) {
+                if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+                    NSDictionary *response = dic[@"response"];
+                    NSArray *keys = @[@"fax",@"qq",@"district",@"address",@"postcode"];
+                    NSMutableArray *secArr = self.dataScour[1];
+                    for (int i = 0; i<keys.count; i++) {
+                        DictionnaryModel *model = secArr[i];
+                        if (i==2) {
+                            model.valueID = response[keys[i]];
+                            model.value = [self.baseModel findLocationNameWithId:response[keys[i]]];
+                        }else{
+                            model.value = response[keys[i]];
+                        }
+                        
+                    }
+                    [self.tableView reloadData];
+                }
+            }
+        } error:nil HUDAddView:self.tableView];
+    }
+    
+}
+-(BaseModel *)baseModel
+{
+    if (!_baseModel) {
+        _baseModel = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    }
+    return _baseModel;
+}
+
+- (void)adjustmentTableView
+{
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:@"TextFileTableViewCell" bundle:nil] forCellReuseIdentifier:@"TextFileTableViewCell"];
+    
+}
+-(void)addFootView
+{
+    UIView *fooview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, 100)];
+    UIButton*conmitBtn = [[UIButton alloc] initWithFrame:CGRectMake(10,(100-44)/2, BOUND_WIDTH-20, 44)];
+    [conmitBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn addTarget:self action:@selector(ToCommit) forControlEvents:UIControlEventTouchUpInside];
+    //    [self.conmitBtn setImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    [conmitBtn setTitle:CustomLocalizedString(@"提交", nil) forState:UIControlStateNormal];
+    [fooview addSubview:conmitBtn];
+    self.tableView.tableFooterView = fooview;
+}
+
+#pragma mark - Table view data source
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return  self.dataScour.count;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSArray *arr = self.dataScour[section];
+    return  arr.count;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSArray *sectionArr = _dataScour[indexPath.section];
+    if (indexPath.section==0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        }
+        cell.textLabel.text = sectionArr[indexPath.row];
+        return cell;
+    }
+    TextFileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TextFileTableViewCell"];
+    DictionnaryModel *model = sectionArr[indexPath.row];
+    cell.title.text = model.title;
+    cell.valueTF.text = model.value;
+    cell.valueTF.delegate = self;
+    cell.valueTF.tag = 4100+indexPath.row;
+    if (indexPath.section==1) {
+        if (indexPath.row==2||indexPath.row==3) {
+            cell.valueTF.placeholder = CustomLocalizedString(@"必填", nil);
+        }else{
+            cell.valueTF.placeholder = nil;
+        }
+        if (indexPath.row==2) {
+            cell.valueTF.userInteractionEnabled = NO;
+        }else{
+            cell.valueTF.userInteractionEnabled = YES;
+        }
+        if (indexPath.row==0||indexPath.row==1||indexPath.row==4) {
+            cell.valueTF.keyboardType = UIKeyboardTypeNumberPad;
+        }else{
+            cell.valueTF.keyboardType = UIKeyboardTypeDefault;
+        }
+    }
+    return cell;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==2) {
+        [self selectDiqu:2];
+    }
+}
+- (void)selectDiqu:(NSInteger)row
+{
+    
+    SelectSubLocationViewController *seVC = [[SelectSubLocationViewController alloc] init];
+    seVC.titleText = CustomLocalizedString(@"地区", nil);
+    seVC.dataSourceList = self.baseModel.Areas;
+    WS(weakSelf);
+    seVC.didselc = ^(NSInteger a,NSString *str,NSString*value){
+        NSArray *secArr = _dataScour[1];
+        DictionnaryModel *model = secArr[row];
+        model.value =str;
+        model.valueID = value;
+        NSIndexPath *path = [NSIndexPath indexPathForRow:row inSection:1];
+        [weakSelf.tableView reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationFade];
+    };
+    
+    
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 10.0;
+}
+
+
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [textField setText:[textField.text filterEmoji]];
+    NSArray *secArr = _dataScour[1];
+    NSInteger index = textField.tag-4100;
+    DictionnaryModel *modle = secArr[index];
+    modle.value = textField.text;
+}
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@" "]&&textField.text.length<1) {
+        return NO;
+    }
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }
+    NSInteger index = textField.tag-4100;
+    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (index==0)
+    {
+        if ([aString length] > 15) {
+            textField.text = [aString substringToIndex:15];
+            return NO;
+        }
+    }else if(index==3){
+        if ([aString length] > 50) {
+            textField.text = [aString substringToIndex:50];
+            return NO;
+        }
+    }else if(index==4){
+        if ([aString length] > 6) {
+            textField.text = [aString substringToIndex:6];
+            return NO;
+        }
+    }
+    return YES;
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    
+    UITextField *tf = [self.tableView viewWithTag:textField.tag+1];
+    if (tf) {
+        [tf becomeFirstResponder];
+    }else{
+        [textField resignFirstResponder];
+    }
+    return YES;
+}
+- (void)ToCommit
+{
+    NSArray *section2 = self.dataScour[1];
+    for (int i=1; i<section2.count-1;i++) {
+        
+        DictionnaryModel *model = section2[i+1];
+        
+        if (model.value.length<1) {
+            
+            NSString *str = [model.title substringWithRange:NSMakeRange(0, model.title.length-1)];
+            [MBProgressHUD showNotPhotoError:[NSString stringWithFormat:@"%@%@",CustomLocalizedString(@"请填写",nil),str] toView:self.view];
+            return;
+        }
+    }
+    NSArray *secArr = _dataScour[1];
+    DictionnaryModel *model1 = secArr[0];
+    DictionnaryModel *model2 = secArr[1];
+    DictionnaryModel *model3 = secArr[2];
+    DictionnaryModel *model4 = secArr[3];
+    DictionnaryModel *model5 = secArr[4];
+    NSDictionary *parameters = @{@"vip":self.userModel.vip,@"fax":model1.value,@"qq":model2.value,@"district":model3.valueID,@"address":model4.value,@"postcode":model5.value};
+    [networking AFNPOST:ADDUINFO withparameters:parameters success:^(NSMutableDictionary *dic) {
+        [MBProgressHUD showSuccess:CustomLocalizedString(@"信息修改成功", nil) toView:self.view];
+        HZLog(@"%@",dic);
+    } error:nil HUDAddView:self.view];
+}
+-(void)dealloc
+{
+    HZLog(@"%@----dealloc",self.class);
+    //    UIViewController *viewController = self.childViewControllers.lastObject;
+    //    [viewController.view removeFromSuperview];
+    //    [viewController removeFromParentViewController];
+}
+@end

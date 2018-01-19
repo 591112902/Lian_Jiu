@@ -1,0 +1,17 @@
+//
+//  BondSucesseViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/11.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "bidModel.h"
+#import "B_C_TViewController.h"
+@interface BondSucesseViewController : UIViewController
+@property (nonatomic,strong)bidModel *bidModel;
+@property (nonatomic,copy)NSString *vip;
+@property (nonatomic,copy)NSString *text;
+@property (nonatomic,strong)B_C_TViewController *preVC;//前一个VC
+@end

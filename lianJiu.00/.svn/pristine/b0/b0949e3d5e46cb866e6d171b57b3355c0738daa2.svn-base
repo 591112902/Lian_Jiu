@@ -1,0 +1,13 @@
+//
+//  B_C_TReadOnlyViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/8.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "bidModel.h"
+@interface B_C_TReadOnlyViewController : UIViewController
+@property(nonatomic,strong)bidModel *model;
+@end

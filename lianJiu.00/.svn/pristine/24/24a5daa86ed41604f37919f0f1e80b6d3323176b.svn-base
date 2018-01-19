@@ -1,0 +1,15 @@
+//
+//  MyOrderViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/25.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface MyOrderViewController : UIViewController
+@property (nonatomic,strong)NSMutableArray *supplyAndPurchaseDataSource;//前两个页面的数据
+@property (nonatomic,strong)NSMutableDictionary *supplyAndPurchaseParameters;//前两个页面的申请数据参数
+@property (nonatomic)NSInteger supplyAndPurchasePapeNo;//前两个页面的申请数据参数
+@end

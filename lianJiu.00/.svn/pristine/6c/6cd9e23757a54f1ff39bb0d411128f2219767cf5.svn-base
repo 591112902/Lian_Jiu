@@ -1,0 +1,114 @@
+//
+//  S_ContactTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "S_ContactTableViewController.h"
+#import "S_ContactTableViewCell.h"
+#import "ZSWViewController.h"
+@interface S_ContactTableViewController ()
+
+@end
+
+@implementation S_ContactTableViewController
+{
+    NSMutableArray *_dataSoc;
+     NSString *cellidentifier;
+    UIWebView *_webView;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    cellidentifier = @"S_ContactTableViewCell";
+    _dataSoc = [[NSMutableArray alloc] init];
+    [_dataSoc addObject:@[CustomLocalizedString(@"电话:", nil),@"0755-23002300",@"phone"]];
+    [_dataSoc addObject:@[CustomLocalizedString(@"QQ:", nil),@"23002300",@"qq"]];
+    [_dataSoc addObject:@[CustomLocalizedString(@"Email:", nil),@"recycle_market@163.com",@"email"]];
+    [_dataSoc addObject:@[CustomLocalizedString(@"官网地址:", nil),@"www.recycle.market",@"www"]];
+    [self.tableView registerNib:[UINib nibWithNibName:cellidentifier  bundle:nil] forCellReuseIdentifier:cellidentifier];
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+
+    
+
+    
+    
+}
+
+
+#pragma mark - Table view data source
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    return _dataSoc.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    S_ContactTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellidentifier];
+    NSArray *arr = _dataSoc[indexPath.row];
+    cell.imageV.image = [UIImage imageNamed:arr[2]];
+
+    cell.title.text = arr[0];
+    cell.titleValue.text = arr[1];
+    
+
+    
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 65;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+        case 0:
+            [self tel:indexPath.row];
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            [self email:indexPath.row];
+            break;
+        default:
+            [self www:indexPath.row];
+            break;
+    }
+}
+- (void)tel:(NSInteger)index
+{
+    NSArray *arr = _dataSoc[index];
+    // 提示：不要将webView添加到self.view，如果添加会遮挡原有的视图
+    // 懒加载
+    if (_webView == nil) {
+        _webView = [[UIWebView alloc] init];
+    }
+    HZLog(@"%p", _webView);
+    
+    //    _webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+    //    [self.view addSubview:_webView];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"tel://%@",arr[1]]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [_webView loadRequest:request];
+}
+- (void)www:(NSInteger)index
+{
+    ZSWViewController *zsw = [[ZSWViewController alloc] init];
+    zsw.title = CustomLocalizedString(@"再商网", nil);
+    zsw.url = @"https://www.recycle.market";
+    [self.navigationController pushViewController:zsw animated:YES];
+    
+}
+-(void)email:(NSInteger)index
+{
+    
+    
+}
+
+@end

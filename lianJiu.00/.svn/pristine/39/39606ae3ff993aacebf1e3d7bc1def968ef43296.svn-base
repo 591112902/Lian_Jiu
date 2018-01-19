@@ -1,0 +1,19 @@
+//
+//  biddingModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/31.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//投标管理---标的管理MOdel
+#import <Foundation/Foundation.h>
+
+@interface biddingModel : NSObject
+@property (nonatomic,strong)NSString *cjid;
+@property (nonatomic,strong)NSString *date;
+@property (nonatomic,strong)NSString *district;
+@property (nonatomic,strong)NSString *photo;
+@property (nonatomic,strong)NSNumber *tb_price;
+@property (nonatomic,strong)NSString *zbrid;
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

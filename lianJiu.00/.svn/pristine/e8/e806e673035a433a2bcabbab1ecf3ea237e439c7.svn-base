@@ -1,0 +1,34 @@
+//
+//  Au_companyModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/22.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Au_companyModel.h"
+
+@implementation Au_companyModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    Au_companyModel *model = [[self alloc] init];
+    model.address = dic[@"address"];
+    model.company = dic[@"company"];
+    model.enrol = dic[@"enrol"];
+    model.enrol= [model.enrol excisionForFistString];
+    model.state = dic[@"state"];
+    model.fdb = dic[@"fdb"];
+    model.license = dic[@"license"];
+    model.license = [model.license excisionForFistString];
+    model.principal = dic[@"principal"];
+    model.principal_id = dic[@"principal_id"];
+    model.registrid = dic[@"registrid"];
+    model.vip = dic[@"vip"];
+    model.xkz = dic[@"xkz"];
+    model.xkz = [model.xkz excisionForFistString];
+    model.zzjgdmz = dic[@"zzjgdmz"];
+    model.zzjgdmz = [model.zzjgdmz excisionForFistString];
+    
+    return model;
+}
+@end

@@ -1,0 +1,13 @@
+//
+//  PurchaseTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/12.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SupplyTableViewController.h"
+
+@interface PurchaseTableViewController : SupplyTableViewController
+
+@end

@@ -1,0 +1,101 @@
+//
+//  BidmanageViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BidmanageViewController.h"
+#import "BidManageZhaoViewController.h"
+#import "BidManageTouViewController.h"
+
+@interface BidmanageViewController ()
+@property(nonatomic,strong)BidManageZhaoViewController *zhaoBiaoVC;
+@property(nonatomic,strong)BidManageTouViewController *touBiaoVC;
+@end
+
+@implementation BidmanageViewController
+{
+//    NSMutableArray *_dataSouc;
+    CGFloat segementedH;
+    UIButton *currBtn;
+    UIViewController *currViewcontroller;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = BGColor;
+    
+    [self addNavigationItem];
+    
+    self.zhaoBiaoVC = [[BidManageZhaoViewController alloc] init];
+    [self addChildViewController:self.zhaoBiaoVC];
+    self.zhaoBiaoVC.view.frame = CGRectMake(0, 64, BOUND_WIDTH, BOUND_HIGHT-64);
+    [self.view addSubview:self.zhaoBiaoVC.view];
+    currViewcontroller = self.zhaoBiaoVC;
+}
+- (void)addNavigationItem
+{
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    segementedH = 30;
+    NSArray *arr = @[CustomLocalizedString(@"招标", nil),CustomLocalizedString(@"投标",nil)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(10, 74, 200, segementedH)];
+    view.backgroundColor = [UIColor whiteColor];
+    view.layer.borderWidth = 1;
+    view.layer.borderColor = [UIColor whiteColor].CGColor;
+    view.layer.cornerRadius = 5;
+    view.clipsToBounds = YES;
+    for (int i = 0; i<arr.count; i++) {
+        UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(i*200/arr.count, 0, 200/arr.count, segementedH)];
+        [btn addTarget:self action:@selector(chooseClass:) forControlEvents:UIControlEventTouchUpInside];
+        [btn setTitle:arr[i] forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [btn setTitleColor:MAINColor forState:UIControlStateSelected];
+        [btn setTitle:arr[i] forState:UIControlStateSelected];
+        [btn setBackgroundImage:[UIImage imageNamed:@"wihle_bg"] forState:UIControlStateSelected];
+        [btn setBackgroundImage:[UIImage imageNamed:@"l_tb_bg"] forState:UIControlStateNormal];
+        btn.tag = 180+i;
+        [view addSubview:btn];
+  
+        
+        if (i==0) {
+            btn.selected =YES;
+            currBtn = btn;
+        }
+    }
+    self.navigationItem.titleView = view;
+}
+- (BidManageTouViewController *)touBiaoVC
+{
+    if (!_touBiaoVC) {
+        _touBiaoVC = [[BidManageTouViewController alloc] init];
+        _touBiaoVC.view.frame = CGRectMake(0, 64, BOUND_WIDTH, BOUND_HIGHT-64);
+        [self addChildViewController:_touBiaoVC];
+    }
+    return _touBiaoVC;
+}
+
+- (void)chooseClass:(UIButton *)btn
+{
+    if (currBtn==btn) {
+        return;
+    }
+    currBtn = btn;
+    for (UIButton *button in btn.superview.subviews) {
+        button.selected = NO;
+    }
+    btn.selected = YES;
+    if (btn.tag==180) {
+        [self transitionFromViewController:self.touBiaoVC toViewController:self.zhaoBiaoVC duration:0.4 options:UIViewAnimationOptionLayoutSubviews animations:nil completion:^(BOOL finished) {
+            currViewcontroller = self.zhaoBiaoVC;
+        }];
+    }else{
+        [self transitionFromViewController:self.zhaoBiaoVC toViewController:self.touBiaoVC duration:0.4 options:UIViewAnimationOptionLayoutSubviews animations:nil completion:^(BOOL finished) {
+            currViewcontroller = self.touBiaoVC;
+        }];
+    }
+    
+}@end

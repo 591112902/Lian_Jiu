@@ -1,0 +1,103 @@
+//
+//  M_FootprinViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/24.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "M_FootprinViewController.h"
+#import "MJRefresh.h"
+@interface M_FootprinViewController ()
+
+@end
+
+@implementation M_FootprinViewController
+{
+    NSInteger pageNo;//申请数据页数
+    NSInteger deleCount;//删除数量
+}
+- (void)viewDidLoad {
+    pageNo=1;
+    [super viewDidLoad];
+    
+    WS(weakSelf);
+    // 上拉刷新
+    self.tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [weakSelf requestData];
+        [weakSelf.tableView.footer endRefreshing];
+    }];
+}
+//申请数据
+-(void)requestData
+{
+    [networking AFNPOSTNotHUD:QUERYFOOTPRINT withparameters:@{@"vip":self.userModel.vip,@"pageNo":[NSNumber numberWithInteger:pageNo]} success:^(NSMutableDictionary *dic) {
+        NSDictionary *response = dic[@"response"];
+        if ([response[@"TenderVo"] isKindOfClass:[NSArray class]]) {
+            NSArray *arr = response[@"TenderVo"];
+            for (NSDictionary *temp in arr) {
+                if ([temp isKindOfClass:[NSDictionary class]]) {
+                    bidModel *model = [bidModel ModelWith:temp];
+                    [self.TenderVo addObject:model];
+                }
+            }
+        }
+        if ([response[@"SupplyVo"] isKindOfClass:[NSArray class]]) {
+            NSArray *arr = response[@"SupplyVo"];
+            for (NSDictionary *temp in arr) {
+                if ([temp isKindOfClass:[NSDictionary class]]) {
+                    SupplyModel *model = [SupplyModel ModelWith:temp];
+                    [self.SupplyVo addObject:model];
+                }
+            }
+        }
+        if ([response[@"PurchaseVo"] isKindOfClass:[NSArray class]]) {
+            NSArray *arr = response[@"PurchaseVo"];
+            for (NSDictionary *temp in arr) {
+                if ([temp isKindOfClass:[NSDictionary class]]) {
+                    PurchaseModel *model = [PurchaseModel ModelWith:temp];
+                    [self.PurchaseVo addObject:model];
+                }
+            }
+        }
+
+        pageNo++;
+        [self.tableView reloadData];
+    } error:nil];
+    
+}
+//收藏、取消收藏
+-(void)deleteShouCang:(NSIndexPath*)indexPath
+{
+    NSString *sid;
+    if (self.currBtn.tag==400) {
+        bidModel *model = self.dataSouc[indexPath.row/2];
+        sid = model.t_id;
+    }else if(self.currBtn.tag==401){
+        SupplyModel *model = self.dataSouc[indexPath.row/2];
+        sid = model.s_id;
+    }else{
+        PurchaseModel *model = self.dataSouc[indexPath.row/2];
+        sid = model.pur_id;
+    }
+    
+    [networking AFNPOST:DELETEFOOTPRINT withparameters:@{@"vip":self.userModel.vip,@"sid":sid} success:^(NSMutableDictionary *dic) {
+        //1.先将数组的内容删除
+        [self.dataSouc removeObjectAtIndex:indexPath.row/2];
+        //2.再处理tableview上的删除
+        //将要删除的indexPath组合成一个数组交给tableview
+        deleCount++;
+        NSIndexPath *indexPath2 = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath,indexPath2] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } error:nil HUDAddView:self.view];
+}
+-(void)dealloc
+{
+    NSInteger count= [self.preVC.zuJi integerValue];
+    HZLog(@"%d",deleCount);
+    self.preVC.zuJi = [NSNumber numberWithInteger:count-deleCount];
+    
+}
+
+
+@end

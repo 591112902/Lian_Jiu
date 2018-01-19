@@ -1,0 +1,32 @@
+//
+//  PacksModle.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PacksModle.h"
+
+@implementation PacksModle
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    PacksModle *model = [[self alloc] init];
+    model.p_id = dic[@"p_id"];
+    model.p_type = dic[@"p_type"];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.p_id forKey:@"p_id"];
+    [aCoder encodeObject:self.p_type forKey:@"p_type"];    
+    
+}
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.p_id = [aDecoder decodeObjectForKey:@"p_id"];
+        self.p_type = [aDecoder decodeObjectForKey:@"p_type"];
+    }
+    return self;
+}
+
+@end

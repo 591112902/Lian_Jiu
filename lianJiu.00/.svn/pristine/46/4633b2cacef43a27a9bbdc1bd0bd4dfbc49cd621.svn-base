@@ -1,0 +1,26 @@
+//
+//  MyNewsModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyNewsModel.h"
+
+@implementation MyNewsModel
++ (instancetype)ModleWith:(NSDictionary *)dic andScreeW:(CGFloat)widht
+{
+    MyNewsModel *model = [[self alloc] init];
+    
+    model.pu_id = dic[@"pu_id"];
+    model.pu_title = dic[@"pu_title"];
+    model.date = dic[@"date"];
+    model.state = dic[@"state"];
+    model.usr_id = dic[@"usr_id"];
+    model.pu_detail = dic[@"pu_detail"];
+    model.pu_detail = [@"  " stringByAppendingString:model.pu_detail?model.pu_detail:@""];
+//    model.size = [model.pu_detail boundingRectWithSize:CGSizeMake(widht-40, 30000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
+    return model;
+}
+@end

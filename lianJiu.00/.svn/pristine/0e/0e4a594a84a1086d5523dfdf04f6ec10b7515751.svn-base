@@ -1,0 +1,18 @@
+//
+//  SupplyAndDemandVC.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface RecoveryVC : UIViewController
+@property(nonatomic,strong)NSMutableArray *dataScour;
+@property(nonatomic,strong)UIView *footView;
+@property(nonatomic,strong)UITableView *tableView;
+//跳入子页面 index:第一个页面,按tableview顺序
+- (void)tosubViewController:(NSInteger)index;
+- (void)reloadSubViews;
+@end

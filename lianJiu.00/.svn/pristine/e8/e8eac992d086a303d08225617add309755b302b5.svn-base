@@ -1,0 +1,18 @@
+//
+//  PhonwRecoveryCollectionViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "PhoneRecycParmModel.h"
+@interface PhonwRecoveryCollectionViewCell : UICollectionViewCell
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *contenH;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *titleLableH;
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *contenLabel;
+-(void)fillCellWithDic:(PhoneRecycParmModel *)model AndBoundWidth:(CGFloat)width;
+@end

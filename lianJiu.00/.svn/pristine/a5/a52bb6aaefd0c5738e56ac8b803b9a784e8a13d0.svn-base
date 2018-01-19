@@ -1,0 +1,136 @@
+//
+//  SupplyTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/12.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SupplyTableViewController.h"
+
+#import "MJRefresh.h"
+#import "B_C_GViewController.h"
+#import "SupplyModel.h"
+#import "PRJTabBarViewController.h"
+@interface SupplyTableViewController ()
+
+@end
+
+@implementation SupplyTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [self.tableView registerNib:[UINib nibWithNibName:@"SATableViewCell" bundle:nil] forCellReuseIdentifier:@"SATableViewCell"];
+    _dataSource = [[NSMutableArray alloc] init];
+    __weak UITableView *tableView = self.tableView;
+    WS(weakSelf);
+    // 下拉刷新
+    tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf addDatasourceIsDown:YES];
+        // 结束刷新
+        [tableView.header endRefreshing];
+    }];
+    [tableView.header beginRefreshing];
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [weakSelf addDatasourceIsDown:NO];
+       [tableView.footer endRefreshing];
+    }];
+
+}
+-(NSMutableDictionary *)parameters
+{
+    if (!_parameters) {
+        _parameters = [[NSMutableDictionary alloc] initWithDictionary:@{@"pageNo":@1}];
+    }
+    return _parameters;
+}
+- (void)addDatasourceIsDown:(BOOL)isDown
+{
+    NSMutableDictionary *parameters = [self.parameters mutableCopy];
+    if (isDown) {
+        [parameters setObject:@1 forKey:@"pageNo"];
+    }
+    HZLog(@"%@",parameters);
+    [networking AFNRequest:QUERYSUPPLY withparameters:parameters success:^(NSMutableDictionary *dic) {
+        if (isDown) {
+            [_dataSource removeAllObjects];
+        }
+        HZLog(@"%@",dic[@"message"]);
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                SupplyModel *supply = [SupplyModel ModelWith:temp];
+                [_dataSource addObject:supply];
+            }
+            if (isDown) {
+                [self.parameters setObject:@2 forKey:@"pageNo"];
+            }else{
+                NSInteger pageNo = [self.parameters[@"pageNo"] integerValue];
+                pageNo ++;
+                [self.parameters setObject:[NSNumber numberWithInteger:pageNo] forKey:@"pageNo"];
+            }
+        }
+        [self.tableView reloadData];
+    } error:nil HUDAddView:self.view];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _dataSource.count*2;
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row%2==0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+            cell.backgroundColor = BGColor;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        return cell;
+    }else{
+        SATableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SATableViewCell"];
+        [cell fillCellWithModel:_dataSource[indexPath.row/2]];
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==0) {
+        return 0;
+    }
+    if (indexPath.row%2==0) {
+        return 8;
+    }
+    return 100.0;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.row%2==0) {
+        return;
+    }
+    B_C_GViewController *bidContenVC = [[B_C_GViewController alloc] init];
+    bidContenVC.model = self.dataSource[indexPath.row/2];
+    bidContenVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:bidContenVC animated:YES];
+    
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers.lastObject;
+    MeVC *meVc = nav.viewControllers.firstObject;
+    meVc.isRequestData = YES;
+    
+}
+
+
+
+
+@end

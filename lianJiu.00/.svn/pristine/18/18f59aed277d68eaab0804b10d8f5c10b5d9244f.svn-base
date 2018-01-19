@@ -1,0 +1,24 @@
+//
+//  ServicesTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ServicesTableViewCell.h"
+
+@implementation ServicesTableViewCell
+
+- (void)awakeFromNib {
+   
+//    [self.vauleTextLabel sizeToFit];
+}
+- (void)fillCellWithModel:(ServicesModel *)model
+{
+    self.titleTextLabel.text = model.title;
+    self.vauleTextLabel.text = model.value;
+
+}
+
+@end

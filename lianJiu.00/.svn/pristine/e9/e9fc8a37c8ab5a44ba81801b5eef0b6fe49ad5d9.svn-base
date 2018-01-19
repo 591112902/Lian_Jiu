@@ -1,0 +1,15 @@
+//
+//  ServicesTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/4.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "ServicesModel.h"
+@interface ServicesTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *titleTextLabel;
+@property (strong, nonatomic) IBOutlet UILabel *vauleTextLabel;
+- (void)fillCellWithModel:(ServicesModel *)model;
+@end

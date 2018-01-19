@@ -1,0 +1,40 @@
+//
+//  superBidModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "superBidModel.h"
+
+@implementation superBidModel
+-(instancetype)initlWith:(NSDictionary *)dic
+{
+    superBidModel *model = self;
+    
+    model.a_level = dic[@"a_level"];
+    model.area_id = dic[@"area_id"];
+    model.bz_name = dic[@"bz_name"];
+    model.currency_id = dic[@"currency_id"];
+    model.dw_name = dic[@"dw_name"];
+    model.dz_name = dic[@"dz_name"];
+    model.jy_name = dic[@"jy_name"];
+    model.lb_name = dic[@"lb_name"];
+    model.list_rar = dic[@"list_rar"];
+    model.name = dic[@"name"];
+    model.p_cargolist = dic[@"p_cargolist"];
+    model.p_detail = dic[@"p_detail"];
+    model.p_file = dic[@"p_file"];
+    model.p_id = dic[@"p_id"];
+    model.p_rar = dic[@"p_rar"];
+    model.pack_id = dic[@"pack_id"];
+    model.pack_name = dic[@"pack_name"];
+    model.trade_id = dic[@"trade_id"];
+    model.unit_id = dic[@"unit_id"];
+    model.usr_id = dic[@"usr_id"];
+    model.release_time = dic[@"release_time"];
+    
+    return model;
+}
+@end

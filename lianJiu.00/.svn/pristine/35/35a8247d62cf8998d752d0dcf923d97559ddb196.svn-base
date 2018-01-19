@@ -1,0 +1,16 @@
+//
+//  S_ContactTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface S_ContactTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIImageView *imageV;
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UILabel *titleValue;
+
+@end

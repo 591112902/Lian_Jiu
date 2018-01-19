@@ -1,0 +1,15 @@
+//
+//  TradesModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//交易方式
+#import <Foundation/Foundation.h>
+
+@interface TradesModel : NSObject<NSCoding>
+@property(nonatomic,copy)NSString *t_id;
+@property(nonatomic,copy)NSString *t_type;
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

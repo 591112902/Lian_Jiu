@@ -1,0 +1,35 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "33529dd8-9a57-124f-9468-6e1098885ead++4251",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696" : {
+
+    },
+    "33529dd8-9a57-124f-9468-6e1098885ead++4251" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696" : 0,
+    "33529dd8-9a57-124f-9468-6e1098885ead++4251" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "B943A6C3-BEAD-479F-B444-97245BD1A040",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696" : "ZaiShangIosSVN",
+    "33529dd8-9a57-124f-9468-6e1098885ead++4251" : "ZaiShangIos\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "zaiShang",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "zaiShang.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/www.lisaite.top\/svn\/project_ios",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "33529dd8-9a57-124f-9468-6e1098885ead++4251"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/192.168.1.168:10000\/svn\/project",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5734961c-91dd-bc4d-b677-5b5f5de51e4d++8696"
+    }
+  ]
+}

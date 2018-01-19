@@ -1,0 +1,23 @@
+//
+//  biddingModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/31.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "biddingModel.h"
+
+@implementation biddingModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    biddingModel *model = [[self alloc] init];
+    model.cjid = dic[@"cjid"];
+    model.date = dic[@"date"];
+    model.district = dic[@"district"];
+    model.tb_price = dic[@"tb_price"];
+    model.photo = dic[@"photo"];
+    model.zbrid = dic[@"zbrid"];
+    return model;
+}
+@end

@@ -1,0 +1,23 @@
+//
+//  B_C_TViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/14.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "bidModel.h"
+@interface B_C_TViewController : UIViewController
+{
+    UIView *endTimeView;//时间view
+    
+}
+@property(nonatomic)BOOL islogin;
+@property(nonatomic,strong)bidModel *model;
+@property(nonatomic)BOOL isSuccessBond;//是否投进入保证金页面，并提交成功
+@property(nonatomic)BOOL isDidBond;//是否投已经保证金
+
+
+
+@end

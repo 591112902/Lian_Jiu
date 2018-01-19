@@ -1,0 +1,19 @@
+//
+//  ServicesModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/7.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ServicesModel.h"
+
+@implementation ServicesModel
++(instancetype)ModelWithDictionnary:(NSDictionary *)dic andScreeW:(CGFloat)widht
+{
+    ServicesModel *model = [super ModelWithDictionnary:dic];
+    CGRect rect = [model.value?model.value:@"" boundingRectWithSize:CGSizeMake(widht-15*2, 30000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]} context:nil];
+    model.cellH = rect.size.height+=40;
+    return model;
+}
+@end

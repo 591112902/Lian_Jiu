@@ -1,0 +1,19 @@
+//
+//  ModifySupplyAndPurchaseVC.h
+//  zaiShang
+//
+//  Created by cnmobi on 16/5/28.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import "R_GYTableViewController.h"
+#import "superBidModel.h"
+#import "SupplyModel.h"
+#import "PurchaseModel.h"
+
+@interface ModifySupplyAndPurchaseVC : R_GYTableViewController
+@property(nonatomic,strong)superBidModel *model;//获取标  id
+@property(nonatomic,strong)NSMutableArray *mainPhotos;
+@property(nonatomic,strong)NSMutableArray *detailPhotos;
+@property(nonatomic,strong)NSMutableArray *files;
+@end

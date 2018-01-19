@@ -1,0 +1,13 @@
+//
+//  B_ContenTViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/27.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//账户明细
+
+#import "C_ContenTableViewController.h"
+
+@interface B_ContenTViewController : C_ContenTableViewController
+
+@end

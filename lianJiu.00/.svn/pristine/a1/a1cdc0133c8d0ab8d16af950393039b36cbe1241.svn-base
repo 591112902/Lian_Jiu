@@ -1,0 +1,13 @@
+//
+//  BidManageTouViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/30.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface BidManageTouViewController : UIViewController
+
+@end

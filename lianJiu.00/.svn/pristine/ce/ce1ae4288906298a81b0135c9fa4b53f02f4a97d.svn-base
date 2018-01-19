@@ -1,0 +1,223 @@
+//
+//  BaseModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "BaseModel.h"
+
+@implementation BaseModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    BaseModel *model = [[self alloc] init];
+    model.Trades = [[NSMutableArray alloc] init];
+    if ([dic[@"Trades"] isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *temp in dic[@"Trades"]) {
+            TradesModel *m = [TradesModel ModelWith:temp];
+            [model.Trades addObject:m];
+        }
+    }
+    
+    model.Products = [[NSMutableArray alloc] init];
+    if ([dic[@"Products"] isKindOfClass:[NSArray class]]) {
+        
+        //计算一共有多少层
+        NSMutableDictionary *leverDic = [[NSMutableDictionary alloc] init];
+        for (NSDictionary *temp in dic[@"Products"]) {
+            NSString *str = temp[@"p_level"];
+            if ([str intValue]>0) {
+                ProductsModel *m = [ProductsModel ModelWith:temp];
+                if (leverDic[str]) {
+                    NSMutableArray *itmes = leverDic[str];
+                    [itmes addObject:m];
+                }else{
+                    NSMutableArray *itmes = [[NSMutableArray alloc]init];
+                    [leverDic setObject:itmes forKey:str];
+                    [itmes addObject:m];
+                }
+            }
+        }
+        //排序
+        NSArray *reslut = [leverDic.allKeys sortedArrayUsingSelector:@selector(compare:)];
+        
+        //分类
+        for (int i = 0; i<reslut.count; i++) {
+            NSString *key = reslut[i];
+            NSMutableArray *itmes = leverDic[key];
+            if (i==0) {//第一层
+                for (ProductsModel *tempModel in itmes) {
+                    [model.Products addObject:tempModel];
+                }
+                
+            }else{//其他层加在前一层的p_subList里面
+                NSString *key = reslut[i-1];
+                NSArray *tempArr =leverDic[key];
+                for (ProductsModel *ltempModel in itmes) {
+                    
+                    for (ProductsModel *ptempModel in tempArr) {
+                        if ([ltempModel.p_super isEqualToString:ptempModel.p_id]) {
+                            [ptempModel.p_subList addObject:ltempModel];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+    model.Currencys = [[NSMutableArray alloc] init];
+    if ([dic[@"Currencys"] isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *temp in dic[@"Currencys"]) {
+            CurrencysModel *m = [CurrencysModel ModelWith:temp];
+            [model.Currencys addObject:m];
+        }
+    }
+    
+    model.Units = [[NSMutableArray alloc] init];
+    if ([dic[@"Units"] isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *temp in dic[@"Units"]) {
+            UnitsModel *m = [UnitsModel ModelWith:temp];
+            [model.Units addObject:m];
+        }
+    }
+    
+    
+    
+    
+    model.Areas = [[NSMutableArray alloc] init];
+    if ([dic[@"Areas"] isKindOfClass:[NSArray class]]) {
+        
+        //计算一共有多少层
+        NSMutableDictionary *leverDic = [[NSMutableDictionary alloc] init];
+        for (NSDictionary *temp in dic[@"Areas"]) {
+            NSString *str = temp[@"a_level"];
+            if ([str intValue]>0) {
+                AreasModel *m = [AreasModel ModelWith:temp];
+                if (leverDic[str]) {
+                    NSMutableArray *itmes = leverDic[str];
+                    [itmes addObject:m];
+                }else{
+                    NSMutableArray *itmes = [[NSMutableArray alloc]init];
+                    [leverDic setObject:itmes forKey:str];
+                    [itmes addObject:m];
+                }
+            }
+        }
+        //排序
+        NSArray *reslut = [leverDic.allKeys sortedArrayUsingSelector:@selector(compare:)];
+        
+        //分类
+        for (int i = 0; i<reslut.count; i++) {
+            NSString *key = reslut[i];
+            NSMutableArray *itmes = leverDic[key];
+            if (i==0) {//第一层
+                for (AreasModel *tempModel in itmes) {
+                    [model.Areas addObject:tempModel];
+                }
+                
+            }else{//其他层加在前一层的a_subList里面
+                NSString *key = reslut[i-1];
+                NSArray *tempArr =leverDic[key];
+                for (AreasModel *ltempModel in itmes) {
+                    
+                    for (AreasModel *ptempModel in tempArr) {
+                        if ([ltempModel.a_super isEqualToString:ptempModel.a_id]) {
+                            [ptempModel.a_subList addObject:ltempModel];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+    }
+    model.Percent = [[NSMutableArray alloc] init];
+    if ([dic[@"Percent"] isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *temp in dic[@"Percent"]) {
+            PercentModel *m = [PercentModel ModelWith:temp];
+            [model.Percent addObject:m];
+        }
+    }
+    
+    model.Packs = [[NSMutableArray alloc] init];
+    if ([dic[@"Packs"] isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *temp in dic[@"Packs"]) {
+            PacksModle *m = [PacksModle ModelWith:temp];
+            [model.Packs addObject:m];
+        }
+    }
+    
+    model.Bank = [[NSMutableArray alloc] init];
+    if ([dic[@"Bank"] isKindOfClass:[NSArray class] ]) {
+        for (NSDictionary *temp in dic[@"Bank"]) {
+            BankModel *m = [BankModel ModelWith:temp];
+            [model.Bank addObject:m];
+        }
+    }
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.Trades forKey:@"Trades"];
+    [aCoder encodeObject:self.Products forKey:@"Products"];
+    [aCoder encodeObject:self.Currencys forKey:@"Currencys"];
+    [aCoder encodeObject:self.Units forKey:@"Units"];
+    [aCoder encodeObject:self.Areas forKey:@"Areas"];
+    [aCoder encodeObject:self.Percent forKey:@"Percent"];
+    [aCoder encodeObject:self.Packs forKey:@"Packs"];
+    [aCoder encodeObject:self.Bank forKey:@"Bank"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.Trades = [aDecoder decodeObjectForKey:@"Trades"];
+        self.Products = [aDecoder decodeObjectForKey:@"Products"];
+        self.Currencys = [aDecoder decodeObjectForKey:@"Currencys"];
+        self.Units = [aDecoder decodeObjectForKey:@"Units"];
+        self.Areas = [aDecoder decodeObjectForKey:@"Areas"];
+        self.Percent = [aDecoder decodeObjectForKey:@"Percent"];
+        self.Packs = [aDecoder decodeObjectForKey:@"Packs"];
+        self.Bank = [aDecoder decodeObjectForKey:@"Bank"];
+    }
+    return self;
+}
+//用id 查找地区名字
+-(NSString *)findLocationNameWithId:(NSString *)a_id
+{
+    NSString *str;
+    str = [self findArr:self.Areas key:a_id backStr:str];
+    return str;
+}
+//递归查找
+- (NSString *)findArr:(NSArray *)arr key:(NSString *)key backStr:(NSString *)backStr
+{
+    for (AreasModel *model in arr) {
+        if ([key isEqualToString:model.a_id]) {
+            if (![model.a_level isEqualToString:@"1"]) {
+                backStr = [NSString stringWithFormat:@"中国(%@)",model.a_name];
+            }else{
+                backStr = model.a_name;
+            }
+            return backStr;
+        }
+    }
+    if (!backStr) {
+        for (AreasModel *model in arr) {
+            if (!backStr) {
+                backStr=[self findArr:model.a_subList key:key backStr:backStr];
+            }
+            
+        }
+    }
+    return backStr;
+}
+@end

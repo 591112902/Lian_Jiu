@@ -1,0 +1,13 @@
+//
+//  categoryVC.h
+//  PRJ_ZaiShang
+//
+//  Created by cnmobi on 15/8/17.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface categoryVC : UIViewController
+
+@end

@@ -1,0 +1,15 @@
+//
+//  Re_3TableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "ReleaseCellModel.h"
+@interface Re_3TableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UITextView *valueTV;
+-(void)fillCellWithModel:(ReleaseCellModel *)model;
+@end

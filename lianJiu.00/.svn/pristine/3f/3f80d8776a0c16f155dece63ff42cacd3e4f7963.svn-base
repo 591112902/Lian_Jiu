@@ -1,0 +1,18 @@
+//
+//  R_GYTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/22.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+
+
+#import "R_SuperTableViewController.h"
+
+
+@interface R_GYTableViewController : R_SuperTableViewController
+@property(nonatomic,assign)BOOL isGongYing;
+
+
+@end

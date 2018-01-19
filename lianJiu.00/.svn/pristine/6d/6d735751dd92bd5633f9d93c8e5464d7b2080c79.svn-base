@@ -1,0 +1,14 @@
+//
+//  SelectSubClassViewController.h
+//  zaiShang
+//
+//  Created by LIHONG on 16/5/17.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import "SelectSubViewController.h"
+
+@interface SelectSubClassViewController : SelectSubViewController
+
+
+@end

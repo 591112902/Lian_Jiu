@@ -1,0 +1,206 @@
+//
+//  IWTabBarViewController.m
+//  ItcastWeibo
+//
+//  Created by apple on 14-5-5.
+//  Copyright (c) 2014年 itcast. All rights reserved.
+/** tableBar */
+
+#import "PRJTabBarViewController.h"
+
+#import "UIImage+MJ.h"
+#import "PRJTabBar.h"
+
+@interface PRJTabBarViewController () <PRJTabBarDelegate>
+/**
+ *  自定义的tabbar
+ */
+@property (nonatomic, weak) PRJTabBar *customTabBar;
+@end
+
+@implementation PRJTabBarViewController
+{
+    BOOL fistReload;
+}
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    //注册通知，用于接收改变语言的通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeLanguage) name:@"changeLanguage" object:nil];
+    
+    // 初始化tabbar
+    [self setupTabbar];
+    
+    // 初始化所有的子控制器
+    [self setupAllChildViewControllersWithXib];
+
+//    [self changeLanguage];
+}
+
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+  
+// 删除系统自动生成的UITabBarButton
+    for (UIView *child in self.tabBar.subviews) {
+        if ([child isKindOfClass:[UIControl class]]) {
+            [child removeFromSuperview];
+        }
+    }
+    if (!fistReload) {
+        [self changeLanguage];
+        fistReload = YES;
+    }
+    
+}
+- (void)setToIndex:(NSInteger)toIndex
+{
+    _toIndex = toIndex;
+    PRJTabBar *tab;
+    for (UIView *child in self.tabBar.subviews) {
+        if ([child isKindOfClass:[PRJTabBar class]]) {
+            tab = (PRJTabBar*)child;
+        }
+    }
+    [tab buttonClick:tab.subviews[toIndex]];
+}
+/**
+ *  初始化tabbar
+ */
+- (void)setupTabbar
+{
+    PRJTabBar *customTabBar = [[PRJTabBar alloc] init];
+    customTabBar.frame = self.tabBar.bounds;
+    customTabBar.delegate = self;
+    [self.tabBar addSubview:customTabBar];
+    self.customTabBar = customTabBar;
+}
+
+/**
+ *  监听tabbar按钮的改变
+ *  @param from   原来选中的位置
+ *  @param to     最新选中的位置
+ */
+- (void)tabBar:(PRJTabBar *)tabBar didSelectedButtonFrom:(int)from to:(int)to
+{
+    self.selectedIndex = to;
+}
+
+/**
+ *  初始化所有的子控制器
+ */
+- (void)setupAllChildViewControllers
+{
+    // 1.竞价投标
+    BidVC *home = [[BidVC alloc] init];
+    [self setupChildViewController:home title:CustomLocalizedString(@"竞价投标", nil) imageName:@"mail_tag_jingbiao" selectedImageName:@"mail_tag_jingpai_ok"];
+    
+    // 2.供求信息
+    SupplyAndDemandTableVC *message = [[SupplyAndDemandTableVC alloc] init];
+    [self setupChildViewController:message title:CustomLocalizedString(@"供求信息", nil) imageName:@"mail_tag_gongqiu" selectedImageName:@"mail_tag_gongqiu_ok"];
+    
+    // 3.上门回收
+    RecoveryVC *discover = [[RecoveryVC alloc] init];
+    [self setupChildViewController:discover title:CustomLocalizedString(@"上门回收", nil) imageName:@"mail_tag_baofei" selectedImageName:@"mail_tag_baofei_ok"];
+    
+    // 4.个人中心
+    MeVC *me = [[MeVC alloc] init];
+    [self setupChildViewController:me title:CustomLocalizedString(@"个人中心", nil) imageName:@"mail_tag_geren" selectedImageName:@"mail_tag_geren_ok"];
+}
+//storyboarg加载
+- (void)setupAllChildViewControllersWithXib
+{
+    // 1.竞价投标
+    [self setupChildViewControllerWithXib:@"竞价投标" imageName:@"mail_tag_jingbiao" selectedImageName:@"mail_tag_jingpai_ok"];
+    
+    // 2.供求信息
+    [self setupChildViewControllerWithXib:@"供求信息" imageName:@"mail_tag_gongqiu" selectedImageName:@"mail_tag_gongqiu_ok"];
+    
+    // 3.上门回收
+    [self setupChildViewControllerWithXib:@"上门回收" imageName:@"mail_tag_baofei" selectedImageName:@"mail_tag_baofei_ok"];
+    
+    // 4.个人中心
+    [self setupChildViewControllerWithXib:@"个人中心" imageName:@"mail_tag_geren" selectedImageName:@"mail_tag_geren_ok"];
+    
+}
+/**
+ *  初始化一个子控制器
+ *
+ *  @param childVc           需要初始化的子控制器
+ *  @param title             标题
+ *  @param imageName         图标
+ *  @param selectedImageName 选中的图标
+ */
+- (void)setupChildViewController:(UIViewController *)childVc title:(NSString *)title imageName:(NSString *)imageName selectedImageName:(NSString *)selectedImageName
+{
+    // 1.设置控制器的属性
+    childVc.title = title;
+    // 设置图标
+    childVc.tabBarItem.image = [UIImage imageWithName:imageName];
+    // 设置选中的图标
+    UIImage *selectedImage = [UIImage imageWithName:selectedImageName];
+    if (isIOS7) {
+        childVc.tabBarItem.selectedImage = [selectedImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    } else {
+        childVc.tabBarItem.selectedImage = selectedImage;
+    }
+    
+    // 2.包装一个导航控制器
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:childVc];
+    [self addChildViewController:childVc];
+    // 3.添加tabbar内部的按钮
+    [self.customTabBar addTabBarButtonWithItem:childVc.tabBarItem];
+}
+- (void)setupChildViewControllerWithXib:(NSString *)title imageName:(NSString *)imageName selectedImageName:(NSString *)selectedImageName
+{
+    // 设置图标
+    UIImage *image= [UIImage imageWithName:imageName];
+    // 设置选中的图标
+    UIImage *selectedImage = [UIImage imageWithName:selectedImageName];
+    if (isIOS7) {
+        selectedImage = [selectedImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    UITabBarItem *tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:image selectedImage:selectedImage];
+    
+    // 3.添加tabbar内部的按钮
+    [self.customTabBar addTabBarButtonWithItem:tabBarItem];
+}
+- (void)changeLanguage
+{
+
+     NSArray *arr = @[@"竞价投标",@"供求信息",@"上门回收",@"个人中心"];
+    int j=0;
+    for (int i= 0;i<self.customTabBar.subviews.count;i++) {
+        UIView *childView = self.customTabBar.subviews[i];
+        if ([childView isKindOfClass:[PRJTabBarButton class]]) {
+            PRJTabBarButton *btn = (PRJTabBarButton *)childView;
+            [btn setTitle:CustomLocalizedString(arr[j], nil) forState:UIControlStateNormal];
+            [btn setTitle:CustomLocalizedString(arr[j], nil) forState:UIControlStateSelected];
+            j++;
+        }
+    }
+
+    for (int i =0; i<self.viewControllers.count; i++) {
+        UINavigationController *nav = self.viewControllers[i];
+        if (i==0) {
+            BidVC *bidVc = (BidVC *)nav.viewControllers.firstObject;
+            [bidVc reloadSubViews];
+        }else if(i==1){
+            SupplyAndDemandTableVC *Vc = (SupplyAndDemandTableVC *)nav.viewControllers.firstObject;
+            [Vc reloadSubViews];
+        }else if(i==2){
+            RecoveryVC *Vc = (RecoveryVC *)nav.viewControllers.firstObject;
+            [Vc reloadSubViews];
+        }else if(i==3){
+            MeVC *VC = (MeVC *)nav.viewControllers.firstObject;
+            [VC reloadSubViews];
+        }
+    }
+}
+- (void)dealloc
+{
+    HZLog(@"%@---dealloc",self.class);
+}
+@end

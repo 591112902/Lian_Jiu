@@ -1,0 +1,22 @@
+//
+//  PhoneRecycParmModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/22.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "PhoneRecycParmModel.h"
+
+@implementation PhoneRecycParmModel
+-(instancetype)initWithTitle:(NSString *)title AndConten:(NSString*)conten andSelect:(BOOL)isselect
+{
+    self = [super init];
+    if (self) {
+        self.title =title;
+        self.conten = conten;
+        self.isselect = isselect;
+    }
+    return self;
+}
+@end

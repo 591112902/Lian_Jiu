@@ -1,0 +1,61 @@
+//
+//  MainTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/19.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "SATableViewCell.h"
+#import "UIImageView+WebCache.h"
+@implementation SATableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    
+    
+}
+
+-(void)fillCellWithModel:(SupplyModel*)model
+{
+//    NSString *urlStr = [model.p_file componentsSeparatedByString:@";"].firstObject;
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.leftImageView sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    self.title.text = model.s_title;
+    STRINGNONIL(model.s_quality);
+    self.numValueLabel.text = [model.s_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+    NSString *time = [model.release_time componentsSeparatedByString:@" "].firstObject;
+    self.dateLabel.text = time;
+    if ([model.a_level isEqualToString:@"3"]) {
+       self.location.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.location.text = model.dz_name;
+    }
+    self.locationTitleLabel.text = CustomLocalizedString(@"地区:", nil);
+    self.numTitleLabel.text = CustomLocalizedString(@"数量:", nil);
+}
+-(void)fillCellWithModel2:(PurchaseModel*)model
+{
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.leftImageView sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+    self.title.text = model.pur_title;
+    self.numValueLabel.text = [model.pur_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+    NSString *time = [model.release_time componentsSeparatedByString:@" "].firstObject;
+    self.dateLabel.text = time;
+    if ([model.a_level isEqualToString:@"2"]) {
+        self.location.text = [NSString stringWithFormat:@"%@(%@)",CustomLocalizedString(@"中国", nil),model.dz_name];
+    }else{
+        self.location.text = model.dz_name;
+    }
+    self.locationTitleLabel.text = CustomLocalizedString(@"地区:", nil);
+    self.numTitleLabel.text = CustomLocalizedString(@"数量:", nil);
+}
+@end

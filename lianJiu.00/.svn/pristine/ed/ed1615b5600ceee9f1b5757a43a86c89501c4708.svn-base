@@ -1,0 +1,28 @@
+//
+//  MyNewsTableViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 16/1/8.
+//  Copyright © 2016年 CNMOBI. All rights reserved.
+//
+
+#import "MyNewsTableViewCell.h"
+
+@implementation MyNewsTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+-(void)fillCellWithModel:(MyNewsModel*)model{
+    self.titleL.text = model.pu_title;
+    self.contenL.text = model.pu_detail;
+    self.timeL.text = model.date;
+    if ([model.state isEqualToString:@"0"]) {
+        self.imgeV.image =[UIImage imageNamed:@"news"];
+    }else{
+        self.imgeV.image =[UIImage imageNamed:@"news_sel"];
+    }
+}
+
+
+@end

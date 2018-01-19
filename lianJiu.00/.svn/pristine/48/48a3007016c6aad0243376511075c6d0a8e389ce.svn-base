@@ -1,0 +1,28 @@
+//
+//  MyOrderRecoverModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderRecoverModel.h"
+
+@implementation MyOrderRecoverModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    MyOrderRecoverModel *model = [[self alloc] init];
+    model.s_state = dic[@"s_state"];
+    model.usr_id = dic[@"usr_id"];
+    model.w_address = dic[@"w_address"];
+    model.w_date = dic[@"w_date"];
+    model.w_detail = dic[@"w_detail"];
+    model.w_id = dic[@"w_id"];
+    model.w_name = dic[@"w_name"];
+    model.w_phone = dic[@"w_phone"];
+    model.w_photo = dic[@"w_photo"];
+    model.w_state = dic[@"w_state"];
+    model.w_weight = dic[@"w_weight"];
+    return model;
+}
+@end

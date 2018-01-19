@@ -1,0 +1,38 @@
+//
+//  bidModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/16.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "bidModel.h"
+
+@implementation bidModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    bidModel *model = [[self alloc] init];
+    
+    [model initlWith:dic];
+    model.pass_time = dic[@"pass_time"];
+    model.size = dic[@"size"];
+    model.t_attestation = dic[@"t_attestation"];
+    model.t_austate_id = dic[@"t_austate_id"];
+    model.t_bidstate_id = dic[@"t_bidstate_id"];
+    model.t_date = dic[@"t_date"];
+    model.t_detail = dic[@"t_detail"];
+    model.t_id = dic[@"t_id"];
+    model.t_phone = dic[@"t_phone"];
+    model.t_picktime = dic[@"t_picktime"];
+    model.t_price = dic[@"t_price"];
+    model.t_quality = dic[@"t_quality"];
+    model.t_reson = dic[@"t_reson"];
+    model.t_tendertype = dic[@"t_tendertype"];
+    model.t_title = dic[@"t_title"];
+    model.t_type = dic[@"t_type"];
+    model.t_surestate_id = dic[@"t_surestate_id"];
+    model.dw_id = dic[@"dw_id"];
+ 
+    return model;
+}
+@end

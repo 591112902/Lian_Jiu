@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="PhonwRecoveryCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="98" height="69"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="98" height="69"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="94" translatesAutoresizingMaskIntoConstraints="NO" id="ZN9-A5-Efk">
+                        <rect key="frame" x="2" y="10" width="94" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="r14-pf-emf"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="94" translatesAutoresizingMaskIntoConstraints="NO" id="BkP-bt-BbX">
+                        <rect key="frame" x="2" y="30" width="94" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="LHW-cA-q4V"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="BkP-bt-BbX" secondAttribute="bottom" id="9Th-9s-8e0"/>
+                <constraint firstAttribute="trailing" secondItem="BkP-bt-BbX" secondAttribute="trailing" constant="2" id="KLN-Rb-mD8"/>
+                <constraint firstItem="ZN9-A5-Efk" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="2" id="QbE-Kp-hbZ"/>
+                <constraint firstItem="BkP-bt-BbX" firstAttribute="top" secondItem="ZN9-A5-Efk" secondAttribute="bottom" id="Qll-KM-dwd"/>
+                <constraint firstAttribute="trailing" secondItem="ZN9-A5-Efk" secondAttribute="trailing" constant="2" id="W7K-kI-3KJ"/>
+                <constraint firstItem="ZN9-A5-Efk" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="10" id="cNJ-Ml-E2R"/>
+                <constraint firstItem="BkP-bt-BbX" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="2" id="jTX-Bo-XtP"/>
+            </constraints>
+            <size key="customSize" width="98" height="69"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                    <real key="value" value="0.29999999999999999"/>
+                </userDefinedRuntimeAttribute>
+            </userDefinedRuntimeAttributes>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="9Th-9s-8e0"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="contenH" destination="LHW-cA-q4V" id="Udn-Lb-wkR"/>
+                <outlet property="contenLabel" destination="BkP-bt-BbX" id="M1O-Hs-5aO"/>
+                <outlet property="titleLabel" destination="ZN9-A5-Efk" id="QFN-av-Cvp"/>
+                <outlet property="titleLableH" destination="r14-pf-emf" id="uqb-9B-e0B"/>
+            </connections>
+            <point key="canvasLocation" x="443" y="319.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

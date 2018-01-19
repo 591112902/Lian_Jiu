@@ -1,0 +1,145 @@
+//
+//  MyOrderPurchaseTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderPurchaseTableViewController.h"
+
+#import "ModifySupplyAndPurchaseVC.h"
+@interface MyOrderPurchaseTableViewController ()
+
+@end
+
+@implementation MyOrderPurchaseTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
+
+- (void)AddDataSource
+{
+    self.dataSource = self.superDataSource[1];
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+//    MyOrederTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MyOrederTableViewCell"];
+//    [cell fillCellWithModel2:self.dataSource[indexPath.section]];
+//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    PurchaseModel *model = self.dataSource[indexPath.section];
+    MyOrederTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"MyOrederTableViewCell"];
+    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    [cell fillCellWithModel2 : model];
+    [cell.bidManageBtn removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
+    if ([model.pur_state isEqualToString:@"2"] ) {//不通过
+        cell.bidManageBtn.tag=indexPath.section+1500;
+        cell.bidManageBtn.hidden=NO;
+        [cell.bidManageBtn addTarget:self action:@selector(purchaseBrightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+    }
+    
+    return cell;
+}
+
+-(void)purchaseBrightBtnClick:(UIButton *)btn{
+
+    NSInteger index = btn.tag-1500;
+    PurchaseModel *model=[[PurchaseModel alloc]init];
+    model = self.dataSource[index];
+    
+    ModifySupplyAndPurchaseVC *gyVC = [[ModifySupplyAndPurchaseVC alloc] initWithStyle:UITableViewStyleGrouped];
+    gyVC.title = CustomLocalizedString(@"发布采购", nil);
+    gyVC.isGongYing = NO;
+    gyVC.model = model;
+
+    NSArray * arr = @[CustomLocalizedString(@"货物类目:", nil),CustomLocalizedString(@"标题:", nil),CustomLocalizedString(@"货物类型:", nil),CustomLocalizedString(@"数量:", nil),CustomLocalizedString(@"价格:", nil),CustomLocalizedString(@"包装:", nil),CustomLocalizedString(@"交易方式:", nil),CustomLocalizedString(@"所在地区:", nil),CustomLocalizedString(@"联系电话:", nil),CustomLocalizedString(@"联系地址:", nil),CustomLocalizedString(@"采购期限:", nil),CustomLocalizedString(@"详情描述:", nil),];
+    NSMutableArray *data = [[NSMutableArray alloc] init];
+    for (int i = 0;i<arr.count;i++) {
+        ReleaseCellModel* releaseCellmodel  = [[ReleaseCellModel alloc] initWithtitel:arr[i] andText:nil];
+        if (i==0) {
+            releaseCellmodel.text=model.lb_name;
+            releaseCellmodel.textId=model.p_id;
+            
+        }else if (i==1){
+            releaseCellmodel.text=model.pur_title;
+        }
+        else if (i==2) {
+            if ([model.pur_type isEqualToString:@"旧"]) {
+                releaseCellmodel.text = @"1";
+            }else{
+                releaseCellmodel.text = @"0";
+            }
+        }else if(i==3)
+        {
+            releaseCellmodel. textId= model.unit_id;
+            releaseCellmodel.rightText=model.dw_name;
+            releaseCellmodel.text = model.pur_quality;
+        }else if(i==4)
+        {
+            releaseCellmodel.rightText =model.bz_name;
+            releaseCellmodel.text =model.pur_price;
+            releaseCellmodel.textId= model.currency_id;
+            
+        }else if (i==5)
+        {
+            releaseCellmodel.textId=model.pack_id;
+            releaseCellmodel.text=model.pack_name;
+        }else if (i==6){
+            releaseCellmodel.text=model.jy_name;
+            releaseCellmodel.textId=model.trade_id;
+            
+            
+        }else if (i==7){
+            releaseCellmodel.textId=model.area_id;
+            releaseCellmodel.text=model.pur_address;
+        }
+        
+        else if(i==8)
+        {
+            
+            releaseCellmodel.text = model.pur_phone;
+        }else if (i==9){
+            releaseCellmodel.text=model.pur_address;
+        }else if (i==10){
+            releaseCellmodel.textId = model.pur_date;
+            releaseCellmodel.text= model.pur_date;
+        }else if (i==11){
+            
+            releaseCellmodel.text=model.pur_detail;
+        }
+
+        [data addObject:releaseCellmodel];
+    }
+    gyVC.dataScour = data;
+    
+    NSArray *headurl = [model.p_file componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;"]];
+    NSMutableArray *mainPhotos=[[NSMutableArray alloc] initWithArray:headurl];
+    [mainPhotos removeObject:@""];
+    gyVC.mainPhotos = mainPhotos;
+    NSArray *detailurl = [model.p_detail componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;"]];
+    NSMutableArray *detailPhotos=[[NSMutableArray alloc] initWithArray:detailurl];
+    [detailPhotos removeObject:@""];
+    gyVC.detailPhotos = detailPhotos;
+    
+    
+    [gyVC.tableView  reloadData];
+    
+    [self.navigationController pushViewController:gyVC animated:YES];
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    B_C_GViewController *bidContenVC = [[B_C_GViewController alloc] init];
+    bidContenVC.Purmodel = self.dataSource[indexPath.section];
+    bidContenVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:bidContenVC animated:YES];
+    
+    PRJTabBarViewController *tabar=(PRJTabBarViewController *)self.tabBarController;
+    UINavigationController *nav = tabar.viewControllers.lastObject;
+    MeVC *meVc = nav.viewControllers.firstObject;
+    meVc.isRequestData = YES;
+}
+@end

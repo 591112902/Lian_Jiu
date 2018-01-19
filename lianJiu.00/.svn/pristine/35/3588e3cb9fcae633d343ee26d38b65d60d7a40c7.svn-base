@@ -1,0 +1,77 @@
+//
+//  AccountModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/7.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "AccountModel.h"
+
+@implementation AccountModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    AccountModel *model =[[self alloc] init];
+    model.account_balance =dic[@"account_balance"];
+    model.email =dic[@"email"];
+    model.ensure_money =dic[@"ensure_money"];
+    model.line_credit =dic[@"line_credit"];
+    model.logindate =dic[@"logindate"];
+    model.name =dic[@"name"];
+    model.payment =dic[@"payment"];
+    model.phone =dic[@"phone"];
+    model.photo =dic[@"photo"];
+    model.pwd =dic[@"pwd"];
+    model.referrer_vip =dic[@"referrer_vip"];
+    model.register_time =dic[@"register_time"];
+    model.sex =dic[@"sex"];
+    model.usr_status =dic[@"usr_status"];
+    model.vip =dic[@"vip"];
+    model.vip_member =dic[@"vip_member"];
+    return model;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.account_balance forKey:@"account_balance"];
+    [aCoder encodeObject:self.email forKey:@"email"];
+    [aCoder encodeObject:self.ensure_money forKey:@"ensure_money"];
+    [aCoder encodeObject:self.line_credit forKey:@"line_credit"];
+    [aCoder encodeObject:self.logindate forKey:@"logindate"];
+    [aCoder encodeObject:self.name forKey:@"name"];
+    [aCoder encodeObject:self.payment forKey:@"payment"];
+    [aCoder encodeObject:self.phone forKey:@"phone"];
+    [aCoder encodeObject:self.photo forKey:@"photo"];
+//    [aCoder encodeObject:self.pwd forKey:@"pwd"];
+    [aCoder encodeObject:self.referrer_vip forKey:@"referrer_vip"];
+    [aCoder encodeObject:self.register_time forKey:@"register_time"];
+    [aCoder encodeObject:self.sex forKey:@"sex"];
+    [aCoder encodeObject:self.usr_status forKey:@"usr_status"];
+    [aCoder encodeObject:self.vip forKey:@"vip"];
+    [aCoder encodeObject:self.vip_member forKey:@"vip_member"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.account_balance = [aDecoder decodeObjectForKey:@"account_balance"];
+        self.email = [aDecoder decodeObjectForKey:@"email"];
+        self.ensure_money = [aDecoder decodeObjectForKey:@"ensure_money"];
+        self.line_credit = [aDecoder decodeObjectForKey:@"line_credit"];
+        self.logindate = [aDecoder decodeObjectForKey:@"logindate"];
+        self.name = [aDecoder decodeObjectForKey:@"name"];
+        self.payment = [aDecoder decodeObjectForKey:@"payment"];
+        self.phone = [aDecoder decodeObjectForKey:@"phone"];
+        self.photo = [aDecoder decodeObjectForKey:@"photo"];
+//        self.pwd = [aDecoder decodeObjectForKey:@"pwd"];
+        self.referrer_vip = [aDecoder decodeObjectForKey:@"referrer_vip"];
+        self.register_time = [aDecoder decodeObjectForKey:@"register_time"];
+        self.sex = [aDecoder decodeObjectForKey:@"sex"];
+        self.usr_status = [aDecoder decodeObjectForKey:@"usr_status"];
+        self.vip = [aDecoder decodeObjectForKey:@"vip"];
+        self.vip_member = [aDecoder decodeObjectForKey:@"vip_member"];
+        
+    }
+    return self;
+}
+
+@end

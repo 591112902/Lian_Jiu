@@ -1,0 +1,136 @@
+//
+//  MyOrderViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/25.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderViewController.h"
+#import "DLFixedTabbarView.h"
+#import "DLTabedSlideView.h"
+#import "MyOrderSupplyTableViewController.h"
+#import "MyOrderPurchaseTableViewController.h"
+#import "MyOrderRecoverViewController.h"
+#import "MOSTableViewCell.h"
+#import "SelectViewController.h"
+@interface MyOrderViewController ()<DLTabedSlideViewDelegate>
+@property(nonatomic,strong)DLTabedSlideView *tabedSlideView;//滑动view
+@end
+
+@implementation MyOrderViewController
+{
+    NSInteger tabNumber;//第几个页面
+    NSMutableArray *childrenVCs;//子页面
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"我的订单", nil);
+    self.view.backgroundColor = [UIColor whiteColor];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    
+    UIImage* img=[UIImage imageNamed:@"shaixuan_writer"];
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame =CGRectMake(0, 0, 25, 25);
+    [btn setBackgroundImage:img forState:UIControlStateNormal];
+    [btn addTarget: self action: @selector(Screening) forControlEvents: UIControlEventTouchUpInside];
+    UIBarButtonItem* item=[[UIBarButtonItem alloc]initWithCustomView:btn];
+    self.navigationItem.rightBarButtonItem=item;
+    
+    _supplyAndPurchaseDataSource  = [[NSMutableArray alloc] init];
+    [_supplyAndPurchaseDataSource addObject:[[NSMutableArray alloc] init]];
+    [_supplyAndPurchaseDataSource addObject:[[NSMutableArray alloc] init]];
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    NSString *vip = [def objectForKey:@"vip"];
+    _supplyAndPurchasePapeNo = 1;
+    _supplyAndPurchaseParameters = [NSMutableDictionary dictionaryWithDictionary:@{@"vip":vip,@"pageNo":[NSNumber numberWithInteger:_supplyAndPurchasePapeNo]}];
+    
+    childrenVCs = [[NSMutableArray alloc] init];
+    
+    self.tabedSlideView = [[DLTabedSlideView alloc] initWithFrame:CGRectMake(0, 64, BOUND_WIDTH, BOUND_HIGHT-64)];
+    self.tabedSlideView.delegate =self;
+    [self.view addSubview:self.tabedSlideView];
+    self.tabedSlideView.baseViewController = self;
+    self.tabedSlideView.tabItemNormalColor = [UIColor blackColor];
+    self.tabedSlideView.tabItemSelectedColor = MAINColor;
+    self.tabedSlideView.tabbarTrackColor = MAINColor;
+    self.tabedSlideView.tabbarBackgroundImage = [UIImage imageNamed:@"tabbarBk"];
+    self.tabedSlideView.tabbarBottomSpacing = 0;
+    self.tabedSlideView.tabbarHeight = 46;
+
+    DLTabedbarItem *item1 = [DLTabedbarItem itemWithTitle:CustomLocalizedString(@"供应", nil) image:nil selectedImage:nil];
+    DLTabedbarItem *item2 = [DLTabedbarItem itemWithTitle:CustomLocalizedString(@"采购", nil) image:nil selectedImage:nil];
+    DLTabedbarItem *item3 = [DLTabedbarItem itemWithTitle:CustomLocalizedString(@"回收", nil) image:nil selectedImage:nil];
+    self.tabedSlideView.tabbarItems = @[item1, item2, item3];
+    [self.tabedSlideView buildTabbar];
+    
+    self.tabedSlideView.selectedIndex = 0;
+    // Do any additional setup after loading the view.
+}
+//选择状态
+- (void)Screening
+{
+    if (tabNumber==2) {
+        return;
+    }
+    SelectViewController *seVC = [[SelectViewController alloc] init];
+    NSArray *data  = @[CustomLocalizedString(@"全部", nil),CustomLocalizedString(@"审核中",nil),CustomLocalizedString(@"审核通过",nil),CustomLocalizedString(@"审核不通过",nil),CustomLocalizedString(@"已过期",nil)];
+    seVC.dataSource = data;
+    WS(weakSelf);
+    seVC.didselc = ^(NSInteger a,NSString *str){
+        if (a==0) {
+            [weakSelf.supplyAndPurchaseParameters removeObjectForKey:@"type"];
+        }else{
+            [weakSelf.supplyAndPurchaseParameters setValue:[NSNumber numberWithInteger:a-1] forKey:@"type"];
+        }
+        [weakSelf.supplyAndPurchaseParameters setValue:@1 forKey:@"pageNo"];
+       MyOrderSupplyTableViewController *childrenVC =  childrenVCs[tabNumber];
+        [childrenVC.tableView.header beginRefreshing];
+    };
+    seVC.tableViewFram = CGRectMake(BOUND_WIDTH-120, 70, 110, 44*data.count+25);
+    seVC.tableViewUIEdgeInsets = UIEdgeInsetsMake(18,8, 7, 8);
+    
+    seVC.bgImage = [UIImage imageNamed:@"huishoukuang"];
+    [self.tabBarController addChildViewController:seVC];
+    [self.view.window addSubview:seVC.view];
+}
+#pragma mark - DLTabedSliderViewDelegate
+- (NSInteger)numberOfTabsInDLTabedSlideView:(DLTabedSlideView *)sender{
+    return 3;
+}
+- (UIViewController *)DLTabedSlideView:(DLTabedSlideView *)sender controllerAt:(NSInteger)index{
+    switch (index) {
+        case 0:
+        {
+            MyOrderSupplyTableViewController *controller = [[MyOrderSupplyTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            controller.superDataSource = self.supplyAndPurchaseDataSource;
+            controller.parameters = self.supplyAndPurchaseParameters;
+            [childrenVCs addObject:controller];
+            return controller;
+        }
+        case 1:
+        {
+            MyOrderPurchaseTableViewController *controller = [[MyOrderPurchaseTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            controller.superDataSource = self.supplyAndPurchaseDataSource;
+            controller.parameters = self.supplyAndPurchaseParameters;
+            [childrenVCs addObject:controller];
+             return controller;
+        }
+        default:
+        {
+            MyOrderRecoverViewController *controller = [[MyOrderRecoverViewController alloc] init];
+            [childrenVCs addObject:controller];
+            return controller;
+        }
+            
+            return nil;
+    }
+}
+- (void)DLTabedSlideView:(DLTabedSlideView *)sender didSelectedAt:(NSInteger)index
+{
+    tabNumber = index;
+}
+
+@end

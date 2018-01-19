@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="EvaluateFooterView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dke-ox-1tc">
+                    <rect key="frame" x="0.0" y="0.0" width="80" height="50"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Customer-service_lj.png" translatesAutoresizingMaskIntoConstraints="NO" id="4Pw-j2-W7v">
+                            <rect key="frame" x="29" y="8" width="22" height="20"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="联系客服" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GHd-Tp-qfS">
+                            <rect key="frame" x="0.0" y="29" width="80" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.98231336805555558" green="0.97889539930555558" blue="0.98076714409722221" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="80" id="UDQ-1K-tuD"/>
+                        <constraint firstAttribute="width" secondItem="dke-ox-1tc" secondAttribute="height" multiplier="8:5" id="i0h-VP-hx1"/>
+                        <constraint firstAttribute="height" constant="50" id="teh-e7-K9w"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gb6-FH-h2c">
+                    <rect key="frame" x="80" y="0.0" width="80" height="50"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Recycling_lj.png" translatesAutoresizingMaskIntoConstraints="NO" id="4l1-pB-CMr">
+                            <rect key="frame" x="29" y="8" width="22" height="20"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="回收车" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fn0-Ee-Z3H">
+                            <rect key="frame" x="0.0" y="29" width="80" height="21"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.98231336810000003" green="0.97889539930000002" blue="0.98076714409999999" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="1BK-Rh-A1f"/>
+                        <constraint firstAttribute="width" constant="80" id="BSz-7E-MBV"/>
+                        <constraint firstAttribute="width" secondItem="Gb6-FH-h2c" secondAttribute="height" multiplier="8:5" id="KJs-m1-hee"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xh8-zS-WUs">
+                    <rect key="frame" x="160" y="0.0" width="80" height="50"/>
+                    <color key="backgroundColor" red="0.01475328041" green="0.79719046090000001" blue="0.0080837673609999994" alpha="0.56648651539999995" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="xh8-zS-WUs" secondAttribute="height" multiplier="8:5" id="NXV-Ny-Y2n"/>
+                        <constraint firstAttribute="height" constant="50" id="m1U-uJ-seG"/>
+                        <constraint firstAttribute="width" constant="80" id="nju-gL-Oc9"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="13"/>
+                    <state key="normal" title="加入回收车">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sLn-3F-PI8">
+                    <rect key="frame" x="240" y="0.0" width="80" height="50"/>
+                    <color key="backgroundColor" red="0.01475328041" green="0.8191631171" blue="0.0080837673609999994" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="sLn-3F-PI8" secondAttribute="height" multiplier="8:5" id="5r3-YR-tq4"/>
+                        <constraint firstAttribute="width" constant="80" id="XbO-1P-osV"/>
+                        <constraint firstAttribute="height" constant="50" id="eXe-5o-u7y"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <state key="normal" title="立即卖掉">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="xh8-zS-WUs" secondAttribute="bottom" id="4U9-IB-rCJ"/>
+                <constraint firstItem="dke-ox-1tc" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="4yZ-wh-izK"/>
+                <constraint firstItem="sLn-3F-PI8" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="8FE-6b-msd"/>
+                <constraint firstItem="xh8-zS-WUs" firstAttribute="width" secondItem="dke-ox-1tc" secondAttribute="width" id="9aV-jF-UlR"/>
+                <constraint firstItem="Gb6-FH-h2c" firstAttribute="height" secondItem="dke-ox-1tc" secondAttribute="height" id="9ru-oe-sZ7"/>
+                <constraint firstAttribute="bottom" secondItem="Gb6-FH-h2c" secondAttribute="bottom" id="E3W-Kb-Lgo"/>
+                <constraint firstAttribute="bottom" secondItem="dke-ox-1tc" secondAttribute="bottom" id="EPJ-1H-UBX"/>
+                <constraint firstItem="xh8-zS-WUs" firstAttribute="height" secondItem="dke-ox-1tc" secondAttribute="height" id="HFn-FH-Q5P"/>
+                <constraint firstItem="dke-ox-1tc" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="K4U-kr-dvq"/>
+                <constraint firstAttribute="trailing" secondItem="sLn-3F-PI8" secondAttribute="trailing" id="LcG-BM-3pu"/>
+                <constraint firstItem="sLn-3F-PI8" firstAttribute="leading" secondItem="xh8-zS-WUs" secondAttribute="trailing" id="O7s-tn-vtx"/>
+                <constraint firstItem="sLn-3F-PI8" firstAttribute="width" secondItem="dke-ox-1tc" secondAttribute="width" id="OjT-31-wKU"/>
+                <constraint firstAttribute="bottom" secondItem="sLn-3F-PI8" secondAttribute="bottom" id="aY6-LK-MM7"/>
+                <constraint firstItem="Gb6-FH-h2c" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="fiQ-Wi-sXA"/>
+                <constraint firstItem="Gb6-FH-h2c" firstAttribute="width" secondItem="dke-ox-1tc" secondAttribute="width" id="hPh-gN-8PK"/>
+                <constraint firstItem="sLn-3F-PI8" firstAttribute="height" secondItem="dke-ox-1tc" secondAttribute="height" id="n2r-zg-b5P"/>
+                <constraint firstItem="xh8-zS-WUs" firstAttribute="leading" secondItem="Gb6-FH-h2c" secondAttribute="trailing" id="rZf-44-l4j"/>
+                <constraint firstItem="Gb6-FH-h2c" firstAttribute="leading" secondItem="dke-ox-1tc" secondAttribute="trailing" id="yM7-I1-pqx"/>
+                <constraint firstItem="xh8-zS-WUs" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="yZK-Ji-yJt"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="hscBtn" destination="xh8-zS-WUs" id="NZT-n0-kKd"/>
+                <outlet property="huishoucheView" destination="Gb6-FH-h2c" id="97f-fP-non"/>
+                <outlet property="kefuView" destination="dke-ox-1tc" id="1GZ-cZ-cgJ"/>
+                <outlet property="recycleImageView" destination="4l1-pB-CMr" id="OSA-Cz-ebU"/>
+                <outlet property="sellBtn" destination="sLn-3F-PI8" id="FFr-a8-7I4"/>
+            </connections>
+            <point key="canvasLocation" x="363" y="96"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="Customer-service_lj.png" width="65" height="59"/>
+        <image name="Recycling_lj.png" width="63" height="60"/>
+    </resources>
+</document>

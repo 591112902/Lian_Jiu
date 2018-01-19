@@ -1,0 +1,30 @@
+//
+//  AccountModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/7.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface AccountModel : NSObject
+@property(nonatomic,strong)NSNumber *account_balance;
+@property(nonatomic,copy)NSString *email;
+@property(nonatomic,strong)NSNumber *ensure_money;
+@property(nonatomic,strong)NSNumber *line_credit;
+@property(nonatomic,copy)NSString *logindate;
+@property(nonatomic,copy)NSString *name;
+@property(nonatomic,copy)NSString *payment;
+@property(nonatomic,copy)NSString *phone;
+@property(nonatomic,copy)NSString *photo;
+@property(nonatomic,copy)NSString *pwd;
+@property(nonatomic,copy)NSString *referrer_vip;
+@property(nonatomic,copy)NSString *register_time;
+@property(nonatomic,copy)NSString *sex;
+@property(nonatomic,copy)NSString *usr_status;
+@property(nonatomic,copy)NSString *vip;//唯一标识
+
+@property(nonatomic,copy)NSString *vip_member;
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

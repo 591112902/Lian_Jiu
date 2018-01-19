@@ -1,0 +1,68 @@
+//
+//  B_W_SucceViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "B_W_SucceViewController.h"
+
+@interface B_W_SucceViewController ()
+
+@end
+
+@implementation B_W_SucceViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    CGFloat lableH = 30;
+    CGFloat h = 64+40;
+    UILabel *Lable1 = [[UILabel alloc] initWithFrame:CGRectMake(20,h, BOUND_WIDTH-40, lableH)];
+    NSString *Str = [NSString stringWithFormat:@"你已申请提现，提现金额为：%@%@",self.money,self.currency];
+    if (isIOS7) {
+        NSMutableAttributedString *noteStr = [[NSMutableAttributedString alloc] initWithString:Str];
+        NSRange redRange = NSMakeRange([[noteStr string] rangeOfString:self.money].location, [[noteStr string] rangeOfString:self.money].length);
+        [noteStr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:redRange];
+        [Lable1 setAttributedText:noteStr];
+    }else{
+        Lable1.text = Str;
+    }
+
+    Lable1.numberOfLines = 0;
+    Lable1.font = [UIFont systemFontOfSize:13];
+//    Lable1.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:Lable1];
+    h+=lableH;
+    
+    UILabel *Lable2 = [[UILabel alloc] initWithFrame:CGRectMake(20,h, BOUND_WIDTH-40, lableH)];
+    Lable2.text = CustomLocalizedString(@"现提现编号为：", nil);
+    Lable2.numberOfLines = 0;
+    Lable2.font = [UIFont systemFontOfSize:13];
+//    Lable2.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:Lable2];
+    h+=lableH;
+    
+    UILabel *Lable3 = [[UILabel alloc] initWithFrame:CGRectMake(20,h, BOUND_WIDTH-40, lableH)];
+    Lable3.text = @"3个工作日内到账";
+    Lable3.numberOfLines = 0;
+    Lable3.font = [UIFont systemFontOfSize:13];
+//    Lable3.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:Lable3];
+    h+=lableH+40;
+    
+    UIButton *outBtn = [[UIButton alloc] initWithFrame:CGRectMake(10, h, BOUND_WIDTH-20, 40)];
+    [outBtn setTitle:@"完成" forState:UIControlStateNormal];
+    [outBtn setBackgroundImage:[UIImage imageNamed:@"fr_three_img_but"] forState:UIControlStateNormal];
+    outBtn.layer.cornerRadius = 5;
+    outBtn.clipsToBounds = YES;
+    [outBtn addTarget:self action:@selector(ToNext) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:outBtn];
+}
+-(void)ToNext
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+@end

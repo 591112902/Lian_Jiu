@@ -1,0 +1,28 @@
+//
+//  SupplyModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "superBidModel.h"
+
+@interface SupplyModel : superBidModel
+
+@property(nonatomic,copy)NSString *pass_time;
+@property(nonatomic,copy)NSString *s_address;
+@property(nonatomic,copy)NSString *s_attestation;
+@property(nonatomic,copy)NSString *s_date;
+@property(nonatomic,copy)NSString *s_detail;
+@property(nonatomic,copy)NSString *s_id;
+@property(nonatomic,copy)NSString *s_phone;
+@property(nonatomic,copy)NSString *s_price;
+@property(nonatomic,copy)NSString *s_quality;
+@property(nonatomic,copy)NSString *s_state;
+@property(nonatomic,copy)NSString *s_title;
+@property(nonatomic,copy)NSString *s_type;
+
++(instancetype)ModelWith:(NSDictionary *)dic;
+
+@end

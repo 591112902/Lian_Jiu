@@ -1,0 +1,13 @@
+//
+//  EvaluateViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/9/10.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "R_SuperTableViewController.h"
+#import "PhotoTableViewController.h"
+@interface EvaluateViewController : PhotoTableViewController
+
+@end

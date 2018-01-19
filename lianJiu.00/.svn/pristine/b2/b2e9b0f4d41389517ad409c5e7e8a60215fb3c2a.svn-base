@@ -1,0 +1,36 @@
+//
+//  Au_personModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/22.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "Au_personModel.h"
+
+@implementation Au_personModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    Au_personModel *model = [[self alloc] init];
+    model.idcardno = dic[@"idcardno"];
+    model.name = dic[@"name"];
+    model.phone = dic[@"phone"];
+    model.state = dic[@"state"];
+    model.photo = dic[@"photo"];
+
+    return model;
+}
+-(void)setPhoto:(NSString *)photo
+{
+    _photo = photo;
+    NSArray *photos =[photo componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@";,"]];
+    NSMutableArray *arr = [NSMutableArray arrayWithArray:photos];
+    [arr removeObject:@""];
+    photos = arr;
+    if (photos.count>0) {
+        self.photo1 = [PHOTOLOADPATH stringByAppendingString:photos.firstObject?photos.firstObject:@""];
+    }if (photos.count>1) {
+        self.photo2 = [PHOTOLOADPATH stringByAppendingString:photos[1]?photos[1]:@""];
+    }
+}
+@end

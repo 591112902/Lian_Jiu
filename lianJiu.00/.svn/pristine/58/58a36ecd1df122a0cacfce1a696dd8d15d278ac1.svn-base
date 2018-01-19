@@ -1,0 +1,266 @@
+//
+//  ReleaseTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/21.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+/**
+ 信息发布
+ */
+
+#import "ReleaseTableViewController.h"
+#import "ReleaseTableViewCell.h"
+#import "R_SuperTableViewController.h"
+#import "R_GYTableViewController.h"
+#import "ReleaseCellModel.h"
+#import "BaseModel.h"
+#import "bidModel.h"
+//#import "B_C_TViewController.h"
+
+@interface ReleaseTableViewController ()
+//@property(nonatomic,strong)B_C_TViewController *bctVc;
+@property(nonatomic,strong)bidModel *model;
+@end
+
+@implementation ReleaseTableViewController
+{
+    NSMutableArray *_dataSoc;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+        UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+        backItem.title = CustomLocalizedString(@"返回", nil);
+        self.navigationItem.backBarButtonItem = backItem;
+    self.title = CustomLocalizedString(@"信息发布", nil);
+    _dataSoc = [[NSMutableArray alloc] init];
+    [_dataSoc addObject:CustomLocalizedString(@"发布招标信息", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"发布采购信息", nil)];
+    [_dataSoc addObject:CustomLocalizedString(@"发布供应信息", nil)];
+
+    UILabel *label  = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,BOUND_WIDTH,60)];
+    label.text = CustomLocalizedString(@"请选择你要发布的类型", nil);
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = UIFont15;
+    self.tableView.tableHeaderView = label;
+    self.view.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:@"ReleaseTableViewCell" bundle:nil] forCellReuseIdentifier:@"ReleaseTableViewCell"];
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view data source
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    return _dataSoc.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    ReleaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ReleaseTableViewCell"];
+    switch (indexPath.row) {
+        case 0:
+            cell.imge.image = [UIImage imageNamed:@"fabu_toubiao"];
+            break;
+        case 1:
+            cell.imge.image = [UIImage imageNamed:@"fabu_caigou"];
+            break;
+        default:
+            cell.imge.image = [UIImage imageNamed:@"fabu_gongying"];
+            break;
+    }
+
+    cell.label.text = _dataSoc[indexPath.row];
+    
+    // Configure the cell...
+    
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 70;
+}
+
+//#warning 查询是否已经实名认证
+-(void)queryPersonReadNameID{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    NSString *vip = [defaults objectForKey:@"vip"];
+    
+    if (!islogin) {
+        return;
+    }else{
+        
+        
+        [networking AFNPOSTNotHUD:QUERYGRSMRZ withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+            if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response=dic[@"response"];
+                if (response.count>0) {
+                    [defaults setBool:YES forKey:@"isRealName"];
+                    
+                    [defaults synchronize];
+                    
+                }
+            }
+        } error:nil];
+        
+    }
+    
+}
+
+-(void)queryBusinessReadNameID{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+    NSString *vip = [defaults objectForKey:@"vip"];
+    if (!islogin) {
+             return;
+    }else{
+   
+        [networking AFNPOSTNotHUD:QUERYQYSMRZ withparameters:@{@"vip":vip} success:^(NSMutableDictionary *dic) {
+            if ([dic[@"response"] isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response=dic[@"response"];
+                if (response.count>0) {
+                    
+                    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+                    [def setBool:YES forKey:@"isRealName"];
+                    [def synchronize];
+                    
+                }
+            }
+        } error:nil];
+        
+    }
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    BOOL islogin = [defaults boolForKey:@"islogin"];
+        if (!islogin) {
+ [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请先登录", nil) toView:self.view];
+        }else{
+           
+            
+            [self queryPersonReadNameID];
+            [self queryBusinessReadNameID];
+         
+    if (![defaults boolForKey:@"isRealName"])  {
+                
+                [MBProgressHUD showError:CustomLocalizedString(@"您好，请先进行实名认证", nil) toView:self.view];
+                return;
+            }else{
+    
+
+    
+    
+    BaseModel *baseModel = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+    
+    R_SuperTableViewController *VC;
+    R_GYTableViewController *gyVC;
+    ReleaseCellModel *model;
+    NSMutableArray *data;
+    NSArray *arr;
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    NSString *phone = [defaults objectForKey:@"phone"];
+    switch (indexPath.row) {
+        case 0:
+
+            VC = [[R_SuperTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            VC.title = CustomLocalizedString(@"发布招标", nil);
+//            arr = @[@"货物类目:",@"标题:",@"招标类型:",@"货物类型:",@"规格型号:",@"数量:",@"所在地区:",@"包装:",@"出价计价单位:",@"交易币种:",@"交易方式:",@"招标结束时间:",@"中标后规定对方提(交)货时间:",@"详情描述:"];
+            arr = @[CustomLocalizedString(@"货物类目:", nil),CustomLocalizedString(@"标题:", nil),CustomLocalizedString(@"招标类型:", nil),CustomLocalizedString(@"货物类型:", nil),CustomLocalizedString(@"数量:", nil),CustomLocalizedString(@"所在地区:", nil),CustomLocalizedString(@"包装:", nil),CustomLocalizedString(@"出价计价单位:", nil),CustomLocalizedString(@"交易币种:", nil),CustomLocalizedString(@"交易方式:", nil),CustomLocalizedString(@"招标结束时间:", nil),CustomLocalizedString(@"中标后规定对方提(交)货时间:", nil),CustomLocalizedString(@"详情描述:", nil),];
+            data = [[NSMutableArray alloc] init];
+            for (int i = 0;i<arr.count;i++) {
+                model  = [[ReleaseCellModel alloc] initWithtitel:arr[i] andText:nil];
+                if (i==2||i==3) {
+                    model.text = @"0";
+                }else if(i==4)
+                {
+                    model.rightText = [baseModel.Units.firstObject u_name];
+                    model.textId = [baseModel.Units.firstObject u_id];
+                }
+                [data addObject:model];
+            }
+            VC.dataScour = data;
+            [self.navigationController pushViewController:VC animated:YES];
+            break;
+        case 1:
+            gyVC = [[R_GYTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            gyVC.title = CustomLocalizedString(@"发布采购", nil);
+            gyVC.isGongYing = NO;
+//            arr = @[@"货物类目:",@"标题:",@"货物类型:",@"数量:",@"价格:",@"包装:",@"交易方式:",@"所在地区:",@"联系电话:",@"联系地址:",@"采购期限:",@"详情描述:"];
+            arr = @[CustomLocalizedString(@"货物类目:", nil),CustomLocalizedString(@"标题:", nil),CustomLocalizedString(@"货物类型:", nil),CustomLocalizedString(@"数量:", nil),CustomLocalizedString(@"价格:", nil),CustomLocalizedString(@"包装:", nil),CustomLocalizedString(@"交易方式:", nil),CustomLocalizedString(@"所在地区:", nil),CustomLocalizedString(@"联系电话:", nil),CustomLocalizedString(@"联系地址:", nil),CustomLocalizedString(@"采购期限:", nil),CustomLocalizedString(@"详情描述:", nil),];
+            data = [[NSMutableArray alloc] init];
+            for (int i = 0;i<arr.count;i++) {
+                model  = [[ReleaseCellModel alloc] initWithtitel:arr[i] andText:nil];
+                if (i==2) {
+                    model.text = @"0";
+                }else if(i==3)
+                {
+                    model.rightText = [baseModel.Units.firstObject u_name];
+                    model.textId = [baseModel.Units.firstObject u_id];
+                }else if(i==4)
+                {
+                    model.rightText = [baseModel.Currencys.firstObject c_name];
+                    model.textId = [baseModel.Currencys.firstObject c_id];
+                }else if(i==8)
+                {
+                    model.text = nil;
+                }
+                [data addObject:model];
+            }
+            gyVC.dataScour = data;
+
+            [self.navigationController pushViewController:gyVC animated:YES];
+            break;
+        default:
+            gyVC = [[R_GYTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            gyVC.title = CustomLocalizedString(@"发布供应", nil);
+            gyVC.isGongYing = YES;
+//            arr = @[@"货物类目:",@"标题:",@"货物类型:",@"数量:",@"价格:",@"包装:",@"交易方式:",@"所在地区:",@"联系电话:",@"联系地址:",@"供应期限:",@"详情描述:"];
+            arr = @[CustomLocalizedString(@"货物类目:", nil),CustomLocalizedString(@"标题:", nil),CustomLocalizedString(@"货物类型:", nil),CustomLocalizedString(@"数量:", nil),CustomLocalizedString(@"价格:", nil),CustomLocalizedString(@"包装:", nil),CustomLocalizedString(@"交易方式:", nil),CustomLocalizedString(@"所在地区:", nil),CustomLocalizedString(@"联系电话:", nil),CustomLocalizedString(@"联系地址:", nil),CustomLocalizedString(@"供应期限:", nil),CustomLocalizedString(@"详情描述:", nil),];
+            data = [[NSMutableArray alloc] init];
+            for (int i = 0;i<arr.count;i++) {
+                model  = [[ReleaseCellModel alloc] initWithtitel:arr[i] andText:nil];
+                if (i==2) {
+                    model.text = @"0";
+                }else if(i==3)
+                {
+                    model.rightText = [baseModel.Units.firstObject u_name];
+                    model.textId = [baseModel.Units.firstObject u_id];
+                }else if(i==4)
+                {
+                    model.rightText = [baseModel.Currencys.firstObject c_name];
+                    model.textId = [baseModel.Currencys.firstObject c_id];
+                }else if(i==8)
+                {
+                    model.text = nil;
+                }
+                [data addObject:model];
+            }
+            gyVC.dataScour = data;
+            
+            [self.navigationController pushViewController:gyVC animated:YES];
+            break;
+        }}}
+}
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.tableView endEditing:YES];
+}
+-(void)dealloc
+{
+    HZLog(@"lotionVC----dealloc");
+}
+
+@end

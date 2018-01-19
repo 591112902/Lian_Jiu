@@ -1,0 +1,20 @@
+//
+//  MyNewsModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/26.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface MyNewsModel : NSObject
+@property (nonatomic)CGRect size;
+@property (nonatomic,copy)NSString *pu_detail;
+@property (nonatomic,copy)NSString *pu_id;
+@property (nonatomic,copy)NSString *pu_title;
+@property (nonatomic,copy)NSString *date;
+@property (nonatomic,copy)NSString *state;
+@property (nonatomic,copy)NSString *usr_id;
++ (instancetype)ModleWith:(NSDictionary *)dic andScreeW:(CGFloat)widht;
+@end

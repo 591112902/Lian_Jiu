@@ -1,0 +1,16 @@
+//
+//  TextFileTableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/23.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface TextFileTableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *title;
+@property (strong, nonatomic) IBOutlet UITextField *valueTF;
+
+@property (weak, nonatomic) IBOutlet UILabel *YuanLabel;
+@end

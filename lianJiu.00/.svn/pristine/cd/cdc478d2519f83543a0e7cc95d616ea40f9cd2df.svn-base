@@ -1,0 +1,42 @@
+//
+//  MainCollectionViewCell.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/20.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MainCollectionViewCell.h"
+#import "UIImageView+WebCache.h"
+@implementation MainCollectionViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+
+    self.contentView.layer.borderColor=[UIColor darkGrayColor].CGColor;
+    self.contentView.layer.borderWidth=0.3;
+    self.contentView.backgroundColor = [UIColor whiteColor];
+
+    
+}
+
+
+-(void)fillCellWithModel:(bidModel*)model
+{
+    NSString *urlStr = [model.p_file excisionForFistString];
+//    urlStr = [urlStr componentsSeparatedByString:@"."].firstObject;
+//    urlStr = [urlStr stringByAppendingString:@"_small.jpg"];
+//    urlStr = [PHOTOLOADPATH stringByAppendingString:urlStr?urlStr:@""];
+//    urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    [self.headImage sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@"180x180"]];
+
+    self.title.text = model.t_title;
+    STRINGNONIL(model.t_quality);
+    self.num.text = [model.t_quality stringByAppendingString:model.dw_name?model.dw_name:@""];
+    if ([model.a_level isEqualToString:@"2"]) {
+        self.location.text = [NSString stringWithFormat:@"中国(%@)",model.dz_name];
+    }else{
+        self.location.text = model.dz_name;
+    }
+}
+@end

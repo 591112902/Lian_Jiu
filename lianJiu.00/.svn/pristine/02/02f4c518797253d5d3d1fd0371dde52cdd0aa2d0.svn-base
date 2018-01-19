@@ -1,0 +1,224 @@
+//
+//  SupplyAndDemandVC.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/8/24.
+//  Copyright (c) 2015年 CNMOBI. All rights reserved.
+//
+
+#import "RecoveryVC.h"
+#import "ComeRecyclingVC.h"
+#import "becomeBusinessViewController.h"
+#import "PhoneRecyceTableViewController.h"
+#import "SetUpTableViewCell.h"
+#import "SDCycleScrollView.h"
+#import "ServicesTableViewController.h"
+#import "ZSWViewController.h"
+@interface RecoveryVC ()<UITableViewDataSource,UITableViewDelegate,SDCycleScrollViewDelegate>
+
+@end
+
+@implementation RecoveryVC
+
+{
+    CGFloat cellH;
+    SDCycleScrollView *cycleScrollView;
+    NSMutableArray  *scrollPhotoList;//滚动图片点击url
+}
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
+    backItem.title = CustomLocalizedString(@"返回", nil);
+    self.navigationItem.backBarButtonItem = backItem;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    _dataScour = [[NSMutableArray alloc] init];
+    [self addDataSource];
+    cellH = BOUND_HIGHT>480?50:44;
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(10, 74, BOUND_WIDTH-20, _dataScour.count*cellH)];
+    self.tableView.layer.cornerRadius = 5;
+    self.tableView.clipsToBounds = YES;
+    self.tableView.layer.borderWidth = 0.5;
+    self.tableView.layer.borderColor = [UIColor grayColor].CGColor;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.scrollEnabled = NO;
+    
+    
+    self.view.backgroundColor = BGColor;
+    [self.tableView registerNib:[UINib nibWithNibName:@"SetUpTableViewCell" bundle:nil] forCellReuseIdentifier:@"SetUpTableViewCell"];
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin;
+    [self.view addSubview:self.tableView];
+    [self.view addSubview:[self addscorlView]];
+    [self ADDCarousel];
+}
+//重新刷新页面
+- (void)reloadSubViews
+{
+    [self addDataSource];
+    self.title = CustomLocalizedString(@"上门回收", nil);
+    self.navigationItem.backBarButtonItem.title = CustomLocalizedString(@"返回", nil);
+    [_tableView reloadData];
+}
+
+
+-(void)addDataSource
+{
+    [_dataScour removeAllObjects];
+    [_dataScour addObject:CustomLocalizedString(@"查看服务范围", nil)];
+    [_dataScour addObject:CustomLocalizedString(@"免费上门回收", nil)];
+    [_dataScour addObject:CustomLocalizedString(@"申请为回收商", nil)];
+    [_dataScour addObject:CustomLocalizedString(@"废旧手机回收", nil)];
+}
+- (void)ADDCarousel
+{
+    [networking AFNRequest:CAROUSEL withparameters:@{@"type":@"2"} success:^(NSMutableDictionary *dic) {
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            NSMutableArray *arr = [[NSMutableArray alloc] init];
+            scrollPhotoList = [[NSMutableArray alloc] init];
+            for (NSDictionary *temp in response) {
+                NSString *str = temp[@"c_img"]?temp[@"c_img"]:@"";
+                NSString *urlStr = [str excisionForFistString];
+                urlStr =[urlStr stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+                [arr addObject:[PHOTOLOADPATH stringByAppendingString:urlStr]];
+                
+                [scrollPhotoList addObject:temp[@"c_url"]?temp[@"c_url"]:@""];
+            }
+            cycleScrollView.imageURLStringsGroup =arr;
+        }
+    } error:nil HUDAddView:cycleScrollView];
+}
+
+
+#pragma mark * 添加按钮
+-(SDCycleScrollView *)addscorlView
+{
+
+    CGFloat w = self.view.bounds.size.width;
+    CGFloat y = self.tableView.frame.origin.y+self.tableView.frame.size.height+10;
+    CGFloat h = (BOUND_WIDTH-20)*3/4>BOUND_HIGHT-y-TARBARHEIGHT?BOUND_HIGHT-y-TARBARHEIGHT:(BOUND_WIDTH-20)*3/4;
+    // 本地加载 --- 创建不带标题的图片轮播器
+    cycleScrollView = [[SDCycleScrollView alloc ] initWithFrame:CGRectMake(10, y, w-20, h)];
+    cycleScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    cycleScrollView.backgroundColor = BGColor;
+    cycleScrollView.infiniteLoop = YES;
+    cycleScrollView.delegate = self;
+    cycleScrollView.pageControlStyle = SDCycleScrollViewPageContolStyleClassic;
+    cycleScrollView.dotColor = MAINColor; // 自定义分页控件小圆标颜色
+    cycleScrollView.placeholderImage = [UIImage imageNamed:@"180x180"];
+    cycleScrollView.layer.cornerRadius = 5;
+    cycleScrollView.clipsToBounds = YES;
+    return cycleScrollView;
+    
+}
+#pragma mark - SDCycleScrollViewDelegate
+
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index
+{
+    if (scrollPhotoList.count>0) {
+        ZSWViewController *ZSWWebView = [[ZSWViewController alloc] init];
+        ZSWWebView.title = CustomLocalizedString(@"再商网", nil);
+        ZSWWebView.url= scrollPhotoList[index];
+        ZSWWebView.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:ZSWWebView animated:YES];
+    }
+}
+
+#pragma mark - Table view data source
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return _dataScour.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    SetUpTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SetUpTableViewCell"];
+    switch (indexPath.row) {
+        case 0:
+            cell.rightImge.image = [UIImage imageNamed:@"fanwei"];
+            break;
+        case 1:
+            cell.rightImge.image = [UIImage imageNamed:@"shangmen"];
+            break;
+        case 2:
+            cell.rightImge.image = [UIImage imageNamed:@"huishoushang"];
+            break;
+        case 3:
+            cell.rightImge.image = [UIImage imageNamed:@"mobli"];
+            break;
+        default:
+            break;
+    }
+    cell.label.text = _dataScour[indexPath.row];
+    
+    // Configure the cell...
+    
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return cellH;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ServicesTableViewController *SericesVC;
+    
+    ComeRecyclingVC *CRVC;
+    PhoneRecyceTableViewController *PRVC;
+
+    switch (indexPath.row) {
+        case 0:
+            SericesVC = [[ServicesTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+            SericesVC.title = CustomLocalizedString(@"服务范围", nil);
+            SericesVC.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:SericesVC animated:YES];
+            break;
+        case 1:
+            CRVC = [[ComeRecyclingVC alloc] init];
+            CRVC.title = CustomLocalizedString(@"上门回收", nil);
+            CRVC.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:CRVC animated:YES];
+            break;
+        case 2:
+            [self Business];
+            break;
+        case 3:
+            PRVC = [[PhoneRecyceTableViewController alloc] init];
+            PRVC.title = CustomLocalizedString(@"手机回收", nil);
+            PRVC.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:PRVC animated:YES];
+            break;
+        default:
+            break;
+    }
+}
+//跳入子页面
+- (void)tosubViewController:(NSInteger)index
+{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+}
+- (void)Business
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+    if ([def boolForKey:@"islogin"]) {
+        if ([[def objectForKey:@"huishoushang"] isEqualToNumber:@2]) {
+            [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"您已经成为回收商", nil) toView:self.view];
+        }else{
+            becomeBusinessViewController *BBVC = [[becomeBusinessViewController alloc] init];
+            BBVC.title = CustomLocalizedString(@"回收商", nil);
+            BBVC.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:BBVC animated:YES];
+        }
+        
+    }else{
+        [MBProgressHUD showNotPhotoError:CustomLocalizedString(@"请先登录", nil) toView:self.view];
+    }
+}
+
+@end

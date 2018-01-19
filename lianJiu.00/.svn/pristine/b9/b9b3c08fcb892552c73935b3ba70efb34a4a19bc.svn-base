@@ -1,0 +1,25 @@
+//
+//  Au_companyModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/22.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface Au_companyModel : NSObject
+@property (nonatomic,strong)NSString *address;
+@property (nonatomic,strong)NSString *company;
+@property (nonatomic,strong)NSString *enrol;
+@property (nonatomic,strong)NSString *fdb;
+@property (nonatomic,strong)NSString *license;
+@property (nonatomic,strong)NSString *principal;
+@property (nonatomic,strong)NSString *principal_id;
+@property (nonatomic,strong)NSString *registrid;
+@property (nonatomic,strong)NSString *state;
+@property (nonatomic,strong)NSString *vip;
+@property (nonatomic,strong)NSString *xkz;
+@property (nonatomic,strong)NSString *zzjgdmz;
++(instancetype)ModelWith:(NSDictionary *)dic;
+@end

@@ -1,0 +1,44 @@
+//
+//  ProductsModel.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "ProductsModel.h"
+
+@implementation ProductsModel
++(instancetype)ModelWith:(NSDictionary *)dic
+{
+    ProductsModel *model = [[self alloc] init];
+    model.p_id = dic[@"p_id"];
+    model.p_level = dic[@"p_level"];
+    model.p_name = dic[@"p_name"];
+    model.p_super = dic[@"p_super"];
+    
+
+    model.p_subList = [[NSMutableArray alloc] init];
+    return model;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.p_id forKey:@"p_id"];
+    [aCoder encodeObject:self.p_level forKey:@"p_level"];
+    [aCoder encodeObject:self.p_name forKey:@"p_name"];
+    [aCoder encodeObject:self.p_super forKey:@"p_super"];
+    [aCoder encodeObject:self.p_subList forKey:@"p_subList"];
+    
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        self.p_id = [aDecoder decodeObjectForKey:@"p_id"];
+        self.p_level = [aDecoder decodeObjectForKey:@"p_level"];
+        self.p_name = [aDecoder decodeObjectForKey:@"p_name"];
+        self.p_super = [aDecoder decodeObjectForKey:@"p_super"];
+        self.p_subList = [aDecoder decodeObjectForKey:@"p_subList"];
+    }
+    return self;
+}
+
+@end

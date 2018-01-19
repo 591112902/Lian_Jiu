@@ -1,0 +1,13 @@
+//
+//  MyOrderPurchaseTableViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/29.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import "MyOrderSupplyTableViewController.h"
+
+@interface MyOrderPurchaseTableViewController : MyOrderSupplyTableViewController
+
+@end

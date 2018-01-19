@@ -1,0 +1,34 @@
+//
+//  superBidModel.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/14.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface superBidModel : NSObject
+@property(nonatomic,copy)NSString *a_level;
+@property(nonatomic,copy)NSString *area_id;
+@property(nonatomic,copy)NSString *bz_name;
+@property(nonatomic,copy)NSString *currency_id;
+@property(nonatomic,copy)NSString *dw_name;
+@property(nonatomic,copy)NSString *dz_name;
+@property(nonatomic,copy)NSString *jy_name;
+@property(nonatomic,copy)NSString *lb_name;
+@property(nonatomic,copy)NSString *list_rar;
+@property(nonatomic,copy)NSString *name;
+@property(nonatomic,copy)NSString *p_cargolist;
+@property(nonatomic,copy)NSString *p_detail;
+@property(nonatomic,copy)NSString *p_file;
+@property(nonatomic,copy)NSString *p_id;
+@property(nonatomic,copy)NSString *p_rar;
+@property(nonatomic,copy)NSString *pack_id;
+@property(nonatomic,copy)NSString *pack_name;
+@property(nonatomic,copy)NSString *trade_id;
+@property(nonatomic,copy)NSString *unit_id;
+@property(nonatomic,copy)NSString *usr_id;
+@property(nonatomic,copy)NSString *release_time;
+-(instancetype)initlWith:(NSDictionary *)dic;
+@end

@@ -1,0 +1,21 @@
+//
+//  Me3TableViewCell.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/3.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface Me3TableViewCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UIButton *leftBtn;
+@property (strong, nonatomic) IBOutlet UILabel *leftValueLabel;
+@property (strong, nonatomic) IBOutlet UILabel *leftTittleLabel;
+
+
+@property (strong, nonatomic) IBOutlet UIButton *rightBtn;
+@property (strong, nonatomic) IBOutlet UILabel *rightValueLabel;
+@property (strong, nonatomic) IBOutlet UILabel *rightTitleLabel;
+
+@end

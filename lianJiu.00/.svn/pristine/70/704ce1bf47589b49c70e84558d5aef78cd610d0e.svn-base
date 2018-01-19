@@ -1,0 +1,339 @@
+//
+//  BidManageContenTableViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/30.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+/**标管理的内容 TableViewController */
+
+#import "BidManageContenTableViewController.h"
+#import "MyOrederTableViewCell.h"
+#import "MJRefresh.h"
+#import "SelectViewController.h"
+#import "bidManageModel.h"
+#import "BiddingViewController.h"
+#import "B_C_TViewController.h"
+#import "B_C_TReadOnlyViewController.h"
+#import "EvaluateViewController.h"
+#import "BaseModel.h"
+
+@interface BidManageContenTableViewController ()
+
+@property(nonatomic,strong)NSMutableDictionary *parameters;
+@property(nonatomic,strong)NSMutableArray *dataSource;
+@end
+
+@implementation BidManageContenTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+     self.VC= [[ModifyTableViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    self.view.backgroundColor = BGColor;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.isRequestData = YES;
+    
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    [self.tableView registerNib:[UINib nibWithNibName:@"MyOrederTableViewCell" bundle:nil] forCellReuseIdentifier:@"MyOrederTableViewCell"];
+
+    __weak UITableView *tableView = self.tableView;
+    WS(weakSelf);
+    // 下拉刷新
+    tableView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf requestDataIsDown:YES];
+        // 结束刷新
+        [tableView.header endRefreshing];
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    tableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [weakSelf requestDataIsDown:NO];
+        // 结束刷新
+        [tableView.footer endRefreshing];
+    }];
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.footer.automaticallyChangeAlpha = YES;
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    if (_isRequestData) {
+        [self requestDataIsDown:YES];
+        return;
+    }else{
+        [self.tableView reloadData];
+    }
+    
+}
+-(NSMutableDictionary *)parameters
+{
+    if (!_parameters) {
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+        self.vip = [def objectForKey:@"vip"];
+        _parameters = [NSMutableDictionary dictionaryWithDictionary:@{@"vip":self.vip,@"pageNo":@1,@"type":[NSNumber numberWithInteger:self.type]}];
+    }
+    return _parameters;
+}
+-(NSMutableArray *)dataSource
+{
+    if (!_dataSource) {
+        _dataSource = [[NSMutableArray alloc] init];
+    }
+    return _dataSource;
+}
+-(void)requestDataIsDown:(BOOL)isDown
+{
+    self.isRequestData = NO;
+    NSMutableDictionary *para = [self.parameters mutableCopy];
+    
+    if (isDown) {
+        [para setObject:@1 forKey:@"pageNo"];
+    }
+    [networking AFNPOST:self.url withparameters:para success:^(NSMutableDictionary *dic) {
+        if (isDown) {
+            [self.dataSource removeAllObjects];
+        }
+        if ([dic[@"response"] isKindOfClass:[NSArray class]]) {
+            NSArray *response = dic[@"response"];
+            for (NSDictionary *temp in response) {
+                if ([temp isKindOfClass:[NSDictionary class]]) {
+                    bidManageModel *model = [bidManageModel ModelWith:temp];
+                    model.type =self.type;
+                    model.state = self.state;
+                    [self.dataSource addObject:model];
+                    
+                }
+            }
+        }
+        
+        [self.tableView reloadData];
+        NSNumber *pageNub = _parameters[@"pageNo"];
+        NSInteger pInt = [pageNub integerValue];
+        pInt++;
+        if (isDown) {
+            [self.parameters setObject:@2 forKey:@"pageNo"];
+        }else{
+            [self.parameters setObject:[NSNumber numberWithInteger:pInt] forKey:@"pageNo"];
+        }
+    } error:nil HUDAddView:self.view];
+}
+
+
+#pragma mark - Table view data source
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return self.dataSource.count;
+
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+    
+}
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MyOrederTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MyOrederTableViewCell"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    [cell.bidManageBtn removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
+    if (self.isToubiao) {
+        [cell fillCellWithModel4:_dataSource[indexPath.section]];
+        cell.bidManageBtn.tag = indexPath.section+46000;
+        [cell.bidManageBtn addTarget:self action:@selector(TBrightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }else{
+        [cell fillCellWithModel3:_dataSource[indexPath.section]];
+        cell.bidManageBtn.tag = indexPath.section+45000;
+        [cell.bidManageBtn addTarget:self action:@selector(ZBrightBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+//        self.BidID.text = model.t_id;
+    }
+    
+    
+    return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 155.0;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    bidManageModel *model = _dataSource[indexPath.section];
+    HZLog(@"-----------%@",model.t_bidstate_id);
+    if (self.isToubiao&&[model.t_bidstate_id isEqualToString:@"0"]) {
+        B_C_TViewController *bidContenVC = [[B_C_TViewController alloc] init];
+        bidContenVC.model = model;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }else{
+        B_C_TReadOnlyViewController *bidContenVC = [[B_C_TReadOnlyViewController alloc] init];
+        bidContenVC.model = model;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 8;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    return 1;
+}
+- (void)ZBrightBtnClick:(UIButton *)btn
+{
+    NSInteger index = btn.tag-45000;
+    bidManageModel *model = self.dataSource[index];
+    if (self.type==1) {
+        if ([model.t_bidstate_id isEqualToString:@"0"]) {
+            BiddingViewController *biddingCV = [[BiddingViewController alloc] initWithNibName:@"BiddingViewController" bundle:nil];
+            biddingCV.bidMangeModel = model;
+            [self.navigationController pushViewController:biddingCV animated:YES];
+        }else{
+            if([model.t_surestate_id isEqualToString:@"0"])
+            {
+            }else{
+                WS(weakSelf);
+                [networking AFNPOST:DETERMINETHEDEAL withparameters:@{@"vip":self.vip,@"bid":model.t_id} success:^(NSMutableDictionary *dic) {
+                    [MBProgressHUD showSuccess:CustomLocalizedString(@"成交成功", nil) toView:weakSelf.view];
+//                    [weakSelf.dataSource removeObjectAtIndex:index];
+//                    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+//                    [weakSelf.tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [weakSelf requestDataIsDown:YES];
+                } error:nil HUDAddView:self.view];
+            }
+            //            [self.bidManageBtn setTitle:@"确定成交" forState:UIControlStateNormal];
+        }
+
+    }else if(self.type==3)
+    {
+        [self modifyBidWithModel:model index:index];
+    }else if(self.type==4){
+        EvaluateViewController *bidContenVC = [[EvaluateViewController alloc] init];
+        bidContenVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }
+    
+}
+
+// 点击修改里的内容
+-(void)modifyBidWithModel:(bidManageModel*)model index:(NSInteger)index
+{
+    
+    self.VC.title = CustomLocalizedString(@"修改招标", nil);
+    self.VC.bidModel = model;
+    WS(weakSelf);
+    self.VC.modifySuccess = ^(){
+        weakSelf.isRequestData = YES;
+       [weakSelf.tableView deleteSections:[NSIndexSet indexSetWithIndex:index] withRowAnimation:UITableViewRowAnimationFade];
+    };
+    NSArray *arr = arr = @[CustomLocalizedString(@"货物类目:", nil),CustomLocalizedString(@"标题:", nil),CustomLocalizedString(@"招标类型:", nil),CustomLocalizedString(@"货物类型:", nil),CustomLocalizedString(@"数量:", nil),CustomLocalizedString(@"所在地区:", nil),CustomLocalizedString(@"包装:", nil),CustomLocalizedString(@"出价计价单位:", nil),CustomLocalizedString(@"交易币种:", nil),CustomLocalizedString(@"交易方式:", nil),CustomLocalizedString(@"招标结束时间:", nil),CustomLocalizedString(@"中标后规定对方提(交)货时间:", nil),CustomLocalizedString(@"详情描述:", nil),];
+    NSMutableArray *data = [[NSMutableArray alloc] init];
+    for (int i = 0;i<arr.count;i++) {
+        ReleaseCellModel *Rmodel  = [[ReleaseCellModel alloc] initWithtitel:arr[i] andText:nil];
+        if (i==0) {
+            Rmodel.text = model.lb_name;
+            Rmodel.textId = model.p_id;
+        }else if(i==1){
+            Rmodel.text = model.t_title;
+        }else if(i==2){
+            if ([model.t_tendertype isEqualToString:@"采购招标"]) {
+                Rmodel.text = @"1";
+            }else{
+                Rmodel.text = @"0";
+            }
+        }else if(i==3){
+            if ([model.t_tendertype isEqualToString:@"旧"]) {
+                Rmodel.text = @"1";
+            }else{
+                Rmodel.text = @"0";
+            }
+        }else if(i==4)
+        {
+            Rmodel.text = model.t_quality;
+            Rmodel.rightText = model.dw_name;
+            Rmodel.textId = model.unit_id;
+        }else if(i==5)
+        {
+            Rmodel.text = model.dz_name;
+            Rmodel.textId = model.area_id;
+        }else if(i==6)
+        {
+            Rmodel.text = model.pack_name;
+            Rmodel.textId = model.pack_id;
+        }else if(i==7)
+        {
+            BaseModel *base = [NSKeyedUnarchiver unarchiveObjectWithFile:BASEPATH];
+            NSString *unit;
+            for (UnitsModel *temp in base.Units) {
+                if ([model.dw_id isEqualToString:temp.u_id]) {
+                    unit = temp.u_name;
+                    break;
+                }
+            }
+           
+            Rmodel.text = unit;
+            Rmodel.textId = model.dw_id;
+            base = nil;
+        }else if(i==8)
+        {
+            Rmodel.text = model.bz_name;
+            Rmodel.textId = model.currency_id;
+        }else if(i==9)
+        {
+            Rmodel.text = model.jy_name;
+            Rmodel.textId = model.trade_id;
+        }else if(i==10)
+        {
+            Rmodel.text = model.t_date;
+        }else if(i==11)
+        {
+            Rmodel.text = model.t_picktime;
+        }else if(i==12)
+        {
+            Rmodel.text = model.t_detail;
+        }
+    
+        [data addObject:Rmodel];
+    }
+    
+    
+    self.VC.dataScour = data;
+    NSArray *headurl = [model.p_file componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;"]];
+    NSMutableArray *mainPhotos=[[NSMutableArray alloc] initWithArray:headurl];
+    [mainPhotos removeObject:@""];
+    self.VC.mainPhotos = mainPhotos;
+    NSArray *detailurl = [model.p_detail componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",;"]];
+    NSMutableArray *detailPhotos=[[NSMutableArray alloc] initWithArray:detailurl];
+    [detailPhotos removeObject:@""];
+    self.VC.detailPhotos = detailPhotos;
+    
+    [self.navigationController pushViewController:self.VC animated:YES];
+
+    
+    
+}
+- (void)TBrightBtnClick:(UIButton *)btn
+{
+    NSInteger index = btn.tag-46000;// 判断点击了哪个按钮
+    bidManageModel *model = self.dataSource[index];
+    if (self.type==2) {
+        if ([model.t_surestate_id isEqualToString:@"1"]) {
+ 
+        }else{
+            WS(weakSelf);
+            [networking AFNPOST:CONFIRMRECEIVING withparameters:@{@"vip":self.vip,@"bid":model.t_id} success:^(NSMutableDictionary *dic) {
+                [MBProgressHUD showSuccess:CustomLocalizedString(@"成交成功", nil) toView:weakSelf.view];
+//                model.t_bidstate_id = @"3";
+//                [weakSelf.tableView reloadSections:[NSIndexSet indexSetWithIndex:index] withRowAnimation:UITableViewRowAnimationFade];
+//                [weakSelf.tableView reloadData];
+                [weakSelf requestDataIsDown:YES];
+            } error:nil HUDAddView:self.view];
+        }
+        
+    }else if(self.type==4){
+        EvaluateViewController *bidContenVC = [[EvaluateViewController alloc] init];
+        bidContenVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:bidContenVC animated:YES];
+    }
+}
+
+@end

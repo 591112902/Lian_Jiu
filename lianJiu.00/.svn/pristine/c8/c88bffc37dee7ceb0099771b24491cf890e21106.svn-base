@@ -1,0 +1,27 @@
+//
+//  SelectSubViewController.h
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/15.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "BaseModel.h"
+
+#import "MOSTableViewCell.h"
+
+@interface SelectSubViewController : UIViewController
+@property (nonatomic,strong)NSArray *dataSource;//tableView显示数据源
+@property (nonatomic,strong)NSArray *dataSourceList;//实际数据源
+@property (nonatomic,assign)UIEdgeInsets tableViewUIEdgeInsets;//内边距
+@property (nonatomic,strong)UIImage *bgImage;//背景图片
+@property (nonatomic,copy)NSString *titleText;//头部字段
+@property (nonatomic,copy)NSString *allText;//是否加上全部
+@property (nonatomic,copy)void (^didselc)(NSInteger,NSString*,NSString *);//回调
+@property (nonatomic,copy)NSString *currValue;
+
+@property (nonatomic,strong)MOSTableViewCell *cell;
+//@property (nonatomic,strong) ProductsModel *PModel;
+- (void)addTableViewDataSource;;
+@end

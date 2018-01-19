@@ -1,0 +1,55 @@
+//
+//  SolutionViewController.m
+//  zaiShang
+//
+//  Created by cnmobi on 15/12/28.
+//  Copyright © 2015年 CNMOBI. All rights reserved.
+//
+//解决方案
+
+#import "SolutionViewController.h"
+#import "WXLabel.h"
+
+@interface SolutionViewController ()
+
+@end
+
+@implementation SolutionViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = CustomLocalizedString(@"解决方案", nil);
+    self.view.backgroundColor = BGColor;
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, BOUND_WIDTH, BOUND_HIGHT)];
+    [self.view addSubview:scrollView];
+    
+    CGFloat h=0;
+    CGFloat s=[WXLabel getTextHeight:15 width:BOUND_WIDTH-60 text:self.model.title];
+    
+//    UILabel *label =[[UILabel alloc] initWithFrame:CGRectMake(30, 0, BOUND_WIDTH-60, 80)];
+    s+=10;
+     UILabel *label =[[UILabel alloc] initWithFrame:CGRectMake(30, 0, BOUND_WIDTH-60, s+20)];
+    h+=20+s;
+    label.numberOfLines = 0;
+
+    label.text = self.model.title;
+ 
+    [scrollView addSubview:label];
+    h+=1;
+    UIView *gapview = [[UIView alloc] initWithFrame:CGRectMake(10, h, BOUND_WIDTH-20, 1)];
+    gapview.backgroundColor = [UIColor grayColor];
+    [scrollView addSubview:gapview];
+  
+//    NSString *sttt=self.model.title;
+    UILabel *contenLabel =[[UILabel alloc] init];
+    contenLabel.text = self.model.content?self.model.content:@"";
+    contenLabel.numberOfLines = 0;
+    contenLabel.font = UIFont15;
+    CGRect size = [contenLabel.text boundingRectWithSize:CGSizeMake(BOUND_WIDTH-60, 30000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} context:nil];
+    contenLabel.frame = CGRectMake(30, h+5,BOUND_WIDTH-60, size.size.height+20);
+    [scrollView addSubview:contenLabel];
+    scrollView.contentSize = CGSizeMake(BOUND_WIDTH, contenLabel.frame.origin.y +contenLabel.frame.size.height+10);
+}
+
+
+@end
